@@ -1,0 +1,91 @@
+<h1>
+  List of all trip plans
+</h1>
+
+<hr>
+
+<article>
+  <header>
+    <h2>
+      Add a new trip plan
+    </h2>
+  </header>
+
+  <form action="/insert_trip_plan" method="post">
+    <div>
+      <label for="trip_id_box">
+        Trip
+      </label>
+
+      <input type="text" id="trip_id_box" name="query_trip_id">
+    </div>
+
+    <div>
+      <label for="trip_plan_box">
+        Trip plan
+      </label>
+
+      <input type="text" id="trip_plan_box" name="query_trip_plan">
+    </div>
+
+    <div>
+      <label for="start_time_box">
+        Start time
+      </label>
+
+      <input type="time" id="start_time_box" name="query_start_time">
+    </div>
+
+    <div>
+      <label for="end_time_box">
+        End time
+      </label>
+
+      <input type="time" id="end_time_box" name="query_end_time">
+    </div>
+
+    <div>
+      <label for="date_box">
+        Date
+      </label>
+
+      <input type="date" id="date_box" name="query_date">
+    </div>
+
+    <div>
+      <label for="plan_location_box">
+        Plan location
+      </label>
+
+      <input type="text" id="plan_location_box" name="query_plan_location">
+    </div>
+
+    <div>
+      <label for="plan_details_box">
+        Plan details
+      </label>
+
+      <input type="text" id="plan_details_box" name="query_plan_details">
+    </div>
+
+    <button type="submit">
+      Create trip plan
+    </button>
+  </form>
+</article>
+
+<hr>
+
+<article>
+  <ul>
+    <% @list_of_trip_plans.each do |a_trip_plan| %>
+      <li>
+        <a href="/trip_plans/<%= a_trip_plan.id %>">
+          Trip plan #<%= a_trip_plan.id %>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+</article>
+
+<hr>

@@ -1,0 +1,75 @@
+<h1>
+  List of all trips
+</h1>
+
+<hr>
+
+<article>
+  <header>
+    <h2>
+      Add a new trip
+    </h2>
+  </header>
+
+  <form action="/insert_trip" method="post">
+    <div>
+      <label for="trip_name_box">
+        Trip name
+      </label>
+
+      <input type="text" id="trip_name_box" name="query_trip_name">
+    </div>
+
+    <div>
+      <label for="trip_location_box">
+        Trip location
+      </label>
+
+      <input type="text" id="trip_location_box" name="query_trip_location">
+    </div>
+
+    <div>
+      <label for="trip_duration_days_box">
+        Trip duration days
+      </label>
+
+      <input type="text" id="trip_duration_days_box" name="query_trip_duration_days">
+    </div>
+
+    <div>
+      <label for="trip_start_date_box">
+        Trip start date
+      </label>
+
+      <input type="text" id="trip_start_date_box" name="query_trip_start_date">
+    </div>
+
+    <div>
+      <label for="trip_notes_box">
+        Trip notes
+      </label>
+
+      <input type="text" id="trip_notes_box" name="query_trip_notes">
+    </div>
+
+    <button type="submit">
+      Create trip
+    </button>
+  </form>
+</article>
+
+<hr>
+
+<article>
+  <ul>
+    <% @list_of_trips.each do |a_trip| %>
+      <li>
+        <a href="/trips/<%= a_trip.id %>">
+          Trip #<%= a_trip.id %>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+</article>
+
+<hr>

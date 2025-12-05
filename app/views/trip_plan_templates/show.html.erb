@@ -1,0 +1,156 @@
+<h1>
+  Trip plan #<%= @the_trip_plan.id %> details
+</h1>
+
+<article>
+  <div>
+    <a href="/trip_plans">
+      Go back
+    </a>
+  </div>
+
+  <div>
+    <a href="/delete_trip_plan/<%= @the_trip_plan.id %>">
+      Delete trip plan
+    </a>
+  </div>
+  <dl>
+    <dt>
+      Trip
+    </dt>
+    <dd>
+      <%= @the_trip_plan.trip_id %>
+    </dd>
+
+    <dt>
+      Trip plan
+    </dt>
+    <dd>
+      <%= @the_trip_plan.trip_plan %>
+    </dd>
+
+    <dt>
+      Start time
+    </dt>
+    <dd>
+      <%= @the_trip_plan.start_time %>
+    </dd>
+
+    <dt>
+      End time
+    </dt>
+    <dd>
+      <%= @the_trip_plan.end_time %>
+    </dd>
+
+    <dt>
+      Date
+    </dt>
+    <dd>
+      <%= @the_trip_plan.date %>
+    </dd>
+
+    <dt>
+      Plan location
+    </dt>
+    <dd>
+      <%= @the_trip_plan.plan_location %>
+    </dd>
+
+    <dt>
+      Plan details
+    </dt>
+    <dd>
+      <%= @the_trip_plan.plan_details %>
+    </dd>
+
+    <dt>
+      Created at
+    </dt>
+    <dd>
+      <%= time_ago_in_words(@the_trip_plan.created_at) %> ago
+    </dd>
+
+    <dt>
+      Updated at
+    </dt>
+    <dd>
+      <%= time_ago_in_words(@the_trip_plan.updated_at) %> ago
+    </dd>
+  </dl>
+</article>
+
+<hr>
+
+
+<article>
+  <header>
+    <h2>
+      Edit trip plan
+    </h2>
+  </header>
+
+  <form action="/modify_trip_plan/<%= @the_trip_plan.id %>"  method="post" >
+    <div>
+      <label for="trip_id_box">
+        Trip
+      </label>
+
+      <input type="text" id="trip_id_box" name="query_trip_id" value="<%= @the_trip_plan.trip_id %>">
+    </div>
+
+    <div>
+      <label for="trip_plan_box">
+        Trip plan
+      </label>
+
+      <input type="text" id="trip_plan_box" name="query_trip_plan" value="<%= @the_trip_plan.trip_plan %>">
+    </div>
+
+    <div>
+      <label for="start_time_box">
+        Start time
+      </label>
+
+      <input type="time" id="start_time_box" name="query_start_time" value="<%= @the_trip_plan.start_time %>">
+    </div>
+
+    <div>
+      <label for="end_time_box">
+        End time
+      </label>
+
+      <input type="time" id="end_time_box" name="query_end_time" value="<%= @the_trip_plan.end_time %>">
+    </div>
+
+    <div>
+      <label for="date_box">
+        Date
+      </label>
+
+      <input type="date" id="date_box" name="query_date" value="<%= @the_trip_plan.date %>">
+    </div>
+
+    <div>
+      <label for="plan_location_box">
+        Plan location
+      </label>
+
+      <input type="text" id="plan_location_box" name="query_plan_location" value="<%= @the_trip_plan.plan_location %>">
+    </div>
+
+    <div>
+      <label for="plan_details_box">
+        Plan details
+      </label>
+
+      <input type="text" id="plan_details_box" name="query_plan_details" value="<%= @the_trip_plan.plan_details %>">
+    </div>
+
+    <button type="submit">
+      Update trip plan
+    </button>
+  </form>
+</article>
+
+<hr>
