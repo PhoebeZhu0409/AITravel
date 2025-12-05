@@ -1,23 +1,5 @@
 Rails.application.routes.draw do
   devise_for :users
-  # Routes for the Trip plan resource:
-
-  # CREATE
-  post("/insert_trip_plan", { :controller => "trip_plans", :action => "create" })
-
-  # READ
-  get("/trip_plans", { :controller => "trip_plans", :action => "index" })
-
-  get("/trip_plans/:path_id", { :controller => "trip_plans", :action => "show" })
-
-  # UPDATE
-
-  post("/modify_trip_plan/:path_id", { :controller => "trip_plans", :action => "update" })
-
-  # DELETE
-  get("/delete_trip_plan/:path_id", { :controller => "trip_plans", :action => "destroy" })
-
-  #------------------------------
 
   # Routes for the Trip resource:
 
@@ -39,6 +21,27 @@ Rails.application.routes.draw do
   get("/delete_trip/:path_id", { :controller => "trips", :action => "destroy" })
 
   #------------------------------
+
+
+  # Routes for the Trip plan resource:
+
+  # CREATE
+  post("/insert_trip_plan", { :controller => "trip_plans", :action => "create" })
+
+  # READ
+  get("/trip_plans", { :controller => "trip_plans", :action => "index" })
+
+  get("/trip_plans/:path_id", { :controller => "trip_plans", :action => "show" })
+
+  # UPDATE
+
+  post("/modify_trip_plan/:path_id", { :controller => "trip_plans", :action => "update" })
+
+  # DELETE
+  get("/delete_trip_plan/:path_id", { :controller => "trip_plans", :action => "destroy" })
+
+  #------------------------------
+
 
   # This is a blank app! Pick your first screen, build out the RCAV, and go from there. E.g.:
   # get("/your_first_screen", { :controller => "pages", :action => "first" })

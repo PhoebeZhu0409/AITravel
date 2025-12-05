@@ -17,14 +17,47 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
+    <!-- The official Pico CSS stylesheet -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.conditional.css">
+    <!-- The official Bootstrap utilities stylesheet -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@main/dist/css/bootstrap-utilities.css">
+    <!-- Our modifications to default Pico CSS styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/firstdraft/pico.firstdraft.css@latest/pico.firstdraft.css">
+
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
-    <%= yield %>
+  <body class="pico">
+    <header>
+      <div class="container-two-thirds">
+        <nav>
+          <ul>
+            <li>
+              <a href="/">
+                <strong>
+                  My Trips
+                </strong>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="container-two-thirds">
+        <div class="text-success">          <%= notice %>        </div>
+        <div class="text-danger">          <%= alert %>        </div>
+
+        <%= yield %>
+      </div>
+    </main>
+
+    <footer class="text-center">
+      PhoebeZhu 2025. All rights reserved.
+    </footer>
+
   </body>
 </html>
