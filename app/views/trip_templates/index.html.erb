@@ -6,6 +6,26 @@
 </nav>
 <hr>
 
+<article>
+  <header>
+    <h2>
+      My future trips
+    </h2>
+  </header>
+  <ul>
+    <% @list_of_trips.each do |a_trip| %>
+      <li>
+        <a href="/trips/<%= a_trip.id %>">
+          <%= a_trip.trip_name %>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+</article>
+
+
+
+<hr>
 
 <article>
   <header>
@@ -23,14 +43,6 @@
       <input type="text" id="trip_name_box" name="query_trip_name">
     </div>
 
-    <!--    <div>
-      <label for="trip_location_box">
-        Trip location
-      </label>
-
-      <input type="text" id="trip_location_box" name="query_trip_location">
-    </div>
--->
     <div>
       <label for="trip_location_box">Trip location</label>
       <input type="text"
@@ -65,31 +77,15 @@
     </div>
 
     <button type="submit">
-      Create trip
+      Create my new trip for me!
     </button>
   </form>
 </article>
 
 <hr>
 
-<article>
-  <header>
-    <h2>
-      My future trips
-    </h2>
-  </header>
-  <ul>
-    <% @list_of_trips.each do |a_trip| %>
-      <li>
-        <a href="/trips/<%= a_trip.id %>">
-          <%= a_trip.trip_name %>
-        </a>
-      </li>
-    <% end %>
-  </ul>
-</article>
 
-<hr>
+
 
 
 

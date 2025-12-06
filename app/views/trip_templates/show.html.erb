@@ -13,6 +13,7 @@
 
 
 
+
 <article>
 
   <div>
@@ -49,6 +50,50 @@
 </article>
 
 <hr>
+
+<article>
+
+   <div class="overflow-auto">
+    <table>
+      <thead>
+        <th>Trip plan</th>
+        <th>Start time</th>
+        <th>End time</th>
+        <th>Date</th>
+        <th>Plan location</th>
+      </thead>
+
+     <% this_trip = @the_trip.trip_plans %>
+      <tbody>
+      <% this_trip.each do |a_trip| %>
+        <tr>
+          <td>
+          <%= a_trip.trip_plan %>
+          </td>
+          <td>
+          <%= a_trip.start_time.strftime("%X") %>
+          </td>
+          <td>
+          <%= a_trip.end_time.strftime("%X")  %>
+          </td>
+          <td>
+          <%= a_trip.date  %>
+          </td>
+          <td>
+          <%= a_trip.plan_location  %>
+          </td>
+        </tr>
+      <% end %>
+
+      </tbody>
+    </table>
+  </div>
+
+</article>
+<hr>
+
+
+
 
 
 <article>

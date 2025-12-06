@@ -13,4 +13,10 @@
 #
 class Trip < ApplicationRecord
   has_many  :trip_plans, class_name: "TripPlan", foreign_key: "trip_id", dependent: :destroy
+
+
+  validates :trip_duration_days, presence: true
+  validates :trip_location, presence: true
+  validates :trip_name, presence: true
+  validates :trip_start_date, presence: true
 end

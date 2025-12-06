@@ -25,9 +25,10 @@ class TripsController < ApplicationController
     the_trip.trip_start_date = params.fetch("query_trip_start_date")
     the_trip.trip_notes = params.fetch("query_trip_notes")
 
+
     if the_trip.valid?
       the_trip.save
-      redirect_to("/trips", { :notice => "Trip created successfully." })
+      redirect_to("/trips/#{the_trip.id}", { :notice => "Trip created successfully." })
     else
       redirect_to("/trips", { :alert => the_trip.errors.full_messages.to_sentence })
     end
@@ -47,9 +48,10 @@ class TripsController < ApplicationController
       the_trip.save
       redirect_to("/trips/#{the_trip.id}", { :notice => "Trip updated successfully." } )
     else
-      redirect_to("/trips/#{the_trip.id}", { :alert => the_trip.errors.full_messages.to_sentence })
+      redirect_to("/trips", { :alert => the_trip.errors.full_messages.to_sentence })
     end
   end
+
 
   def destroy
     the_id = params.fetch("path_id")

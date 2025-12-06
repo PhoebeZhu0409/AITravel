@@ -11,51 +11,7 @@
   </div>
 
 
-   <div class="overflow-auto">
-    <table>
-      <thead>
-        <th>Trip plan</th>
-        <th>Start time</th>
-        <th>End time</th>
-        <th>Date</th>
-        <th>Plan location</th>
-      </thead>
 
-     ?????? <% this_trip = @trips.trip_plans.where({ :trip_id => (Date.today...) }) %>
-      <tbody>
-      <% this_trip.each do |a_trip| %>
-        <tr>
-          <td>
-          <%= a_trip.trip_plan %>
-          </td>
-          <td>
-          <%= a_trip.start_time.strftime("%X") %>
-          </td>
-          <td>
-          <%= a_trip.end_time.strftime("%X")  %>
-          </td>
-          <td>
-          <%= a_trip.date  %>
-          </td>
-          <td>
-          <%= a_trip.plan_location  %>
-          </td>
-        </tr>
-      <% end %>
-<!---->
-      <%#= @the_trip_plan.trip_plan %>
-<!---->
-      <%#= @the_trip_plan.start_time.strftime("%X") %>
-<!---->
-      <%#= @the_trip_plan.end_time.strftime("%X") %>
-<!-- -->
-      <%#= @the_trip_plan.date %>
-<!---->
-      <%#= @the_trip_plan.plan_location %>
-
-      </tbody>
-    </table>
-  </div>
 </article>
 
 <hr>

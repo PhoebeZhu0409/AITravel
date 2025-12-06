@@ -15,4 +15,5 @@
 #
 class TripPlan < ApplicationRecord
   belongs_to :trip, required: true, class_name: "Trip", foreign_key: "trip_id"
+
 end
