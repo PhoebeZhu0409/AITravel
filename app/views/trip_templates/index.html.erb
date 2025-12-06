@@ -1,8 +1,11 @@
-<h1>
-  List of all trips
-</h1>
 
+<nav aria-label="breadcrumb">
+  <ul>
+    <li><a href="/">Home</a></li>
+  </ul>
+</nav>
 <hr>
+
 
 <article>
   <header>
@@ -70,11 +73,16 @@
 <hr>
 
 <article>
+  <header>
+    <h2>
+      My future trips
+    </h2>
+  </header>
   <ul>
     <% @list_of_trips.each do |a_trip| %>
       <li>
         <a href="/trips/<%= a_trip.id %>">
-          Trip #<%= a_trip.id %>
+          <%= a_trip.trip_name %>
         </a>
       </li>
     <% end %>
@@ -104,5 +112,5 @@
   defer>
 </script>
 
-# src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initAutocomplete"
+<!--src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initAutocomplete"-->
  

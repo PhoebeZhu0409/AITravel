@@ -1,69 +1,51 @@
+<nav aria-label="breadcrumb">
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><%= @the_trip.trip_name%></li>
+  </ul>
+</nav>
+<hr>
+
+
 <h1>
-  Trip #<%= @the_trip.id %> details
+  <%= @the_trip.trip_name %> 
 </h1>
 
+
+
 <article>
-  <div>
-    <a href="/trips">
-      Go back
-    </a>
-  </div>
 
   <div>
     <a href="/delete_trip/<%= @the_trip.id %>">
       Delete trip
     </a>
   </div>
-  <dl>
-    <dt>
-      Trip name
-    </dt>
-    <dd>
-      <%= @the_trip.trip_name %>
-    </dd>
+  
+   <div class="overflow-auto">
+    <table>
+      <thead>
+        <th>Location</th>
+        <th>Days</th>
+        <th>Start Date</th>
+      </thead>
 
-    <dt>
-      Trip location
-    </dt>
-    <dd>
-      <%= @the_trip.trip_location %>
-    </dd>
+      <tbody>
+        <tr>
+          <td>
+          <%= @the_trip.trip_location %>
+          </td>
+          <td>
+          <%= @the_trip.trip_duration_days %>
+          </td>
+          <td>
+          <%= @the_trip.trip_start_date  %><!--.strftime("%b %e, %Y")-->
+          </td>
+        </tr>
+      </tbody>
+    </table>
+      </div>
 
-    <dt>
-      Trip duration days
-    </dt>
-    <dd>
-      <%= @the_trip.trip_duration_days %>
-    </dd>
 
-    <dt>
-      Trip start date
-    </dt>
-    <dd>
-      <%= @the_trip.trip_start_date %>
-    </dd>
-
-    <dt>
-      Trip notes
-    </dt>
-    <dd>
-      <%= @the_trip.trip_notes %>
-    </dd>
-
-    <dt>
-      Created at
-    </dt>
-    <dd>
-      <%= time_ago_in_words(@the_trip.created_at) %> ago
-    </dd>
-
-    <dt>
-      Updated at
-    </dt>
-    <dd>
-      <%= time_ago_in_words(@the_trip.updated_at) %> ago
-    </dd>
-  </dl>
 </article>
 
 <hr>
@@ -106,7 +88,7 @@
         Trip start date
       </label>
 
-      <input type="text" id="trip_start_date_box" name="query_trip_start_date" value="<%= @the_trip.trip_start_date %>">
+      <input type="date" id="trip_start_date_box" name="query_trip_start_date" value="<%= @the_trip.trip_start_date %>">
     </div>
 
     <div>
