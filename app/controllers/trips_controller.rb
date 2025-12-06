@@ -4,6 +4,7 @@ class TripsController < ApplicationController
 
     @list_of_trips = matching_trips.order({ :created_at => :desc })
 
+
     render({ :template => "trip_templates/index" })
   end
 

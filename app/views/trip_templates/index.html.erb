@@ -1,4 +1,3 @@
-
 <nav aria-label="breadcrumb">
   <ul>
     <li><a href="/">Home</a></li>
@@ -12,20 +11,29 @@
       My future trips
     </h2>
   </header>
-  <ul>
-    <% @list_of_trips.each do |a_trip| %>
-      <li>
-        <a href="/trips/<%= a_trip.id %>">
-          <%= a_trip.trip_name %>
-        </a>
-      </li>
-    <% end %>
-  </ul>
+  <div class="overflow-auto">
+    <table>
+      <tbody>
+        <% @list_of_trips.each do |a_trip| %>
+          <tr>
+            <td>
+              <%= a_trip.trip_name %>
+            </td>
+
+              <td>
+                <a href="/delete_trip/<%= a_trip.id %>">
+                  Delete
+                </a>
+              </td>
+            </tr>
+
+        <% end %>
+
+      </tbody>
+    </table>
+  </div>
+
 </article>
-
-
-
-<hr>
 
 <article>
   <header>
@@ -84,13 +92,6 @@
 
 <hr>
 
-
-
-
-
-
-
-
 <script>
   function initAutocomplete() {
     new google.maps.places.Autocomplete(
@@ -105,8 +106,6 @@
 <script
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXuv1tJQIJP92XV8Wo98Hy02e1nLGlmjs&libraries=places&callback=initAutocomplete"
   async
-  defer>
-</script>
+  defer></script>
 
 <!--src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initAutocomplete"-->
- 
