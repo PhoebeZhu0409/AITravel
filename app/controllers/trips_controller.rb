@@ -18,6 +18,9 @@ class TripsController < ApplicationController
     render({ :template => "trip_templates/show" })
   end
 
+
+
+
   def create
     the_trip = Trip.new
     the_trip.trip_name = params.fetch("query_trip_name")
@@ -35,6 +38,19 @@ class TripsController < ApplicationController
     end
   end
 
+
+
+  def update_form
+    the_id = params.fetch("path_id")
+
+    matching_trips = Trip.where({ :id => the_id })
+
+    @the_trip = matching_trips.at(0)
+
+    render({ :template => "trip_templates/edit_trip" })
+  end
+
+  
   def update
     the_id = params.fetch("path_id")
     the_trip = Trip.where({ :id => the_id }).at(0)
@@ -49,7 +65,7 @@ class TripsController < ApplicationController
       the_trip.save
       redirect_to("/trips/#{the_trip.id}", { :notice => "Trip updated successfully." } )
     else
-      redirect_to("/trips", { :alert => the_trip.errors.full_messages.to_sentence })
+      redirect_to("/trips/#{the_trip.id}", { :alert => the_trip.errors.full_messages.to_sentence })
     end
   end
 

@@ -1,0 +1,63 @@
+<nav aria-label="breadcrumb">
+  <ul>
+    <li><a href="/">Home</a></li>
+  </ul>
+</nav>
+<hr>
+
+
+<article>
+  <header>
+    <h2>
+      Trip details
+    </h2>
+  </header>
+
+  <form action="/modify_trip/<%= @the_trip.id %>"  method="post" >
+    <div>
+      <label for="trip_name_box">
+        My trip name
+      </label>
+
+      <input type="text" id="trip_name_box" name="query_trip_name" value="<%= @the_trip.trip_name %>">
+    </div>
+
+    <div>
+      <label for="trip_location_box">
+        Location
+      </label>
+
+      <input type="text" id="trip_location_box" name="query_trip_location" value="<%= @the_trip.trip_location %>">
+    </div>
+
+    <div>
+      <label for="trip_duration_days_box">
+        How many days
+      </label>
+
+      <input type="number" id="trip_duration_days_box" name="query_trip_duration_days" value="<%= @the_trip.trip_duration_days %>"  step="1">
+    </div>
+
+    <div>
+      <label for="trip_start_date_box">
+        Trip starts
+      </label>
+
+      <input type="date" id="trip_start_date_box" name="query_trip_start_date" value="<%= @the_trip.trip_start_date %>">
+    </div>
+
+    <div>
+      <label for="trip_notes_box">
+        Other preferences
+      </label>
+
+      <input type="text" id="trip_notes_box" name="query_trip_notes" value="<%= @the_trip.trip_notes %>" placeholder="I specifically want to see/do..">
+    </div>
+
+    <button type="submit">
+      Rebuild my agenda!
+    </button>
+  </form>
+</article>
+
+<hr>

@@ -6,46 +6,45 @@
 </nav>
 <hr>
 
-
 <h1>
-  <%= @the_trip.trip_name %> 
+  <%= @the_trip.trip_name %>
 </h1>
 
-
-
+<a href="/delete_trip/<%= @the_trip.id %>">
+  Delete
+</a>
 
 <article>
 
-  <div>
-    <a href="/delete_trip/<%= @the_trip.id %>">
-      Delete trip
-    </a>
-  </div>
-  
-   <div class="overflow-auto">
+  <div class="overflow-auto">
     <table>
       <thead>
         <th>Location</th>
+        <th>Trip Starts</th>
         <th>Days</th>
-        <th>Start Date</th>
+        <th> </th>
       </thead>
 
       <tbody>
         <tr>
           <td>
-          <%= @the_trip.trip_location %>
+            <%= @the_trip.trip_location %>
           </td>
           <td>
-          <%= @the_trip.trip_duration_days %>
+            <%= @the_trip.trip_start_date  %><!--.strftime("%b %e, %Y")-->
           </td>
           <td>
-          <%= @the_trip.trip_start_date  %><!--.strftime("%b %e, %Y")-->
+            <%= @the_trip.trip_duration_days %>
+          </td>
+          <td>
+            <a href="/modify/<%= @the_trip.id %>">
+              Rebuild my agenda
+            </a>
           </td>
         </tr>
       </tbody>
     </table>
-      </div>
-
+  </div>
 
 </article>
 
@@ -53,7 +52,7 @@
 
 <article>
 
-   <div class="overflow-auto">
+  <div class="overflow-auto">
     <table>
       <thead>
         <th>Trip plan</th>
@@ -63,91 +62,31 @@
         <th>Plan location</th>
       </thead>
 
-     <% this_trip = @the_trip.trip_plans %>
+      <% this_trip = @the_trip.trip_plans %>
       <tbody>
-      <% this_trip.each do |a_trip| %>
-        <tr>
-          <td>
-          <%= a_trip.trip_plan %>
-          </td>
-          <td>
-          <%= a_trip.start_time.strftime("%X") %>
-          </td>
-          <td>
-          <%= a_trip.end_time.strftime("%X")  %>
-          </td>
-          <td>
-          <%= a_trip.date  %>
-          </td>
-          <td>
-          <%= a_trip.plan_location  %>
-          </td>
-        </tr>
-      <% end %>
+        <% this_trip.each do |a_trip| %>
+          <tr>
+            <td>
+              <%= a_trip.trip_plan %>
+            </td>
+            <td>
+              <%= a_trip.start_time.strftime("%X") %>
+            </td>
+            <td>
+              <%= a_trip.end_time.strftime("%X")  %>
+            </td>
+            <td>
+              <%= a_trip.date  %>
+            </td>
+            <td>
+              <%= a_trip.plan_location  %>
+            </td>
+          </tr>
+        <% end %>
 
       </tbody>
     </table>
   </div>
 
 </article>
-<hr>
-
-
-
-
-
-<article>
-  <header>
-    <h2>
-      Edit trip
-    </h2>
-  </header>
-
-  <form action="/modify_trip/<%= @the_trip.id %>"  method="post" >
-    <div>
-      <label for="trip_name_box">
-        Trip name
-      </label>
-
-      <input type="text" id="trip_name_box" name="query_trip_name" value="<%= @the_trip.trip_name %>">
-    </div>
-
-    <div>
-      <label for="trip_location_box">
-        Trip location
-      </label>
-
-      <input type="text" id="trip_location_box" name="query_trip_location" value="<%= @the_trip.trip_location %>">
-    </div>
-
-    <div>
-      <label for="trip_duration_days_box">
-        Trip duration days
-      </label>
-
-      <input type="text" id="trip_duration_days_box" name="query_trip_duration_days" value="<%= @the_trip.trip_duration_days %>">
-    </div>
-
-    <div>
-      <label for="trip_start_date_box">
-        Trip start date
-      </label>
-
-      <input type="date" id="trip_start_date_box" name="query_trip_start_date" value="<%= @the_trip.trip_start_date %>">
-    </div>
-
-    <div>
-      <label for="trip_notes_box">
-        Trip notes
-      </label>
-
-      <input type="text" id="trip_notes_box" name="query_trip_notes" value="<%= @the_trip.trip_notes %>">
-    </div>
-
-    <button type="submit">
-      Update trip
-    </button>
-  </form>
-</article>
-
 <hr>
