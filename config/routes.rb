@@ -20,6 +20,8 @@ Rails.application.routes.draw do
   # DELETE
   get("/delete_trip/:path_id", { :controller => "trips", :action => "destroy" })
 
+  # AI Output
+  get("/ai", { :controller => "trips", :action => "ai_ouput" })
   #------------------------------
 
 
