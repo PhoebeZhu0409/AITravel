@@ -10,3 +10,20 @@
  */
 
 @import "custom-image.css";
+
+
+  .day-header {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0.2rem 0 0.2rem;
+  }
+
+
+  .day-map {
+  width: 100%;
+  height: 300px;  /* adjust as you like */
+  margin-top: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+}
