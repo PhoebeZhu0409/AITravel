@@ -1,10 +1,3 @@
-<!--<div><%#=@response%></div>
-<hr>
-<div><%#=@data %></div>
-<hr>
-<div><%#=@data[:total_calories] %></div>
--->
-
     <%=@trip_location %>
     <hr>
     <%=@trip_duration_days %>
@@ -14,3 +7,15 @@
     <%=@trip_notes %>
     <hr>
     <%=@user_input %>
+    <hr>
+
+<%=@data%>
+    <%#=Date.parse(@data[:date]).strftime("%B %d, %Y")%>
+<!--        <hr>-->
+    <%#= Time.parse(@data[:start_time]).strftime("%I:%M %p") %>
+<!--        <hr>-->
+    <%#= Time.parse(@data[:end_time]).strftime("%I:%M %p") %>
+<!--        <hr>-->
+    <%#=@data[:trip_plan]%>
+<!--        <hr>-->
+    <%#=@data[:plan_location]%>

@@ -81,17 +81,18 @@ class TripsController < ApplicationController
     @trip_duration_days=the_trip.trip_duration_days	
     @trip_start_date=the_trip.trip_start_date	
     @trip_notes=the_trip.trip_notes
-    @user_input = "Trip location is: " + @trip_location + ", the trip start date is: " + @trip_start_date + " ,for "+ @trip_duration_days.to_s + " days in total, and specifically, I have these requirement: "+ @trip_notes
+    @user_input = "I am traveling to " + @trip_location + ", from " + @trip_start_date + ", for "+ @trip_duration_days.to_s + " days in total, and specifically, I have these requirement: "+ @trip_notes + ". Can you build day by day, activity by activity, what should i do"
+
+    i = AI::Chat.new
+
+    i.system("You are an trip planner. Based on user's input of where and when they are travelling to, plus their specific requirements, come up with a trip plan with start time, end time, activity, and location for each day during the traveling period. Build day by day, activity by activity, detailed agenda")
     
-    # i = AI::Chat.new
-    # i.system("You are an trip planner. Based on user's input of where and when they are travelling to, plus their specific requirements, come up with a trip plan with start time, end time, activity, and location for each day during the traveling period.")
-    # i.schema = '{"name": "trip_plans","strict": true,"schema": {"type": "object","properties": {"fat": {"type": "number","description": "The amount of fat in grams."},"protein": {"type": "number","description": "The amount of protein in grams."},"carbs": {"type": "number","description": "The amount of carbohydrates in grams."},"total_calories": {"type": "number","description": "The total calories calculated based on fat, protein, and carbohydrates."}},"required": ["fat","protein","carbs","total_calories"],"additionalProperties": false}}'
+    # i.schema = '{"name": "trip_plans","strict": true,"schema": {"type": "object","properties": {"date": {"type": "string", "format": "date","description": "The specific day during this planned trip"},"start_time": {"type": "string", "format": "time","description": "The starting time of the day for that inidividual activity"},"end_time": {"type": "string", "format": "time", "description": "The starting time of the day for that inidividual activity"},"trip_plan": {"type": "string", "description": "One inidividual activity of the agenda of that day"},"plan_location": {"type": "string","description": "The location where the user will be doing that individual activtiy"}},"required": ["date","start_time","end_time","trip_plan","plan_location"],"additionalProperties": false}}'
 
-    # i.user(user_input)
+    i.user(@user_input)
 
-    # @response = i.generate!
-    # @data = @response[:content]                 # => {:fat=>15, :protein=>12, :carbs=>35, :total_calories=>285}
-    # @data[:total_calories]  # => 285          # The response is parsed JSON, not a string!
+    @response = i.generate!
+    @data = @response[:content]                 # => {:fat=>15, :protein=>12, :carbs=>35, :total_calories=>285}
 
     render({ :template => "trip_templates/ai_agenda" })
   end
