@@ -27,6 +27,7 @@
         <input type="text"
          id="trip_location_box"
          name="query_trip_location"
+         value="<%= @the_trip.trip_location %>"
          placeholder="Search a city..."
          autocomplete="off">
       </div>
@@ -52,7 +53,7 @@
         Other preferences
       </label>
 
-      <textarea id="trip_notes_box" name="query_trip_notes" placeholder="I specifically want to see/do..."></textarea>
+      <textarea id="trip_notes_box" name="query_trip_notes" placeholder="I specifically want to see/do..."><%= @the_trip.trip_notes %> </textarea>
     </div>
 
     <button type="submit">
@@ -62,5 +63,3 @@
 </article>
 
 <hr>
-
-

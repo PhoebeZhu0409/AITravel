@@ -3,6 +3,7 @@
 # Table name: trips
 #
 #  id                 :bigint           not null, primary key
+#  my_preference      :text
 #  trip_duration_days :integer
 #  trip_location      :string
 #  trip_name          :string

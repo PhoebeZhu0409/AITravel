@@ -78,13 +78,15 @@
   <!--src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initAutocomplete"-->
 
 
+
+
 <script>
   function initItineraryMaps() {
     document.querySelectorAll('.day-map').forEach(function(el) {
       const locations = JSON.parse(el.dataset.locations || '[]');
       if (!locations.length) return;
 
-      // default center (Paris)
+      // Basic map centered on Paris
       const map = new google.maps.Map(el, {
         zoom: 13,
         center: { lat: 48.8566, lng: 2.3522 }
@@ -95,13 +97,14 @@
 
       locations.forEach(function(loc) {
         geocoder.geocode({ address: loc.address }, function(results, status) {
-          if (status === 'OK' && results[0]) {
+          if (status === "OK" && results[0]) {
             const position = results[0].geometry.location;
 
+            // ⭐ Simple marker — no click popup
             new google.maps.Marker({
               map: map,
               position: position,
-              title: loc.label || loc.address
+              title: loc.label || loc.address   // hover label only
             });
 
             bounds.extend(position);
@@ -115,6 +118,7 @@
   // make callback visible to Google Maps script
   window.initItineraryMaps = initItineraryMaps;
 </script>
+
 
 <script async
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXuv1tJQIJP92XV8Wo98Hy02e1nLGlmjs&callback=initItineraryMaps">

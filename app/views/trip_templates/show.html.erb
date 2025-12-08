@@ -22,6 +22,7 @@
         <th>Location</th>
         <th>Trip Starts</th>
         <th>Days</th>
+        <th>You preferences</th>
         <th> </th>
       </thead>
 
@@ -35,6 +36,9 @@
           </td>
           <td>
             <%= @the_trip.trip_duration_days %>
+          </td>
+          <td>
+            <%= @the_trip.my_preference%>
           </td>
           <td>
             <a href="/modify/<%= @the_trip.id %>">
@@ -71,6 +75,7 @@
             <th>To</th>
             <th>Plan</th>
             <th>Location</th>
+            <th>Get around</th>
           </thead>
 
           <tbody>
@@ -86,16 +91,18 @@
                   target: "_blank",
                   rel: "noopener" %>
                 </td>
+                <td><%= a_day.plan_details %></td>
 
               </tr>
             <% end %>
           </tbody>
         </table>
+        
     <div
       id="map-day-<%= i + 1 %>"
       class="day-map"
       data-locations="<%= h(this_day.map { |p|
-          { label: p.trip_plan, address: p.plan_location }
+          { label: p.plan_location.split(",").first.split(" or ").first, address: p.plan_location }
         }.to_json) %>">
     </div>
       </div>
