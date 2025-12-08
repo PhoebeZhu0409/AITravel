@@ -22,13 +22,14 @@
       <input type="text" id="trip_name_box" name="query_trip_name" value="<%= @the_trip.trip_name %>">
     </div>
 
-    <div>
-      <label for="trip_location_box">
-        Location
-      </label>
-
-      <input type="text" id="trip_location_box" name="query_trip_location" value="<%= @the_trip.trip_location %>">
-    </div>
+      <div>
+        <label for="trip_location_box">Location</label>
+        <input type="text"
+         id="trip_location_box"
+         name="query_trip_location"
+         placeholder="Search a city..."
+         autocomplete="off">
+      </div>
 
     <div>
       <label for="trip_duration_days_box">
@@ -61,3 +62,22 @@
 </article>
 
 <hr>
+
+
+  <script>
+    function initAutocomplete() {
+      new google.maps.places.Autocomplete(
+        document.getElementById('trip_location_box'),
+        {
+          types: ['(cities)'],   // limits results to worldwide cities
+        }
+      );
+    }
+  </script>
+
+  <script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXuv1tJQIJP92XV8Wo98Hy02e1nLGlmjs&libraries=places&callback=initAutocomplete"
+  async
+  defer></script>
+
+  <!--src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initAutocomplete"-->

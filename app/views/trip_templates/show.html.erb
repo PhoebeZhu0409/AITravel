@@ -11,7 +11,7 @@
 </h1>
 
 <a href="/delete_trip/<%= @the_trip.id %>">
-  Delete
+  Delete this trip
 </a>
 
 <article>
@@ -31,7 +31,7 @@
             <%= @the_trip.trip_location %>
           </td>
           <td>
-            <%= @the_trip.trip_start_date  %><!--.strftime("%b %e, %Y")-->
+            <%= Date.parse(@the_trip.trip_start_date)  %><!--.strftime("%b %e, %Y")-->
           </td>
           <td>
             <%= @the_trip.trip_duration_days %>
@@ -45,48 +45,46 @@
       </tbody>
     </table>
   </div>
-
 </article>
-
 <hr>
 
-<article>
+<h1>
+  My Agenda
+</h1>
 
-  <div class="overflow-auto">
-    <table>
-      <thead>
-        <th>Trip plan</th>
-        <th>Start time</th>
-        <th>End time</th>
-        <th>Date</th>
-        <th>Plan location</th>
-      </thead>
 
-      <% this_trip = @the_trip.trip_plans %>
-      <tbody>
-        <% this_trip.each do |a_trip| %>
-          <tr>
-            <td>
-              <%= a_trip.trip_plan %>
-            </td>
-            <td>
-              <%= a_trip.start_time.strftime("%X") %>
-            </td>
-            <td>
-              <%= a_trip.end_time.strftime("%X")  %>
-            </td>
-            <td>
-              <%= a_trip.date  %>
-            </td>
-            <td>
-              <%= a_trip.plan_location  %>
-            </td>
-          </tr>
-        <% end %>
 
-      </tbody>
-    </table>
+<%
+  start_date = Date.parse(@the_trip.trip_start_date)
+  end_date = Date.parse(@the_trip.trip_start_date) + @the_trip.trip_duration_days.day-1.day
+%>
+
+<% (start_date..end_date).each_with_index do |date, i| %>
+  <div>
+    <article>
+      <div class="overflow-auto">
+        <div>
+          <strong>Day <%= i + 1 %>:</strong> <%= date.strftime("%Y-%m-%d") %>
+          <div>
+          <% this_trip = @the_trip.trip_plans.where(date: date.strftime("%Y-%m-%d")) %>
+          <% this_trip.each do |a_trip| %>
+          <table>          
+          <thead>
+            <th>From</th>
+            <th>To</th>
+            <th>Plan</th>
+            <th>Location</th>
+          </thead>
+
+          <tbody>
+          <td><%= a_trip.start_time.strftime("%X") %></td>
+          <td><%= a_trip.end_time.strftime("%X") %></td>
+          <td><%= a_trip.trip_plan %></td>
+          <td><%= a_trip.plan_location %></td>
+          </tbody></table>
+          <% end %>
+          </div>
+
+    </article>
   </div>
-
-</article>
-<hr>
+<% end %>
