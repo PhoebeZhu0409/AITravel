@@ -1,23 +1,21 @@
 class TripsController < ApplicationController
-    def ai
-     
+  def ai
     require "ai-chat"
     require "dotenv/load"
     i = AI::Chat.new
-    i.system("you provide a representative single picture that can be put in <img src="" > based on user's input of a location")
+    i.system("you provide a representative single picture that can be put in <img src=" " > based on user's input of a location")
     i.schema = '{"name": "links","strict": true,"schema": {"type": "object","properties": {"link": {"type": "string","description": "The link of the picture based on user input"}},"required": ["link"],"additionalProperties": false}}'
-    
+
     the_id = params.fetch("path_id")
     the_trip = Trip.where({ :id => the_id }).at(0)
     @location = the_trip.trip_location
     @location = @location.gsub(", ", "_")
-    i.user( @location)
-    @response = i.generate!  
-    @pic=@response[:content][:link] 
+    i.user(@location)
+    @response = i.generate!
+    @pic = @response[:content][:link]
 
     render({ :template => "trip_templates/ai_agenda" })
   end
-
 
   def index
     matching_trips = Trip.all
@@ -136,7 +134,7 @@ class TripsController < ApplicationController
               end_time: Time.parse(item[:end_time]),
               trip_plan: item[:activity],
               plan_location: item[:location],
-              plan_details: item[:commute]
+              plan_details: item[:commute],
             )
           end
         end
@@ -148,7 +146,6 @@ class TripsController < ApplicationController
       redirect_to("/trips", { :alert => the_trip.errors.full_messages.to_sentence })
     end
   end
-
 
   def create
     the_trip = Trip.new
@@ -181,8 +178,12 @@ class TripsController < ApplicationController
       i.system("You are an trip planner. Based on user's input of where and when they are travelling to, plus their specific requirements, come up with a trip plan with start time, end time, activity, and location for each day during the traveling period. Build day by day, activity by activity, detailed agenda")
 
       i.system(<<~SYS)
-        You are a trip planner. Based on the user's input, return a JSON object only,
-        no markdown, no explanation.
+                You are a trip-planner agent. Your job is to return **JSON only**, with no explanations, no markdown, and no extra text.
+
+        Follow the schema *exactly*.  
+        All fields must be present.  
+        If information is unknown, make a reasonable assumption.
+
         The JSON must look exactly like this:
         {
           "days": [
@@ -192,21 +193,23 @@ class TripsController < ApplicationController
                 {
                   "start_time": "HH:MM",
                   "end_time": "HH:MM",
-                  "activity": "short activity name",
-                  "location": "location on google map, with country and city name",
-                  "commute": "short location commute notes"
+                  "activity": "short description of the activity",
+                  "location": "Name of the location as listed on Google Maps, including city and country",
+                  "commute": "1–2 sentence explanation of how to get there (walking, metro, taxi, etc.). Include reservation or ticket guidance if it is strongly recommended before arrival."
                 }
               ]
             }
           ]
         }
-        - date: the calendar date of that day of the trip
-        - times: local time, 24-hour "HH:MM"
-        - activity: 1–2 sentence description
-        - location: location name on google map, with country and city name
-        - commute: 1–2 sentence notes on commuting to the location
+        
+      Rules:
+      - **date**: calendar date of that day of the trip
+      - **start_time / end_time**: local time, 24-hour format "HH:MM"
+      - **activity**: brief 1–2 sentence description
+      - **location**: Google Maps listing name + city + country
+      - **commute**: brief 1–2 sentence note explaining how to get between items (walking, metro, taxi, etc.). Include reservation or ticket guidance if it is strongly recommended before arrival—otherwise do not mention them
 
-        Output ONLY valid JSON that matches this schema.
+      Output **ONLY valid JSON** matching this structure.
       SYS
 
       i.user(@user_input)
@@ -230,7 +233,7 @@ class TripsController < ApplicationController
               end_time: Time.parse(item[:end_time]),
               trip_plan: item[:activity],
               plan_location: item[:location],
-              plan_details: item[:commute]
+              plan_details: item[:commute],
             )
           end
         end

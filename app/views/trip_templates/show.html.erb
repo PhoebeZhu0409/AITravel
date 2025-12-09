@@ -66,7 +66,7 @@
           </thead>
 
           <tbody>
-            <% this_day.each do |a_day| %>
+            <% this_day.order(:start_time).each do |a_day| %>
               <tr>
                 <td><%= a_day.start_time.strftime("%I:%M&nbsp;%p").html_safe %></td>
                 <td><%= a_day.end_time.strftime("%I:%M&nbsp;%p").html_safe %></td>
