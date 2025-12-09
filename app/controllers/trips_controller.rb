@@ -195,7 +195,7 @@ class TripsController < ApplicationController
                   "end_time": "HH:MM",
                   "activity": "short description of the activity",
                   "location": "Name of the location as listed on Google Maps, including city and country",
-                  "commute": "1–2 sentence explanation of how to get there (walking, metro, taxi, etc.). Include reservation or ticket guidance if it is strongly recommended before arrival."
+                  "commute": "1–2 sentence explanation of how to get there (walking, metro, taxi, etc.). Include reservation or ticket guidance ONLY if it is strongly recommended before arrival."
                 }
               ]
             }
@@ -207,7 +207,7 @@ class TripsController < ApplicationController
       - **start_time / end_time**: local time, 24-hour format "HH:MM"
       - **activity**: brief 1–2 sentence description
       - **location**: Google Maps listing name + city + country
-      - **commute**: brief 1–2 sentence note explaining how to get between items (walking, metro, taxi, etc.). Include reservation or ticket guidance if it is strongly recommended before arrival—otherwise do not mention them
+      - **commute**: brief 1–2 sentence note explaining how to get between items (walking, metro, taxi, etc.). Only include reservation or ticket guidance if they are strongly recommended before arrival—otherwise do not mention them
 
       Output **ONLY valid JSON** matching this structure.
       SYS
