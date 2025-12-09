@@ -1,35 +1,6 @@
-    <%=@trip_location %>
-    <hr>
-    <%=@trip_duration_days %>
-    <hr>
-    <%=@trip_start_date %>
-    <hr>
-    <%=@trip_notes %>
-    <hr>
-    <%=@user_input %>
-    <hr>
 
-<%=@plan%>
-    <%#=Date.parse(@data[:date]).strftime("%B %d, %Y")%>
-<!--        <hr>-->
-    <%#= Time.parse(@data[:start_time]).strftime("%I:%M %p") %>
-<!--        <hr>-->
-    <%#= Time.parse(@data[:end_time]).strftime("%I:%M %p") %>
-<!--        <hr>-->
-    <%#=@data[:trip_plan]%>
-<!--        <hr>-->
-    <%#=@data[:plan_location]%>
-
-    
-    <hr>
-    <hr>
-
-<% this_trip = @the_trip.trip_plans %>
-<% this_trip.each do |a_trip| %>
-  <tr>
-    <td><%= a_trip.trip_plan %></td>
-    <td><%= a_trip.start_time.strftime("%H:%M") %></td>
-    <td><%= a_trip.end_time.strftime("%H:%M") %></td>
-    <td><%= a_trip.plan_location %></td>
-  </tr>
-<% end %>
+ <img
+    src="https://loremflickr.com/1200/400/<%= @location%>"
+    style="width: 300px; height: auto; border-radius: 8px;"
+  >
+https://loremflickr.com/1200/400/<%= @location%>

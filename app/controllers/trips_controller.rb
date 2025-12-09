@@ -1,7 +1,26 @@
 class TripsController < ApplicationController
+    def ai
+     
+    require "ai-chat"
+    require "dotenv/load"
+    i = AI::Chat.new
+    i.system("you provide a representative single picture that can be put in <img src="" > based on user's input of a location")
+    i.schema = '{"name": "links","strict": true,"schema": {"type": "object","properties": {"link": {"type": "string","description": "The link of the picture based on user input"}},"required": ["link"],"additionalProperties": false}}'
+    
+    the_id = params.fetch("path_id")
+    the_trip = Trip.where({ :id => the_id }).at(0)
+    @location = the_trip.trip_location
+    @location = @location.gsub(", ", "_")
+    i.user( @location)
+    @response = i.generate!  
+    @pic=@response[:content][:link] 
+
+    render({ :template => "trip_templates/ai_agenda" })
+  end
+
+
   def index
     matching_trips = Trip.all
-
     @list_of_trips = matching_trips.order({ :created_at => :desc })
 
     render({ :template => "trip_templates/index" })
@@ -80,7 +99,7 @@ class TripsController < ApplicationController
                   "start_time": "HH:MM",
                   "end_time": "HH:MM",
                   "activity": "short activity name",
-                  "location": "short location on google map / notes"
+                  "location": "location on google map, with country and city name",
                   "commute": "short location commute notes"
                 }
               ]
@@ -90,7 +109,7 @@ class TripsController < ApplicationController
         - date: the calendar date of that day of the trip
         - times: local time, 24-hour "HH:MM"
         - activity: 1–2 sentence description
-        - location: short location name on google map
+        - location: location on google map, with country and city name"
         - commute: 1–2 sentence notes on commuting to the location
 
         Output ONLY valid JSON that matches this schema.
@@ -174,7 +193,7 @@ class TripsController < ApplicationController
                   "start_time": "HH:MM",
                   "end_time": "HH:MM",
                   "activity": "short activity name",
-                  "location": "short location on google map / notes",
+                  "location": "location on google map, with country and city name",
                   "commute": "short location commute notes"
                 }
               ]
@@ -184,7 +203,7 @@ class TripsController < ApplicationController
         - date: the calendar date of that day of the trip
         - times: local time, 24-hour "HH:MM"
         - activity: 1–2 sentence description
-        - location: short location name on google map
+        - location: location name on google map, with country and city name
         - commute: 1–2 sentence notes on commuting to the location
 
         Output ONLY valid JSON that matches this schema.

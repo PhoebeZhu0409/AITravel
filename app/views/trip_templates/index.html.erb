@@ -7,13 +7,18 @@
 
 
 <article>
-    <header>
+ <img
+    src="https://loremflickr.com/1200/400/travel"
+    style="width: 1000px; height: auto; border-radius: 8px;"
+  >
+    <header style="margin-top: 15px;">
       <h2>
-        My future trips
+        My Future Trips
       </h2>
     </header>
   <ul>
-    <% @list_of_trips.each do |a_trip| %>
+  <% active_trips = @list_of_trips.where({ :trip_start_date => (Date.today...) }) %>
+    <% active_trips.each do |a_trip| %>
       <li>
           <a href="/trips/<%=a_trip.id%>">
             <%= a_trip.trip_name %>
@@ -27,7 +32,7 @@
   <article>
     <header>
       <h2>
-        Plan a new trip
+        Plan A New Trip
       </h2>
     </header>
 
@@ -98,3 +103,22 @@
   defer></script>
 
   <!--src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initAutocomplete"-->
+
+
+<article>
+    <header style="margin-top: 15px;">
+      <h2>
+        Past Trips
+      </h2>
+    </header>
+  <ul>
+  <% past_trips = @list_of_trips.where({ :trip_start_date => (...Date.today) }) %>
+    <% past_trips.each do |a_trip| %>
+      <li>
+          <a href="/trips/<%=a_trip.id%>">
+            <%= a_trip.trip_name %>
+          </a>
+      </li>
+      <% end %>
+    </ul>
+  </article>

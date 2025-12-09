@@ -6,49 +6,36 @@
 </nav>
 <hr>
 
-<h1>
-  <%= @the_trip.trip_name %>
-</h1>
-
-<a href="/delete_trip/<%= @the_trip.id %>">
-  Delete this trip
-</a>
-
 <article>
+<div class="trip-hero">
+  <% location = @the_trip.trip_location %>
+  <% location = location.gsub(", ", "_")%>
 
-  <div class="overflow-auto">
-    <table>
-      <thead>
-        <th>Location</th>
-        <th>Trip Starts</th>
-        <th>Days</th>
-        <th>You preferences</th>
-        <th> </th>
-      </thead>
+ <img
+    src="https://loremflickr.com/1200/400/<%=location%>"
+    alt="<%= location %>"
+    style="width: 9000px; height: auto; border-radius: 8px;"
+  >
 
-      <tbody>
-        <tr>
-          <td>
-            <%= @the_trip.trip_location %>
-          </td>
-          <td>
-            <%= Date.parse(@the_trip.trip_start_date)  %><!--.strftime("%b %e, %Y")-->
-          </td>
-          <td>
-            <%= @the_trip.trip_duration_days %>
-          </td>
-          <td>
-            <%= @the_trip.my_preference%>
-          </td>
-          <td>
-            <a href="/modify/<%= @the_trip.id %>">
-              Rebuild my agenda
-            </a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+<h1 style="margin-top: 15px;"><%= @the_trip.trip_name %> </h1>
+
+
+<div>
+  <div><%= @the_trip.trip_location %></div>
+  <div><%= @the_trip.trip_duration_days %> days, <%= Date.parse(@the_trip.trip_start_date) %></div>
+</div>
+
+
+<div class="trip-actions">
+  <a class="btn-rebuild" href="/modify/<%= @the_trip.id %>">
+    Rebuild My Agenda
+  </a>
+  
+  <a class="btn-delete" href="/delete_trip/<%= @the_trip.id %>">
+    Delete This Trip
+  </a>
+</div>
+
 </article>
 <hr>
 

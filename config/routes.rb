@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   get("/trips", { :controller => "trips", :action => "index" })
   #get("/", { :controller => "trips", :action => "index" })
   root to: "trips#index"
+  get("/trips/:path_id/ai", { :controller => "trips", :action => "ai" })
 
   get("/trips/:path_id", { :controller => "trips", :action => "show" })
 
