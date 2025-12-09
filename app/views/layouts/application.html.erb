@@ -124,6 +124,22 @@
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXuv1tJQIJP92XV8Wo98Hy02e1nLGlmjs&callback=initItineraryMaps">
 </script>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const btn = document.getElementById("show-more-trips");
+    if (!btn) return;
+
+    btn.addEventListener("click", function () {
+      document.querySelectorAll("#future-trips-list .extra-trip")
+        .forEach(function (li) {
+          li.style.display = "block";
+        });
+
+      // hide the button once expanded
+      btn.style.display = "none";
+    });
+  });
+</script>
 
 
   </body>

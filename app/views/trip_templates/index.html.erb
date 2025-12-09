@@ -7,26 +7,34 @@
 
 
 <article>
- <img
+  <img
     src="https://loremflickr.com/1200/400/travel"
-    style="width: 1000px; height: auto; border-radius: 8px;"
+    style="width: 100%; height: auto; border-radius: 8px;"
   >
-    <header style="margin-top: 15px;">
-      <h2>
-        My Future Trips
-      </h2>
-    </header>
-  <ul>
-  <% active_trips = @list_of_trips.where({ :trip_start_date => (Date.today...) }) %>
-    <% active_trips.each do |a_trip| %>
-      <li>
-          <a href="/trips/<%=a_trip.id%>">
-            📍 <%= a_trip.trip_name %>
-          </a>
+
+  <header style="margin-top: 15px;">
+    <h2>My Future Trips</h2>
+  </header>
+
+  <% active_trips = @list_of_trips.where(trip_start_date: (Date.today...)).order(:trip_start_date) %>
+
+  <ul id="future-trips-list">
+    <% active_trips.each_with_index do |a_trip, idx| %>
+      <li class="<%= 'extra-trip' if idx >= 3 %>">
+        <a href="/trips/<%= a_trip.id %>">
+         📍 <%= a_trip.trip_name %>
+        </a>
       </li>
-      <% end %>
-    </ul>
-  </article>
+    <% end %>
+  </ul>
+
+  <% if active_trips.size > 3 %>
+    <button id="show-more-trips" class="btn-view-more">
+      View more
+    </button>
+  <% end %>
+</article>
+
 
  
   <article>
@@ -106,19 +114,25 @@
 
 
 <article>
-    <header style="margin-top: 15px;">
-      <h2>
-        Past Trips
-      </h2>
-    </header>
-  <ul>
-  <% past_trips = @list_of_trips.where({ :trip_start_date => (...Date.today) }) %>
-    <% past_trips.each do |a_trip| %>
-      <li>
-          <a href="/trips/<%=a_trip.id%>">
-            <%= a_trip.trip_name %>
-          </a>
+  <header style="margin-top: 15px;">
+    <h2>Past Trips</h2>
+  </header>
+
+  <% past_trips = @list_of_trips.where(trip_start_date: (...Date.today)).order(trip_start_date: :desc) %>
+
+  <ul id="past-trips-list">
+    <% past_trips.each_with_index do |a_trip, idx| %>
+      <li class="<%= 'extra-trip' if idx >= 3 %>">
+        <a href="/trips/<%= a_trip.id %>">
+          📍 <%= a_trip.trip_name %>
+        </a>
       </li>
-      <% end %>
-    </ul>
-  </article>
+    <% end %>
+  </ul>
+
+  <% if past_trips.size > 3 %>
+    <button id="show-more-past" class="btn-view-more">
+      View more
+    </button>
+  <% end %>
+</article>
