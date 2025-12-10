@@ -1,21 +1,21 @@
 class TripsController < ApplicationController
-  def ai
-    require "ai-chat"
-    require "dotenv/load"
-    i = AI::Chat.new
-    i.system("you provide a representative single picture that can be put in <img src=" " > based on user's input of a location")
-    i.schema = '{"name": "links","strict": true,"schema": {"type": "object","properties": {"link": {"type": "string","description": "The link of the picture based on user input"}},"required": ["link"],"additionalProperties": false}}'
+  # def ai
+  #   require "ai-chat"
+  #   require "dotenv/load"
+  #   i = AI::Chat.new
+  #   i.system("you provide a representative single picture that can be put in <img src=" " > based on user's input of a location")
+  #   i.schema = '{"name": "links","strict": true,"schema": {"type": "object","properties": {"link": {"type": "string","description": "The link of the picture based on user input"}},"required": ["link"],"additionalProperties": false}}'
 
-    the_id = params.fetch("path_id")
-    the_trip = Trip.where({ :id => the_id }).at(0)
-    @location = the_trip.trip_location
-    @location = @location.gsub(", ", "_")
-    i.user(@location)
-    @response = i.generate!
-    @pic = @response[:content][:link]
+  #   the_id = params.fetch("path_id")
+  #   the_trip = Trip.where({ :id => the_id }).at(0)
+  #   @location = the_trip.trip_location
+  #   @location = @location.gsub(", ", "_")
+  #   i.user(@location)
+  #   @response = i.generate!
+  #   @pic = @response[:content][:link]
 
-    render({ :template => "trip_templates/ai_agenda" })
-  end
+  #   render({ :template => "trip_templates/ai_agenda" })
+  # end
 
   def index
     matching_trips = Trip.all
