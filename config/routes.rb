@@ -14,7 +14,8 @@ Rails.application.routes.draw do
   get("/trips/:path_id", { :controller => "trips", :action => "show" })
 
   # UPDATE
-  get("/modify/:path_id", { :controller => "trips", :action => "update_form" })
+  post("/trip_name_update/:path_id", { :controller => "trips", :action => "trip_name_update" })
+  get("/modify/:path_id", { :controller => "trips", :action => "rebuild_form" })
   post("/modify_trip/:path_id", { :controller => "trips", :action => "update" })
 
   # DELETE

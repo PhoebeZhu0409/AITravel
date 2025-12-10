@@ -34,13 +34,18 @@ class TripsController < ApplicationController
     render({ :template => "trip_templates/show" })
   end
 
-  def update_form
+  def trip_name_update
     the_id = params.fetch("path_id")
+    the_trip = Trip.where({ :id => the_id }).at(0)
+    the_trip.trip_name = params.fetch("query_trip_name")
+    the_trip.save
+    redirect_to "/trips/#{the_trip.id}"
+  end
 
+  def rebuild_form
+    the_id = params.fetch("path_id")
     matching_trips = Trip.where({ :id => the_id })
-
     @the_trip = matching_trips.at(0)
-
     render({ :template => "trip_templates/edit_trip" })
   end
 
@@ -93,7 +98,7 @@ class TripsController < ApplicationController
     @trip_start_date = the_trip.trip_start_date
     @trip_notes = the_trip.trip_notes
     @trip_name = the_trip.trip_name
-    
+
     @user_input = "I am traveling to " + @trip_location + ", from " + @trip_start_date + ", for " + @trip_duration_days.to_s + " days in total. " + @trip_notes + ". Can you build day by day, activity by activity, what should i do"
     # ===========================================================================
     if the_trip.valid?
