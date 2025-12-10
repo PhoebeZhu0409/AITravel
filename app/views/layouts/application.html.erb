@@ -62,34 +62,45 @@
       PhoebeZhu 2025. All rights reserved.
     </footer>
 
+<!-------------------------------- Google API Functions -------------------------------->
 
-  <script>
-    function initAutocomplete() {
-      new google.maps.places.Autocomplete(
-        document.getElementById('trip_location_box'),
-        {
-          types: ['(cities)'],   // limits results to worldwide cities
-        }
-      );
-    }
-  </script>
   <script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXuv1tJQIJP92XV8Wo98Hy02e1nLGlmjs&libraries=places&callback=initAutocomplete"
+  src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GOOGLE_MAPS_API_KEY'] %>&libraries=places&callback=googleMapsLoaded"
   async
-  defer></script>
-
-  <!--src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initAutocomplete"-->
-
-
+  defer>
+</script>
 
 
 <script>
+  // This is the function Google calls after Maps JS finishes loading
+  function googleMapsLoaded() {
+    function runMaps() {
+      initAutocomplete();
+      initItineraryMaps();
+    }
+
+    // If DOM isn't ready yet, wait for it
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", runMaps);
+    } else {
+      runMaps();
+    }
+  }
+
+  function initAutocomplete() {
+    const input = document.getElementById('trip_location_box');
+    if (!input) return;
+
+    new google.maps.places.Autocomplete(input, {
+      types: ['(cities)'],
+    });
+  }
+
   function initItineraryMaps() {
     document.querySelectorAll('.day-map').forEach(function(el) {
       const locations = JSON.parse(el.dataset.locations || '[]');
       if (!locations.length) return;
 
-      // Basic map centered on Paris
       const map = new google.maps.Map(el, {
         zoom: 13,
         center: { lat: 48.8566, lng: 2.3522 }
@@ -103,11 +114,10 @@
           if (status === "OK" && results[0]) {
             const position = results[0].geometry.location;
 
-            // ⭐ Simple marker — no click popup
             new google.maps.Marker({
               map: map,
               position: position,
-              title: loc.label || loc.address   // hover label only
+              title: loc.label || loc.address
             });
 
             bounds.extend(position);
@@ -118,14 +128,16 @@
     });
   }
 
-  // make callback visible to Google Maps script
+  window.googleMapsLoaded  = googleMapsLoaded;
+  window.initAutocomplete  = initAutocomplete;
   window.initItineraryMaps = initItineraryMaps;
 </script>
 
 
-<script async
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXuv1tJQIJP92XV8Wo98Hy02e1nLGlmjs&callback=initItineraryMaps">
-</script>
+
+
+
+<!-------------------------------- Show more botton -------------------------------->
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -143,6 +155,8 @@
     });
   });
 </script>
+
+
 
 
   </body>

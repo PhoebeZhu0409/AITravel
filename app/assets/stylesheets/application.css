@@ -112,3 +112,11 @@
   width: 100%;
   text-align: left;  /* or center */
 }
+
+
+
+.place-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

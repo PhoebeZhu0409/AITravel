@@ -121,7 +121,7 @@ class TripsController < ApplicationController
                     "start_time": "HH:MM",
                     "end_time": "HH:MM",
                     "activity": "short description of the activity",
-                    "location": "Name of the location as listed on Google Maps, including city and country",
+                    "location": "Name of the location as listed on Google Maps, including street, city, country, and zip code",
                     "commute": "1–2 sentence explanation of how to get there (walking, metro, taxi, etc.). Include reservation or ticket guidance ONLY if it is strongly recommended before arrival."
                   }
                 ]
@@ -238,7 +238,7 @@ class TripsController < ApplicationController
                     "start_time": "HH:MM",
                     "end_time": "HH:MM",
                     "activity": "short description of the activity",
-                    "location": "Name of the location as listed on Google Maps, including city and country",
+                    "location": "Name of the location as listed on Google Maps, including street, city, country, and zip code",
                     "commute": "1–2 sentence explanation of how to get there (walking, metro, taxi, etc.). Include reservation or ticket guidance ONLY if it is strongly recommended before arrival."
                   }
                 ]
