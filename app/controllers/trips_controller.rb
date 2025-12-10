@@ -159,7 +159,25 @@ class TripsController < ApplicationController
     the_trip.trip_location = params.fetch("query_trip_location")
     the_trip.trip_duration_days = params.fetch("query_trip_duration_days")
     the_trip.trip_start_date = params.fetch("query_trip_start_date")
-    the_trip.trip_notes = params.fetch("query_trip_notes")
+
+query_budget = params[:query_budget]
+summary_a = "Budget wise, I want my trip to be #{query_budget}" if query_budget.present?
+
+query_people = params[:query_people]
+summary_b = "I am #{query_people}" if query_people.present?
+
+query_todo = params[:query_todo]
+summary_c = "My trip should include #{query_todo}" if query_todo.present?
+
+live_area = params[:live_area]
+summary_d = "I want to stay near #{live_area}" if live_area.present?
+
+trip_notes = params[:query_trip_notes]
+summary_e = "Specifically, I have these requirements: #{trip_notes}" if trip_notes.present?
+
+@summary = [summary_a, summary_b, summary_c, summary_d, summary_e].compact.join(" ; ")
+
+the_trip.trip_notes = @summary
 
     # ============================== AI Ouput ===================================
     require "bundler/setup"
@@ -175,7 +193,7 @@ class TripsController < ApplicationController
     @trip_notes = the_trip.trip_notes
     @trip_name = the_trip.trip_name
 
-    @user_input = "I am traveling to " + @trip_location + ", from " + @trip_start_date + ", for " + @trip_duration_days.to_s + " days in total, and specifically, I have these requirement: " + @trip_notes + "my trip name is: " + @trip_name + ". Can you build day by day, activity by activity, what should i do"
+    @user_input = "I am traveling to " + @trip_location + ", from " + @trip_start_date + ", for " + @trip_duration_days.to_s + " days in total. " +  @trip_notes + ". Can you build day by day, activity by activity, what should i do"
     # ===========================================================================
     if the_trip.valid?
       the_trip.save
