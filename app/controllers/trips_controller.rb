@@ -96,7 +96,7 @@ class TripsController < ApplicationController
     @trip_notes = the_trip.trip_notes
     @trip_name = the_trip.trip_name
 
-    @user_input = "I am traveling to " + @trip_location + ", from " + @trip_start_date + ", for " + @trip_duration_days.to_s + " days in total. " + @trip_notes + ". Can you build day by day, activity by activity, what should i do"
+    @user_input = "I am traveling to " + @trip_location + ", from " + @trip_start_date.to_s + ", for " + @trip_duration_days.to_s + " days in total. " + @trip_notes + ". Can you build day by day, activity by activity, what should i do"
     # ===========================================================================
     if the_trip.valid?
       the_trip.save
@@ -169,7 +169,7 @@ class TripsController < ApplicationController
       #render template: "trip_templates/ai_agenda"
       redirect_to("/trips/#{the_trip.id}", { :notice => "Trip updated successfully." })
     else
-      redirect_to("/trips", { :alert => the_trip.errors.full_messages.to_sentence })
+      redirect_to("/trips/#{the_trip.id}", { :alert => the_trip.errors.full_messages.to_sentence })
     end
   end
 
@@ -213,7 +213,7 @@ class TripsController < ApplicationController
     @trip_notes = the_trip.trip_notes
     @trip_name = the_trip.trip_name
 
-    @user_input = "I am traveling to " + @trip_location + ", from " + @trip_start_date + ", for " + @trip_duration_days.to_s + " days in total. " + @trip_notes + ". Can you build day by day, activity by activity, what should i do"
+    @user_input = "I am traveling to " + @trip_location + ", from " + @trip_start_date.to_s + ", for " + @trip_duration_days.to_s + " days in total. " + @trip_notes + ". Can you build day by day, activity by activity, what should i do"
     # ===========================================================================
     if the_trip.valid?
       the_trip.save

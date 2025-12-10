@@ -90,7 +90,7 @@
 
       <div>
         <div><%= @the_trip.trip_location %></div>
-        <div><%= @the_trip.trip_duration_days %> days, <%= Date.parse(@the_trip.trip_start_date) %></div>
+        <div><%= @the_trip.trip_duration_days %> days, <%= @the_trip.trip_start_date.strftime("%B %-d, %Y") %></div>
       </div>
 
       <div class="trip-actions">
@@ -111,8 +111,8 @@
     </h1>
 
     <%
-  start_date = Date.parse(@the_trip.trip_start_date)
-  end_date = Date.parse(@the_trip.trip_start_date) + @the_trip.trip_duration_days.day-1.day
+  start_date = @the_trip.trip_start_date
+  end_date = @the_trip.trip_start_date + @the_trip.trip_duration_days.day-1.day
 %>
 
     <% (start_date..end_date).each_with_index do |date, i| %>

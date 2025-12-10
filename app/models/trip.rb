@@ -7,7 +7,7 @@
 #  trip_location      :string
 #  trip_name          :string
 #  trip_notes         :text
-#  trip_start_date    :string
+#  trip_start_date    :date
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #
@@ -18,6 +18,6 @@ class Trip < ApplicationRecord
   validates :trip_duration_days, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :trip_location, presence: true
   validates :trip_name, presence: true
-  validates :trip_start_date, presence: true, comparison: { greater_than: Date.today, message: "Your trip start date cannot be in the past"}
+  validates :trip_start_date, presence: true, comparison: { greater_than: Date.today, message: "cannot be in the past"}
   
 end
