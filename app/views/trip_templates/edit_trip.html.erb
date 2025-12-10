@@ -1,9 +1,12 @@
 <nav aria-label="breadcrumb">
   <ul>
     <li><a href="/">Home</a></li>
+    <li><a href="/trips/<%= @the_trip.id %>"><%= @the_trip.trip_name%></a></li>
+    <li>Rebuild My Agenda</li>
   </ul>
 </nav>
 <hr>
+
 
 
 <article>
@@ -16,7 +19,7 @@
   <form action="/modify_trip/<%= @the_trip.id %>"  method="post" >
     <div>
       <label for="trip_name_box">
-        My trip name
+        Trip name
       </label>
 
       <input type="text" id="trip_name_box" name="query_trip_name" value="<%= @the_trip.trip_name %>">
@@ -56,14 +59,14 @@
 
           <article>
             <div>
-              <label>I want my trip to be...</label>
+              <label>You want my trip to be...</label>
               <label><input type="radio" name="query_budget" value="luxury"> Luxury</label>
               <label><input type="radio" name="query_budget" value="budget friendly"> Budget friendly  </label>
               <label><input type="radio" name="query_budget" value="A mix of both luxury and budget friendly"> A mix of both</label>
             </div>
             <hr>
             <div>
-              <label>I am...</label>
+              <label>You are...</label>
               <label><input type="radio" name="query_people" value="solo traveling"> Solo traveling</label>
               <label><input type="radio" name="query_people" value="traveling with my partner">Traveling with my partner</label>
               <label><input type="radio" name="query_people" value="traveling with my friends">Traveling with my friends</label>
@@ -71,7 +74,7 @@
             </div>
             <hr>
             <div>
-              <label>My trip should include...</label>
+              <label>Your trip should include...</label>
               <div>
                 <label><input type="checkbox" name="query_todo[]" value="Local's favorite resturants or spots, or things to do that involves local culture ">Local's favorite food or spot, culture </label>
               </div>
@@ -134,4 +137,3 @@
 
   </form>
 </article>
-
