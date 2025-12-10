@@ -83,3 +83,32 @@
   background-color: #0063cc;
 }
 
+.collapsible-btn {
+  display: inline-block;
+  padding: 10px 16px;
+  margin: 10px 0;
+  background-color: #c5ebf3;   /* blue button */
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  border: none;
+  user-select: none;
+}
+
+.collapsible-btn:hover {
+  background-color: #89bcf3;
+}
+
+.collapsible-btn:active {
+  background-color: #005bb5;
+}
+
+/* Hide the default marker/arrow */
+.collapsible-btn::-webkit-details-marker {
+  display: none;
+}
+.collapsible-btn {
+  width: 100%;
+  text-align: left;  /* or center */
+}

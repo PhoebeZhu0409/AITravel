@@ -5,38 +5,35 @@
 </nav>
 <hr>
 
-
 <article>
   <img
     src="https://loremflickr.com/1200/400/travel"
     style="width: 100%; height: auto; border-radius: 8px;"
   >
 
-  <header style="margin-top: 15px;">
-    <h2>My Future Trips</h2>
-  </header>
+    <header style="margin-top: 15px;">
+      <h2>My Future Trips</h2>
+    </header>
 
-  <% active_trips = @list_of_trips.where(trip_start_date: (Date.today...)).order(:trip_start_date) %>
+    <% active_trips = @list_of_trips.where(trip_start_date: (Date.today...)).order(:trip_start_date) %>
 
-  <ul id="future-trips-list">
-    <% active_trips.each_with_index do |a_trip, idx| %>
-      <li class="<%= 'extra-trip' if idx >= 3 %>">
-        <a href="/trips/<%= a_trip.id %>">
-         📍 <%= a_trip.trip_name %>
-        </a>
-      </li>
+    <ul id="future-trips-list">
+      <% active_trips.each_with_index do |a_trip, idx| %>
+        <li class="<%= 'extra-trip' if idx >= 3 %>">
+          <a href="/trips/<%= a_trip.id %>">
+            📍 <%= a_trip.trip_name %>
+          </a>
+        </li>
+      <% end %>
+    </ul>
+
+    <% if active_trips.size > 3 %>
+      <button id="show-more-trips" class="btn-view-more">
+        View more
+      </button>
     <% end %>
-  </ul>
+  </article>
 
-  <% if active_trips.size > 3 %>
-    <button id="show-more-trips" class="btn-view-more">
-      View more
-    </button>
-  <% end %>
-</article>
-
-
- 
   <article>
     <header>
       <h2>
@@ -78,13 +75,81 @@
         <input type="date" id="trip_start_date_box" name="query_trip_start_date">
       </div>
 
-      <div>
-        <label for="trip_notes_box">
-          Tell me what you like, or any special requirement? 
-        </label>
+      <!-- Collapsible section -->
+      <details class="collapsible">
+        <summary class="collapsible-btn">Tell me more?</summary>
 
-        <textarea id="trip_notes_box" name="query_trip_notes" placeholder="I specifically want to see/do..."></textarea>
-      </div>
+        <div class="content">
+
+          <article>
+            <div>
+              <label>I want my trip to be...</label>
+              <label><input type="radio" name="query_preference[]" value="Luxury"> Luxury</label>
+              <label><input type="radio" name="query_preference[]" value="Art"> Budget friendly  </label>
+              <label><input type="radio" name="query_preference[]" value="Outdoors"> A mix of both</label>
+            </div>
+            <hr>
+            <div>
+              <label>I am...</label>
+              <label><input type="radio" name="query_preference[]" value="Luxury"> Solo traveling</label>
+              <label><input type="radio" name="query_preference[]" value="Art"> Traveling with my partner  </label>
+              <label><input type="radio" name="query_preference[]" value="Outdoors"> Traveling with my friends </label>
+              <label><input type="radio" name="query_preference[]" value="Outdoors"> Traveling with my family </label>
+            </div>
+            <hr>
+            <div>
+              <label>My trip should include...</label>
+              <div>
+                <label><input type="checkbox" name="query_preference[]" value="Food & restaurants">Local's favorite, culture </label>
+              </div>
+              <div>
+                <label><input type="checkbox" name="query_preference[]" value="Museums & culture">Museums, art, history</label>
+              </div>
+              <div>
+                <label><input type="checkbox" name="query_preference[]" value="Outdoors & nature">Outdoors, nature</label>
+              </div>
+              <div>
+                <label><input type="checkbox" name="query_preference[]" value="Nightlife & bars">Nightlife, bars</label>
+              </div>
+              <div>
+                <label><input type="checkbox" name="query_preference[]" value="Shopping">Shopping</label>
+              </div>
+              <div>
+                <label><input type="checkbox" name="query_preference[]" value="Food & restaurants">High-end restaurants and luxury experience </label>
+              </div>
+            </div>
+          </article>
+
+          <article>
+            <div>
+              <label for="live_area">
+                Which area do you live? 
+              </label>
+
+              <input type="text" id="live_area" name="query_live_area">
+            </div>
+
+          </article>
+
+        </div>
+      </details>
+
+      <article>
+        <div>
+          <label for="trip_notes_box">
+            Anything else you want to tell me about? 
+          </label>
+          <% placeholder_text = <<~TEXT
+            I would prefer...
+            My goal is...
+            I have to...
+            I arrive/leave at...
+            TEXT
+          %>
+          <textarea id="trip_notes_box" name="query_trip_notes" rows="4" placeholder="<%= placeholder_text %>"></textarea>
+        </div>
+
+      </article>
 
       <button type="submit">
         Build agenda for my trip!
@@ -112,27 +177,26 @@
 
   <!--src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initAutocomplete"-->
 
+  <article>
+    <header style="margin-top: 15px;">
+      <h2>Past Trips</h2>
+    </header>
 
-<article>
-  <header style="margin-top: 15px;">
-    <h2>Past Trips</h2>
-  </header>
+    <% past_trips = @list_of_trips.where(trip_start_date: (...Date.today)).order(trip_start_date: :desc) %>
 
-  <% past_trips = @list_of_trips.where(trip_start_date: (...Date.today)).order(trip_start_date: :desc) %>
+    <ul id="past-trips-list">
+      <% past_trips.each_with_index do |a_trip, idx| %>
+        <li class="<%= 'extra-trip' if idx >= 3 %>">
+          <a href="/trips/<%= a_trip.id %>">
+            📍 <%= a_trip.trip_name %>
+          </a>
+        </li>
+      <% end %>
+    </ul>
 
-  <ul id="past-trips-list">
-    <% past_trips.each_with_index do |a_trip, idx| %>
-      <li class="<%= 'extra-trip' if idx >= 3 %>">
-        <a href="/trips/<%= a_trip.id %>">
-          📍 <%= a_trip.trip_name %>
-        </a>
-      </li>
+    <% if past_trips.size > 3 %>
+      <button id="show-more-past" class="btn-view-more">
+        View more
+      </button>
     <% end %>
-  </ul>
-
-  <% if past_trips.size > 3 %>
-    <button id="show-more-past" class="btn-view-more">
-      View more
-    </button>
-  <% end %>
-</article>
+  </article>
