@@ -61,7 +61,25 @@ class TripsController < ApplicationController
     the_trip.trip_location = params.fetch("query_trip_location")
     the_trip.trip_duration_days = params.fetch("query_trip_duration_days")
     the_trip.trip_start_date = params.fetch("query_trip_start_date")
-    the_trip.trip_notes = params.fetch("query_trip_notes")
+    query_budget = params[:query_budget]
+    summary_a = "Budget wise, I want my trip to be #{query_budget}" if query_budget.present?
+
+    query_people = params[:query_people]
+    summary_b = "I am #{query_people}" if query_people.present?
+
+    query_todo = params[:query_todo]
+    summary_c = "My trip should include a mix of these: #{query_todo}" if query_todo.present?
+
+    live_area = params[:query_live_area]
+    summary_d = "I stay near #{live_area}" if live_area.present?
+
+    trip_notes = params[:query_trip_notes]
+    summary_e = "Specifically, I have these requirements: #{trip_notes}" if trip_notes.present?
+
+    @summary = [summary_a, summary_b, summary_c, summary_d, summary_e].compact.join(" ; ")
+
+    the_trip.trip_notes = @summary
+
     # ============================== AI Ouput ===================================
     require "bundler/setup"
     require "ai-chat"
@@ -75,8 +93,8 @@ class TripsController < ApplicationController
     @trip_start_date = the_trip.trip_start_date
     @trip_notes = the_trip.trip_notes
     @trip_name = the_trip.trip_name
-
-    @user_input = "I am traveling to " + @trip_location + ", from " + @trip_start_date + ", for " + @trip_duration_days.to_s + " days in total, and specifically, I have these requirement: " + @trip_notes + "my trip name is: " + @trip_name + ". Can you build day by day, activity by activity, what should i do"
+    
+    @user_input = "I am traveling to " + @trip_location + ", from " + @trip_start_date + ", for " + @trip_duration_days.to_s + " days in total. " + @trip_notes + ". Can you build day by day, activity by activity, what should i do"
     # ===========================================================================
     if the_trip.valid?
       the_trip.save
@@ -85,38 +103,38 @@ class TripsController < ApplicationController
       i.system("You are an trip planner. Based on user's input of where and when they are travelling to, plus their specific requirements, come up with a trip plan with start time, end time, activity, and location for each day during the traveling period. Build day by day, activity by activity, detailed agenda")
 
       i.system(<<~SYS)
-                You are a trip-planner agent. Your job is to return **JSON only**, with no explanations, no markdown, and no extra text.
+                  You are a trip-planner agent. Your job is to return **JSON only**, with no explanations, no markdown, and no extra text.
 
-        Follow the schema *exactly*.  
-        All fields must be present.  
-        If information is unknown, make a reasonable assumption.
+          Follow the schema *exactly*.  
+          All fields must be present.  
+          If information is unknown, make a reasonable assumption.
 
-        The JSON must look exactly like this:
-        {
-          "days": [
-            {
-              "date": "YYYY-MM-DD",
-              "items": [
-                {
-                  "start_time": "HH:MM",
-                  "end_time": "HH:MM",
-                  "activity": "short description of the activity",
-                  "location": "Name of the location as listed on Google Maps, including city and country",
-                  "commute": "1–2 sentence explanation of how to get there (walking, metro, taxi, etc.). Include reservation or ticket guidance ONLY if it is strongly recommended before arrival."
-                }
-              ]
-            }
-          ]
-        }
-        
-      Rules:
-      - **date**: calendar date of that day of the trip
-      - **start_time / end_time**: local time, 24-hour format "HH:MM"
-      - **activity**: brief 1–2 sentence description
-      - **location**: Google Maps listing name + city + country
-      - **commute**: brief 1–2 sentence note explaining how to get between items (walking, metro, taxi, etc.). Only include reservation or ticket guidance if they are strongly recommended before arrival—otherwise do not mention them
+          The JSON must look exactly like this:
+          {
+            "days": [
+              {
+                "date": "YYYY-MM-DD",
+                "items": [
+                  {
+                    "start_time": "HH:MM",
+                    "end_time": "HH:MM",
+                    "activity": "short description of the activity",
+                    "location": "Name of the location as listed on Google Maps, including city and country",
+                    "commute": "1–2 sentence explanation of how to get there (walking, metro, taxi, etc.). Include reservation or ticket guidance ONLY if it is strongly recommended before arrival."
+                  }
+                ]
+              }
+            ]
+          }
+          
+        Rules:
+        - **date**: calendar date of that day of the trip
+        - **start_time / end_time**: local time, 24-hour format "HH:MM"
+        - **activity**: brief 1–2 sentence description
+        - **location**: Google Maps listing name + city + country
+        - **commute**: brief 1–2 sentence note explaining how to get between items (walking, metro, taxi, etc.). Only include reservation or ticket guidance if they are strongly recommended before arrival—otherwise do not mention them
 
-      Output **ONLY valid JSON** matching this structure.
+        Output **ONLY valid JSON** matching this structure.
       SYS
 
       i.user(@user_input)
@@ -160,24 +178,24 @@ class TripsController < ApplicationController
     the_trip.trip_duration_days = params.fetch("query_trip_duration_days")
     the_trip.trip_start_date = params.fetch("query_trip_start_date")
 
-query_budget = params[:query_budget]
-summary_a = "Budget wise, I want my trip to be #{query_budget}" if query_budget.present?
+    query_budget = params[:query_budget]
+    summary_a = "Budget wise, I want my trip to be #{query_budget}" if query_budget.present?
 
-query_people = params[:query_people]
-summary_b = "I am #{query_people}" if query_people.present?
+    query_people = params[:query_people]
+    summary_b = "I am #{query_people}" if query_people.present?
 
-query_todo = params[:query_todo]
-summary_c = "My trip should include #{query_todo}" if query_todo.present?
+    query_todo = params[:query_todo]
+    summary_c = "My trip should include a mix of these: #{query_todo}" if query_todo.present?
 
-live_area = params[:live_area]
-summary_d = "I want to stay near #{live_area}" if live_area.present?
+    live_area = params[:query_live_area]
+    summary_d = "I stay near #{live_area}" if live_area.present?
 
-trip_notes = params[:query_trip_notes]
-summary_e = "Specifically, I have these requirements: #{trip_notes}" if trip_notes.present?
+    trip_notes = params[:query_trip_notes]
+    summary_e = "Specifically, I have these requirements: #{trip_notes}" if trip_notes.present?
 
-@summary = [summary_a, summary_b, summary_c, summary_d, summary_e].compact.join(" ; ")
+    @summary = [summary_a, summary_b, summary_c, summary_d, summary_e].compact.join(" ; ")
 
-the_trip.trip_notes = @summary
+    the_trip.trip_notes = @summary
 
     # ============================== AI Ouput ===================================
     require "bundler/setup"
@@ -193,7 +211,7 @@ the_trip.trip_notes = @summary
     @trip_notes = the_trip.trip_notes
     @trip_name = the_trip.trip_name
 
-    @user_input = "I am traveling to " + @trip_location + ", from " + @trip_start_date + ", for " + @trip_duration_days.to_s + " days in total. " +  @trip_notes + ". Can you build day by day, activity by activity, what should i do"
+    @user_input = "I am traveling to " + @trip_location + ", from " + @trip_start_date + ", for " + @trip_duration_days.to_s + " days in total. " + @trip_notes + ". Can you build day by day, activity by activity, what should i do"
     # ===========================================================================
     if the_trip.valid?
       the_trip.save
@@ -202,38 +220,38 @@ the_trip.trip_notes = @summary
       i.system("You are an trip planner. Based on user's input of where and when they are travelling to, plus their specific requirements, come up with a trip plan with start time, end time, activity, and location for each day during the traveling period. Build day by day, activity by activity, detailed agenda")
 
       i.system(<<~SYS)
-                You are a trip-planner agent. Your job is to return **JSON only**, with no explanations, no markdown, and no extra text.
+                  You are a trip-planner agent. Your job is to return **JSON only**, with no explanations, no markdown, and no extra text.
 
-        Follow the schema *exactly*.  
-        All fields must be present.  
-        If information is unknown, make a reasonable assumption.
+          Follow the schema *exactly*.  
+          All fields must be present.  
+          If information is unknown, make a reasonable assumption.
 
-        The JSON must look exactly like this:
-        {
-          "days": [
-            {
-              "date": "YYYY-MM-DD",
-              "items": [
-                {
-                  "start_time": "HH:MM",
-                  "end_time": "HH:MM",
-                  "activity": "short description of the activity",
-                  "location": "Name of the location as listed on Google Maps, including city and country",
-                  "commute": "1–2 sentence explanation of how to get there (walking, metro, taxi, etc.). Include reservation or ticket guidance ONLY if it is strongly recommended before arrival."
-                }
-              ]
-            }
-          ]
-        }
-        
-      Rules:
-      - **date**: calendar date of that day of the trip
-      - **start_time / end_time**: local time, 24-hour format "HH:MM"
-      - **activity**: brief 1–2 sentence description
-      - **location**: Google Maps listing name + city + country
-      - **commute**: brief 1–2 sentence note explaining how to get between items (walking, metro, taxi, etc.). Only include reservation or ticket guidance if they are strongly recommended before arrival—otherwise do not mention them
+          The JSON must look exactly like this:
+          {
+            "days": [
+              {
+                "date": "YYYY-MM-DD",
+                "items": [
+                  {
+                    "start_time": "HH:MM",
+                    "end_time": "HH:MM",
+                    "activity": "short description of the activity",
+                    "location": "Name of the location as listed on Google Maps, including city and country",
+                    "commute": "1–2 sentence explanation of how to get there (walking, metro, taxi, etc.). Include reservation or ticket guidance ONLY if it is strongly recommended before arrival."
+                  }
+                ]
+              }
+            ]
+          }
+          
+        Rules:
+        - **date**: calendar date of that day of the trip
+        - **start_time / end_time**: local time, 24-hour format "HH:MM"
+        - **activity**: brief 1–2 sentence description
+        - **location**: Google Maps listing name + city + country
+        - **commute**: brief 1–2 sentence note explaining how to get between items (walking, metro, taxi, etc.). Only include reservation or ticket guidance if they are strongly recommended before arrival—otherwise do not mention them
 
-      Output **ONLY valid JSON** matching this structure.
+        Output **ONLY valid JSON** matching this structure.
       SYS
 
       i.user(@user_input)

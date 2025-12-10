@@ -48,18 +48,90 @@
       <input type="date" id="trip_start_date_box" name="query_trip_start_date" value="<%= @the_trip.trip_start_date %>">
     </div>
 
-    <div>
-      <label for="trip_notes_box">
-        Tell me what you like, or any special requirement? 
-      </label>
+      <!-- Collapsible section -->
+      <details class="collapsible">
+        <summary class="collapsible-btn">Tell me more?</summary>
 
-      <textarea id="trip_notes_box" name="query_trip_notes" placeholder="I specifically want to see/do..."><%= @the_trip.trip_notes %> </textarea>
-    </div>
+        <div class="content">
+
+          <article>
+            <div>
+              <label>I want my trip to be...</label>
+              <label><input type="radio" name="query_budget" value="luxury"> Luxury</label>
+              <label><input type="radio" name="query_budget" value="budget friendly"> Budget friendly  </label>
+              <label><input type="radio" name="query_budget" value="A mix of both luxury and budget friendly"> A mix of both</label>
+            </div>
+            <hr>
+            <div>
+              <label>I am...</label>
+              <label><input type="radio" name="query_people" value="solo traveling"> Solo traveling</label>
+              <label><input type="radio" name="query_people" value="traveling with my partner">Traveling with my partner</label>
+              <label><input type="radio" name="query_people" value="traveling with my friends">Traveling with my friends</label>
+              <label><input type="radio" name="query_people" value="traveling with my family">Traveling with my family</label>
+            </div>
+            <hr>
+            <div>
+              <label>My trip should include...</label>
+              <div>
+                <label><input type="checkbox" name="query_todo[]" value="Local's favorite resturants or spots, or things to do that involves local culture ">Local's favorite food or spot, culture </label>
+              </div>
+              <div>
+                <label><input type="checkbox" name="query_todo[]" value="Museums, art, and history">Museums, art, history</label>
+              </div>
+              <div>
+                <label><input type="checkbox" name="query_todo[]" value="Outdoors & nature">Outdoors, nature</label>
+              </div>
+              <div>
+                <label><input type="checkbox" name="query_todo[]" value="Nightlife & bars">Nightlife, bars</label>
+              </div>
+              <div>
+                <label><input type="checkbox" name="query_todo[]" value="Shopping">Shopping</label>
+              </div>
+              <div>
+                <label><input type="checkbox" name="query_todo[]" value="High-end restaurants and luxury experience">High-end restaurants and luxury experience </label>
+              </div>
+            </div>
+          </article>
+
+          <article>
+            <div>
+              <label for="live_area">
+                Which area do you live? 
+              </label>
+
+              <input type="text" id="live_area" name="query_live_area">
+            </div>
+
+          </article>
+
+        </div>
+      </details>
+      <!-- Collapsible section -->
+      
+
+
+      <article>
+        <div>
+          <label for="trip_notes_box">
+            Anything else you want to tell me about? 
+          </label>
+          <% placeholder_text = <<~TEXT
+            I would prefer...
+            My goal is...
+            I have to...
+            I arrive/leave at...
+            TEXT
+          %>
+          <textarea id="trip_notes_box" name="query_trip_notes" rows="4" placeholder="<%= placeholder_text %>"></textarea>
+        </div>
+
+      </article>
 
     <button type="submit">
       Rebuild my agenda!
     </button>
+
+
   </form>
 </article>
 
-<hr>

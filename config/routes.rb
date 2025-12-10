@@ -10,7 +10,6 @@ Rails.application.routes.draw do
   get("/trips", { :controller => "trips", :action => "index" })
   #get("/", { :controller => "trips", :action => "index" })
   root to: "trips#index"
-  get("/trips/:path_id/ai", { :controller => "trips", :action => "ai" })
 
   get("/trips/:path_id", { :controller => "trips", :action => "show" })
 
@@ -20,10 +19,6 @@ Rails.application.routes.draw do
 
   # DELETE
   get("/delete_trip/:path_id", { :controller => "trips", :action => "destroy" })
-
-  # AI Output
-  # get("/ai", { :controller => "trips", :action => "ai_ouput" })
-  #------------------------------
 
 
   # Routes for the Trip plan resource:
