@@ -122,9 +122,9 @@
        <article class="agenda-day <%= 'active' if i == 0 %>">
 
           <div class="overflow-auto">
-            <div class="day-header">Day <%= i + 1 %>: <%= date.strftime("%B %-d, %Y") %></div>
+            <div class="day-header" style="color: #1c49a9ff;">Day <%= i + 1 %>: <%= date.strftime("%B %-d, %Y") %></div>
             <% this_day = @the_trip.trip_plans.where(date: date.strftime("%Y-%m-%d")) %>
-
+<div class="overflow-auto">
             <table class="agenda-table">
               <thead>
                 <th>Time</th>
@@ -173,13 +173,14 @@
                   </td>
 
 <!---------------------------------------------------->
-                    <td style="font-size: 0.8rem;"><%= a_day.plan_details %></td>
+                    <td style="font-size: 0.9rem;"><%= a_day.plan_details %></td>
 
                   </tr>
                 <% end %>
               </tbody>
               
             </table>
+            </div>
 
             <div
       id="map-day-<%= i + 1 %>"

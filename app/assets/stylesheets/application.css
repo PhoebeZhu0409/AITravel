@@ -14,7 +14,7 @@
 
   .day-header {
     text-align: center;
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-weight: 600;
     margin: 0.2rem 0 0.2rem;
   }
@@ -186,15 +186,15 @@ article.agenda-day.active {
 /* Arrows on left/right, centered vertically */
 .agenda-arrow {
   position: absolute;
-  top: 50%;
+  top: 3%;
   transform: translateY(-50%);
   z-index: 50;
 
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 999px;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   font-size: 20px;
   font-weight: 600;
   color: #333;
@@ -209,12 +209,12 @@ article.agenda-day.active {
 
 /* Left side */
 .agenda-arrow.left {
-  left: -16px;  /* move inward/outward as you like */
+  left: -50px;  /* move inward/outward as you like */
 }
 
 /* Right side */
 .agenda-arrow.right {
-  right: -16px;
+  right: -50px;
 }
 
 /* Hover state */
@@ -241,28 +241,38 @@ article.agenda-day.active {
 /* --------------------------------- Google review --------------------------------------- */
 
 .place-card {
-  gap: 2px;
+  gap: 6px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 300px; /* control column width */
+  width: 100%;        /* allow it to stretch with the table column */
+  max-width: 100%;
   text-align: center;
 }
 
-.place-photo img {
-  width: 300px;
-  height: 240px;
-  object-fit: cover;
-  border-radius: 6px;
+
+.place-photo {
+  width: 100%;              /* full column width */
+  aspect-ratio: 1 / 1;      /* ← makes it a perfect square */
+  border-radius: 12px;
+  overflow: hidden;         /* crop overflow so image stays inside */
 }
+
+.place-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;        /* prevents distortion, clean crop */
+  display: block;
+}
+
 
 .place-name {
   font-weight: 400;
-  font-size: 0.7rem;
+  font-size: 0.9rem;
 }
 
 .place-rating {
-  font-size: 0.7rem;
+  font-size: 0.9rem;
   color: #666666;
 }
 
@@ -285,12 +295,12 @@ article.agenda-day.active {
 
 .agenda-table th:nth-child(3),
 .agenda-table td:nth-child(3) {
-  width: 40%;   /* Plan */
+  width: 30%;   /* Plan */
 }
 
 .agenda-table th:nth-child(4),
 .agenda-table td:nth-child(4) {
-  width: 20%;   /* Location */
+  width: 30%;   /* Location */
 }
 
 }
