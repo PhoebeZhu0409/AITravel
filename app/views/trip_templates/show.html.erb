@@ -131,6 +131,7 @@
                 <th>To</th>
                 <th>Plan</th>
                 <th>Location</th>
+          <!--      <th>....</th>-->
                 <th>Get around</th>
               </thead>
 
@@ -140,13 +141,6 @@
                     <td><%= a_day.start_time.strftime("%I:%M&nbsp;%p").html_safe %></td>
                     <td><%= a_day.end_time.strftime("%I:%M&nbsp;%p").html_safe %></td>
 
-            <!--------------------------------------------tool tip---------------------------------------->
-                    <!--                    <td>
-                      <span title="<%#= a_day.trip_plan %>">
-                        <%#= a_day.plan_brief %>-->
-                    <!--                      </span>
-                    </td>-->
-
                     <td class="plan-cell">
                       <div class="plan-brief">
                         <%= a_day.plan_brief %>
@@ -154,14 +148,35 @@
                       </div>
                     </td>
 
-                    <td>
-                      <% short_loc = a_day.plan_location.split(",").first %>
-                      <%= link_to short_loc,
+                   <!-- <td>-->
+                      <%# short_loc = a_day.plan_location.split(",").first %>
+                      <%#= link_to short_loc,
                   "https://www.google.com/maps/search/?api=1&query=#{ERB::Util.url_encode(a_day.plan_location)}",
                   target: "_blank",
                   rel: "noopener" %>
-                    </td>
-                    <td><%= a_day.plan_details %></td>
+<!--                    </td>-->
+<!---------------------------------------------------->
+                  <td class="place-cell"
+                      data-location="<%= a_day.plan_location %>">
+                    <a
+                      href="https://www.google.com/maps/search/?api=1&query=<%= ERB::Util.url_encode(a_day.plan_location) %>"
+                      target="_blank"
+                      rel="noopener"
+                      class="place-card-link">
+                      <div class="place-card">
+                        <div class="place-photo"></div>
+                        <div class="place-info">
+                          <div class="place-name">
+                            <%= a_day.plan_location.split(",").first %>
+                          </div>
+                          <div class="place-rating"></div>
+                        </div>
+                      </div>
+                    </a>
+                  </td>
+
+<!---------------------------------------------------->
+                    <td style="font-size: 0.8rem;"><%= a_day.plan_details %></td>
 
                   </tr>
                 <% end %>

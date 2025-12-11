@@ -77,6 +77,7 @@
     function runMaps() {
       initAutocomplete();
       initItineraryMaps();
+      initPlaceCards(); 
     }
 
     // If DOM isn't ready yet, wait for it
@@ -128,9 +129,73 @@
     });
   }
 
+
+<!---->
+
+  function initPlaceCards() {
+    const cells = document.querySelectorAll(".place-cell");
+    if (!cells.length) return;
+
+    // PlacesService needs a map or a dummy div
+    const service = new google.maps.places.PlacesService(
+      document.createElement("div")
+    );
+
+    cells.forEach((cell) => {
+      const query = cell.dataset.location;
+      if (!query) return;
+
+      const card      = cell.querySelector(".place-card");
+      if (!card) return;
+
+      const nameEl    = card.querySelector(".place-name");
+      const ratingEl  = card.querySelector(".place-rating");
+      const photoWrap = card.querySelector(".place-photo");
+
+      const request = {
+        query: query,
+        fields: ["name", "rating", "user_ratings_total", "photos"],
+      };
+
+      service.findPlaceFromQuery(request, (results, status) => {
+        if (
+          status !== google.maps.places.PlacesServiceStatus.OK ||
+          !results ||
+          !results[0]
+        ) {
+          return; // keep your fallback text
+        }
+
+        const place = results[0];
+
+        // Name
+        if (place.name && nameEl) {
+          nameEl.textContent = place.name;
+        }
+
+        // Rating
+        if (ratingEl && place.rating) {
+          const count = place.user_ratings_total || 0;
+          ratingEl.textContent = `${place.rating.toFixed(1)} ★ (${count})`;
+        }
+
+        // Photo
+        if (photoWrap && place.photos && place.photos.length > 0) {
+          const img = document.createElement("img");
+          img.src = place.photos[0].getUrl({ maxWidth: 400, maxHeight: 400 });
+          img.alt = place.name || query;
+          photoWrap.appendChild(img);
+        }
+      });
+    });
+  }
+<!---->
+
   window.googleMapsLoaded  = googleMapsLoaded;
   window.initAutocomplete  = initAutocomplete;
   window.initItineraryMaps = initItineraryMaps;
+    // expose if you like
+  window.initPlaceCards = initPlaceCards;
 </script>
 
 
@@ -157,7 +222,7 @@
 </script>
 
 
-<!-----------pages------------>
+<!----------- flip pages. ------------>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const days = Array.from(document.querySelectorAll(".agenda-day"));
