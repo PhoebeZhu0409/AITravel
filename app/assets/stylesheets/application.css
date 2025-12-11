@@ -239,53 +239,21 @@ article.agenda-day.active {
 
 
 /* --------------------------------- Google review --------------------------------------- */
-/* .place-card-link {
-  text-decoration: none;
-  color: inherit;
-}
-
-.place-card {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.place-photo img {
-  width: 64px;
-  height: 64px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.place-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.place-name {
-  font-weight: 500;
-}
-
-.place-rating {
-  font-size: 0.85rem;
-  color: #6b7280; 
-} */
-
 
 .place-card {
   gap: 2px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 140px; /* control column width */
+  width: 300px; /* control column width */
   text-align: center;
 }
 
 .place-photo img {
-  width: 200px;
-  height: 140px;
+  width: 300px;
+  height: 240px;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 6px;
 }
 
 .place-name {
@@ -296,4 +264,33 @@ article.agenda-day.active {
 .place-rating {
   font-size: 0.7rem;
   color: #666666;
+}
+
+
+/* --------------- table column witdth --------------- */
+.agenda-table {
+  table-layout: fixed;   /* allows proportional control */
+  width: 100%;
+}
+
+.agenda-table th:nth-child(1),
+.agenda-table td:nth-child(1) {
+  width: 15%;   /* From */
+}
+
+.agenda-table th:nth-child(2),
+.agenda-table td:nth-child(2) {
+  width: 25%;   /* To */
+}
+
+.agenda-table th:nth-child(3),
+.agenda-table td:nth-child(3) {
+  width: 40%;   /* Plan */
+}
+
+.agenda-table th:nth-child(4),
+.agenda-table td:nth-child(4) {
+  width: 20%;   /* Location */
+}
+
 }
