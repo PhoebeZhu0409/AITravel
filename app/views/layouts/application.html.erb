@@ -157,7 +157,61 @@
 </script>
 
 
+<!-----------pages------------>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const days = Array.from(document.querySelectorAll(".agenda-day"));
+    if (days.length === 0) return;
 
+    let currentIndex = 0;
+    const prevBtn = document.getElementById("agenda-prev");
+    const nextBtn = document.getElementById("agenda-next");
+    const label   = document.getElementById("agenda-label");
+
+    function applyVisibility() {
+      days.forEach((day, idx) => {
+        if (idx === currentIndex) {
+          day.classList.add("active");
+        } else {
+          day.classList.remove("active");
+        }
+      });
+    }
+
+    function updateUI() {
+      if (label) {
+        label.textContent = `Day ${currentIndex + 1} of ${days.length}`;
+      }
+      if (prevBtn) prevBtn.disabled = currentIndex === 0;
+      if (nextBtn) nextBtn.disabled = currentIndex === days.length - 1;
+    }
+
+    // Initial state
+    currentIndex = 0;
+    applyVisibility();
+    updateUI();
+
+    if (prevBtn) {
+      prevBtn.addEventListener("click", () => {
+        if (currentIndex > 0) {
+          currentIndex -= 1;
+          applyVisibility();
+          updateUI();
+        }
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener("click", () => {
+        if (currentIndex < days.length - 1) {
+          currentIndex += 1;
+          applyVisibility();
+          updateUI();
+        }
+      });
+    }
+  });
+</script>
 
   </body>
 </html>

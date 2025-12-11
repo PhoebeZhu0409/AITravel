@@ -120,3 +120,119 @@
   align-items: center;
   gap: 8px;
 }
+
+
+
+/* tooltip */
+
+.plan-cell {
+  position: relative;
+}
+
+.plan-brief {
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  /* text-decoration: underline dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px; */
+}
+
+.plan-brief::after {
+  content: "  ⓘ";            /* info symbol */
+  font-size: 0.85em;
+  opacity: 0.6;
+}
+
+.plan-full {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 400px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.plan-brief:hover .plan-full {
+  display: block;
+}
+
+.plan-brief:hover::after {
+  opacity: 1;
+}
+
+
+/* pages */
+/* Container for carousel */
+.agenda-carousel {
+  position: relative;
+  width: 100%;
+}
+
+/* Only one day visible at a time */
+article.agenda-day {
+  display: none;
+}
+
+article.agenda-day.active {
+  display: block;
+}
+
+/* Arrows on left/right, centered vertically */
+.agenda-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: all 0.15s ease;
+}
+
+/* Left side */
+.agenda-arrow.left {
+  left: -16px;  /* move inward/outward as you like */
+}
+
+/* Right side */
+.agenda-arrow.right {
+  right: -16px;
+}
+
+/* Hover state */
+.agenda-arrow:hover:not(:disabled) {
+  background: #f9fafb;
+  transform: translateY(-50%) scale(1.08);
+}
+
+/* Disabled arrows */
+.agenda-arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* Pagination label below */
+.agenda-pagination {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 14px;
+  color: #555;
+}

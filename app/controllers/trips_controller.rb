@@ -121,6 +121,7 @@ class TripsController < ApplicationController
                     "start_time": "HH:MM",
                     "end_time": "HH:MM",
                     "activity": "short description of the activity",
+                    "plan_brief": "the name of the activity, no more than 4 words"
                     "location": "Name of the location as listed on Google Maps, including street, city, country, and zip code",
                     "commute": "1–2 sentence explanation of how to get there (walking, metro, taxi, etc.). Include reservation or ticket guidance ONLY if it is strongly recommended before arrival."
                   }
@@ -132,7 +133,8 @@ class TripsController < ApplicationController
         Rules:
         - **date**: calendar date of that day of the trip
         - **start_time / end_time**: local time, 24-hour format "HH:MM"
-        - **activity**: brief 1–2 sentence description
+        - **activity**: brief 1–2 sentence description of the activity
+        - **plan_brief**: the name of the activity, no more than 4 words
         - **location**: Name of the location as listed on Google Maps, including street, city, country, and zip code
         - **commute**: brief 1–2 sentence note explaining how to get between items (walking, metro, taxi, etc.). Only include reservation or ticket guidance if they are strongly recommended before arrival—otherwise do not mention them
 
@@ -159,6 +161,7 @@ class TripsController < ApplicationController
               start_time: Time.parse(item[:start_time]),
               end_time: Time.parse(item[:end_time]),
               trip_plan: item[:activity],
+              plan_brief: item[:plan_brief],
               plan_location: item[:location],
               plan_details: item[:commute],
             )
@@ -238,6 +241,7 @@ class TripsController < ApplicationController
                     "start_time": "HH:MM",
                     "end_time": "HH:MM",
                     "activity": "short description of the activity",
+                    "plan_brief": "the name of the activity, no more than 4 words"
                     "location": "Name of the location as listed on Google Maps, including street, city, country, and zip code",
                     "commute": "1–2 sentence explanation of how to get there (walking, metro, taxi, etc.). Include reservation or ticket guidance ONLY if it is strongly recommended before arrival."
                   }
@@ -249,7 +253,8 @@ class TripsController < ApplicationController
         Rules:
         - **date**: calendar date of that day of the trip
         - **start_time / end_time**: local time, 24-hour format "HH:MM"
-        - **activity**: brief 1–2 sentence description
+        - **activity**: brief 1–2 sentence description of the activity
+        - **plan_brief**: the name of the activity, no more than 4 words
         - **location**: Name of the location as listed on Google Maps, including street, city, country, and zip code
         - **commute**: brief 1–2 sentence note explaining how to get between items (walking, metro, taxi, etc.). Only include reservation or ticket guidance if they are strongly recommended before arrival—otherwise do not mention them
 
@@ -276,6 +281,7 @@ class TripsController < ApplicationController
               start_time: Time.parse(item[:start_time]),
               end_time: Time.parse(item[:end_time]),
               trip_plan: item[:activity],
+              plan_brief: item[:plan_brief],
               plan_location: item[:location],
               plan_details: item[:commute],
             )

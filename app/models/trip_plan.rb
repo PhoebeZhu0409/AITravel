@@ -5,6 +5,7 @@
 #  id            :bigint           not null, primary key
 #  date          :date
 #  end_time      :time
+#  plan_brief    :string
 #  plan_details  :text
 #  plan_location :string
 #  start_time    :time

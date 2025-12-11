@@ -115,9 +115,11 @@
   end_date = @the_trip.trip_start_date + @the_trip.trip_duration_days.day-1.day
 %>
 
+<div class="agenda-carousel">
+<button id="agenda-prev" class="agenda-arrow left">&lt;</button>
+<div class="agenda-wrapper">
     <% (start_date..end_date).each_with_index do |date, i| %>
-      <div>
-        <article>
+       <article class="agenda-day <%= 'active' if i == 0 %>">
 
           <div class="overflow-auto">
             <div class="day-header">Day <%= i + 1 %>: <%= date.strftime("%B %-d, %Y") %></div>
@@ -137,7 +139,21 @@
                   <tr>
                     <td><%= a_day.start_time.strftime("%I:%M&nbsp;%p").html_safe %></td>
                     <td><%= a_day.end_time.strftime("%I:%M&nbsp;%p").html_safe %></td>
-                    <td><%= a_day.trip_plan %></td>
+
+            <!--------------------------------------------tool tip---------------------------------------->
+                    <!--                    <td>
+                      <span title="<%#= a_day.trip_plan %>">
+                        <%#= a_day.plan_brief %>-->
+                    <!--                      </span>
+                    </td>-->
+
+                    <td class="plan-cell">
+                      <div class="plan-brief">
+                        <%= a_day.plan_brief %>
+                        <span class="plan-full"><%= a_day.trip_plan %></span>
+                      </div>
+                    </td>
+
                     <td>
                       <% short_loc = a_day.plan_location.split(",").first %>
                       <%= link_to short_loc,
@@ -150,6 +166,7 @@
                   </tr>
                 <% end %>
               </tbody>
+              
             </table>
 
             <div
@@ -162,8 +179,19 @@
           </div>
 
         </article>
-      </div>
     <% end %>
+</div>
+
+
+
+<button id="agenda-next" class="agenda-arrow right">&gt;</button>
+</div>
+
+<div class="agenda-pagination">
+  <span id="agenda-label"></span>
+</div>
+
+
 
     <!---------------------------- JAVA SCRIPT: Update my trip name in agenda ----------------------------->
     <script>
@@ -177,4 +205,3 @@
         document.getElementById("trip-name-view").style.display = "flex";
       });
     </script>
-
