@@ -73,7 +73,7 @@ class TripsController < ApplicationController
     summary_c = "My trip should include a mix of these: #{query_todo}" if query_todo.present?
 
     live_area = params[:query_live_area]
-    summary_d = "I stay near #{live_area}" if live_area.present?
+    summary_d = "I stay near #{live_area}; and I can also go any other places you recommend" if live_area.present?
 
     trip_notes = params[:query_trip_notes]
     summary_e = "Specifically, I have these requirements: #{trip_notes}" if trip_notes.present?
@@ -133,7 +133,7 @@ class TripsController < ApplicationController
         - **date**: calendar date of that day of the trip
         - **start_time / end_time**: local time, 24-hour format "HH:MM"
         - **activity**: brief 1–2 sentence description
-        - **location**: Google Maps listing name + city + country
+        - **location**: Name of the location as listed on Google Maps, including street, city, country, and zip code
         - **commute**: brief 1–2 sentence note explaining how to get between items (walking, metro, taxi, etc.). Only include reservation or ticket guidance if they are strongly recommended before arrival—otherwise do not mention them
 
         Output **ONLY valid JSON** matching this structure.
@@ -190,7 +190,7 @@ class TripsController < ApplicationController
     summary_c = "My trip should include a mix of these: #{query_todo}" if query_todo.present?
 
     live_area = params[:query_live_area]
-    summary_d = "I stay near #{live_area}" if live_area.present?
+    summary_d = "I stay near #{live_area}; and I can also go any other places you recommend" if live_area.present?
 
     trip_notes = params[:query_trip_notes]
     summary_e = "Specifically, I have these requirements: #{trip_notes}" if trip_notes.present?
@@ -250,7 +250,7 @@ class TripsController < ApplicationController
         - **date**: calendar date of that day of the trip
         - **start_time / end_time**: local time, 24-hour format "HH:MM"
         - **activity**: brief 1–2 sentence description
-        - **location**: Google Maps listing name + city + country
+        - **location**: Name of the location as listed on Google Maps, including street, city, country, and zip code
         - **commute**: brief 1–2 sentence note explaining how to get between items (walking, metro, taxi, etc.). Only include reservation or ticket guidance if they are strongly recommended before arrival—otherwise do not mention them
 
         Output **ONLY valid JSON** matching this structure.
