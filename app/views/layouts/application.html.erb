@@ -58,9 +58,48 @@
       </div>
     </main>
 
-    <footer class="text-center">
-      PhoebeZhu 2025. All rights reserved.
-    </footer>
+
+<footer class="site-footer">
+  <div class="footer-content">
+  
+    <div class="footer-col">
+      <h4>LEGAL</h4>
+      <a href="#">Legal notices</a>
+      <a href="#">Terms of use</a>
+      <a href="#">Privacy policy</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>ABOUT US</h4>
+      <a href="#">Who we are</a>
+      <a href="#">Contact us</a>
+    </div>
+
+
+    <div class="footer-col">
+      <h4>DISCOVER</h4>
+      <a href="https://www.nationalgeographic.com/travel/destination/destinations">🟡 National Geographic | Destinations </a>
+      <a href="#">🔵 Lonely Planet | Destinations </a>
+
+    </div>
+
+    <div class="footer-col">
+      <h4>FOLLOW US</h4>
+      <div class="social-icons">
+        <a href="#">📷</a>
+        <a href="#">🎵</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+
+    <span class="copyright">
+      PhoebeZhu 2025 | All rights reserved
+    </span>
+  </div>
+</footer>
+
 
 <!-------------------------------- Google API Functions -------------------------------->
 
@@ -130,7 +169,6 @@
   }
 
 
-<!---->
 
   function initPlaceCards() {
     const cells = document.querySelectorAll(".place-cell");
@@ -189,7 +227,7 @@
       });
     });
   }
-<!---->
+
 
   window.googleMapsLoaded  = googleMapsLoaded;
   window.initAutocomplete  = initAutocomplete;
@@ -277,6 +315,19 @@
     }
   });
 </script>
+
+
+
+<!--------------------complete plan ----------------------->
+<script>
+  document.addEventListener("change", function (e) {
+    if (e.target.classList.contains("done-checkbox")) {
+      const row = e.target.closest(".agenda-row");
+      row.classList.toggle("done", e.target.checked);
+    }
+  });
+</script>
+<!---------------------------------------------------->
 
   </body>
 </html>

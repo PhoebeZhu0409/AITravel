@@ -285,22 +285,81 @@ article.agenda-day.active {
 
 .agenda-table th:nth-child(1),
 .agenda-table td:nth-child(1) {
-  width: 15%;   /* From */
+  width: 13%;   /* From-To */
 }
 
 .agenda-table th:nth-child(2),
 .agenda-table td:nth-child(2) {
-  width: 25%;   /* To */
+  width: 22%;   /* Plan */
 }
 
 .agenda-table th:nth-child(3),
 .agenda-table td:nth-child(3) {
-  width: 30%;   /* Plan */
+  width: 30%;   /* Location */
 }
 
 .agenda-table th:nth-child(4),
 .agenda-table td:nth-child(4) {
-  width: 30%;   /* Location */
+  width: 25%;   /* Get Around */
 }
 
+.agenda-table th:nth-child(5),
+.agenda-table td:nth-child(5) {
+  width: 10%;   /* Get Around */
 }
+/* -----------------complete plan check----------------- */
+
+tr.done td { background: #f3f4f6; opacity: 0.6; }
+
+/* -------------------------footer css--------------------------- */
+.site-footer {
+  padding: 60px 80px 30px;
+  background: #fff;
+  color: #333;
+  font-size: 14px;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 80px;
+}
+
+.footer-col h4 {
+  font-size: 14px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.footer-col a {
+  display: block;
+  margin-bottom: 10px;
+  color: #555;
+  text-decoration: none;
+}
+
+.footer-col a:hover {
+  text-decoration: underline;
+}
+
+.social-icons a {
+  margin-right: 12px;
+  font-size: 20px;
+  text-decoration: none;
+}
+
+.footer-bottom {
+  margin-top: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #aaa;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer-bottom span {
+  margin-right: 16px;
+}
+/* ------------------------------------------------------------------------------ */

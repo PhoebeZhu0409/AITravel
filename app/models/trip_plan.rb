@@ -4,6 +4,7 @@
 #
 #  id            :bigint           not null, primary key
 #  date          :date
+#  done          :boolean
 #  end_time      :time
 #  plan_brief    :string
 #  plan_details  :text

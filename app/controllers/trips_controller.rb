@@ -39,6 +39,20 @@ class TripsController < ApplicationController
     redirect_to "/trips/#{the_trip.id}"
   end
 
+
+  def toggle_done
+  the_trip = Trip.where({ :id => params.fetch("path_id") }).at(0)
+  
+  # you must send trip_plan_id "a_day" from the form
+  the_trip_plan = TripPlan.where({ :id => params.fetch("a_day") }).at(0)
+
+  new_value = (params.fetch("done") == "true")
+  the_trip_plan.update({ :done => new_value })
+
+  redirect_to "/trips/#{the_trip.id}"
+  end
+
+
   def rebuild_form
     the_id = params.fetch("path_id")
     matching_trips = Trip.where({ :id => the_id })

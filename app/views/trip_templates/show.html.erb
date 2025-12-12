@@ -131,11 +131,12 @@
                 <th>Plan</th>
                 <th>Location</th>
                 <th>Get around</th>
+                <th>✔️</th>
               </thead>
 
               <tbody>
                 <% this_day.order(:start_time).each do |a_day| %>
-                  <tr>
+                  <tr class="<%= 'done' if a_day.done %>">
                     <td><%= a_day.start_time.strftime("%I:%M&nbsp;%p").html_safe %> - <%= a_day.end_time.strftime("%I:%M&nbsp;%p").html_safe %></td>
               
                     <td class="plan-cell">
@@ -173,7 +174,18 @@
                   </td>
 
 <!---------------------------------------------------->
-                    <td style="font-size: 0.9rem;"><%= a_day.plan_details %></td>
+                <td style="font-size: 0.9rem;"><%= a_day.plan_details %></td>
+
+                <!--<td class="done-cell">  <input type="checkbox" class="done-checkbox"> </td>-->
+                <td class="done-cell">
+                  <%= form_with url: "/trips/#{@the_trip.id}/toggle_done", method: :patch, local: true do %>
+                    <%= hidden_field_tag :a_day, a_day.id %>
+                    <%= hidden_field_tag :done, "false" %>
+                    <%= check_box_tag :done, "true", a_day.done, onchange: "this.form.submit()" %>
+                  <% end %>
+                </td>
+
+         
 
                   </tr>
                 <% end %>
