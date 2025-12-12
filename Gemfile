@@ -103,3 +103,9 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver", "~> 4.11.0"
 end
+
+
+# for mailing when forget password
+group :development do
+  gem "letter_opener_web"
+end
