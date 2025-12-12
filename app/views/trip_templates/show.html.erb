@@ -198,7 +198,7 @@
       id="map-day-<%= i + 1 %>"
       class="day-map"
       data-locations="<%= h(this_day.map { |p|
-          { label: p.plan_location.split(",").first.split(" or ").first, address: p.plan_location }
+          { label: p.plan_location.split(",").first, address: p.plan_location }
         }.to_json) %>">
             </div>
           </div>

@@ -18,18 +18,25 @@ class TripsController < ApplicationController
   # end
 
   def index
-    matching_trips = Trip.all
+    matching_trips = current_user.trips
     @list_of_trips = matching_trips.order({ :created_at => :desc })
 
     render({ :template => "trip_templates/index" })
   end
 
+
+
   def show
     the_id = params.fetch("path_id")
-    matching_trips = Trip.where({ :id => the_id })
+    matching_trips = current_user.trips.where({ :id => the_id })
     @the_trip = matching_trips.at(0)
+    # if @the_trip == nil
+    #   redirect_to("/", { :alert => "Not found" })
+    #   return
+    # end
     render({ :template => "trip_templates/show" })
   end
+
 
   def trip_name_update
     the_id = params.fetch("path_id")
@@ -192,6 +199,7 @@ class TripsController < ApplicationController
 
   def create
     the_trip = Trip.new
+    the_trip.user_id = current_user.id
     the_trip.trip_name = params.fetch("query_trip_name")
     the_trip.trip_location = params.fetch("query_trip_location")
     the_trip.trip_duration_days = params.fetch("query_trip_duration_days")
@@ -296,6 +304,7 @@ class TripsController < ApplicationController
               end_time: Time.parse(item[:end_time]),
               trip_plan: item[:activity],
               plan_brief: item[:plan_brief],
+              user_id:the_trip.user_id,
               plan_location: item[:location],
               plan_details: item[:commute],
             )

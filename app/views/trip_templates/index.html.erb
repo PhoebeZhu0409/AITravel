@@ -1,6 +1,7 @@
 <nav aria-label="breadcrumb">
   <ul>
     <li><a href="/">Home</a></li>
+    
   </ul>
 </nav>
 <hr>
@@ -42,6 +43,7 @@
     </header>
 
     <form action="/insert_trip" method="post">
+    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
       <div>
         <label for="trip_name_box">
           Trip name

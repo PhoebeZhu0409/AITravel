@@ -22,4 +22,6 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
+  has_many  :trip_plans, class_name: "TripPlan", foreign_key: "user_id"
+  has_many  :trips, class_name: "Trip", foreign_key: "user_id"
 end
