@@ -51,7 +51,7 @@ Rails.application.routes.draw do
   # get("/your_first_screen", { :controller => "pages", :action => "first" })
 
 
-  # forget password, reset email
+  # forget password, reset email 
 mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
-  
+
 end
