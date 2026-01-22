@@ -368,55 +368,112 @@ article.agenda-day.active {
 
 tr.done td { background: #f3f4f6; opacity: 0.6; }
 
-/* -------------------------footer css--------------------------- */
+/* ------------------------- footer css --------------------------- */
 .site-footer {
-  padding: 60px 80px 30px;
+  padding: 48px 0 24px;              /* remove huge side padding */
   background: #fff;
   color: #333;
   font-size: 14px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+
+/* Add a centered inner container (you can apply this to the wrapper div if you have one) */
+.site-footer .footer-inner,
+.site-footer .footer-content,
+.site-footer .footer-bottom {
+  max-width: 1040px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .footer-content {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 80px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 28px;                         /* smaller + cleaner than 80px */
 }
 
 .footer-col h4 {
-  font-size: 14px;
-  margin-bottom: 16px;
-  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #111827;
 }
 
 .footer-col a {
   display: block;
   margin-bottom: 10px;
-  color: #555;
+  color: #4b5563;
   text-decoration: none;
+  line-height: 1.4;
 }
 
 .footer-col a:hover {
   text-decoration: underline;
 }
 
+/* Social icons row */
 .social-icons a {
   margin-right: 12px;
   font-size: 20px;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .footer-bottom {
-  margin-top: 60px;
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(0,0,0,0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 12px;
-  color: #aaa;
+  color: #6b7280;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
 }
 
 .footer-bottom span {
-  margin-right: 16px;
+  margin-right: 0;                   /* avoid weird spacing on wrap */
 }
-/* ------------------------------------------------------------------------------ */
+
+/* ===== Responsive ===== */
+
+/* Tablet: 2 columns */
+@media (max-width: 900px) {
+  .footer-content {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+
+/* Mobile: 1 column + better tap targets */
+@media (max-width: 520px) {
+  .site-footer {
+    padding: 28px 0 18px;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .footer-col a {
+    margin-bottom: 12px;
+    font-size: 15px;
+  }
+
+  .footer-bottom {
+    margin-top: 18px;
+    padding-top: 14px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+/* ---------------------------------------------------------------- */
+
