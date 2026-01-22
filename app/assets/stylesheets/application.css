@@ -16,10 +16,16 @@
   font-size: 15px !important;
   font-style: italic !important;
   line-height: 1.6;
-  color: #4084e4 !important;
-  max-width: 52ch;
+  color: #4084e48f !important;
+
   margin-bottom: 22px;
 }
+
+.link-text{
+  font-size: 15px !important;
+  font-style: italic !important;
+}
+
 
 .wip-note {
   margin-top: 12px;
@@ -31,7 +37,7 @@
   font-style: italic !important;
   font-size: 14px;       /* smaller */
   line-height: 1.4;
-  color: #6b7280;        /* soft gray */
+  color: #6b7280d0;        /* soft gray */
 }
 
 
