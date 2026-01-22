@@ -16,6 +16,7 @@ class TripsController < ApplicationController
 
   #   render({ :template => "trip_templates/ai_agenda" })
   # end
+  
 
   def index
     matching_trips = current_user.trips

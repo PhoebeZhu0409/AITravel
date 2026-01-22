@@ -28,6 +28,7 @@
 
 .wip-note p {
   margin: 4px 0;          /* keeps them close together */
+  font-style: italic !important;
   font-size: 14px;       /* smaller */
   line-height: 1.4;
   color: #6b7280;        /* soft gray */
@@ -476,4 +477,3 @@ tr.done td { background: #f3f4f6; opacity: 0.6; }
   }
 }
 /* ---------------------------------------------------------------- */
-
