@@ -231,3 +231,25 @@
         document.getElementById("trip-name-view").style.display = "flex";
       });
     </script>
+
+
+
+<!--JAVA SCRIPT-->
+<script>
+  // Must exist BEFORE the Google script loads
+  window.googleMapsLoaded = function () {
+    initAutocomplete();
+    initItineraryMaps();
+    initPlaceCards();
+  };
+
+  // If you use Turbo (Rails 7), re-run on page navigation
+  document.addEventListener("turbo:load", () => {
+    if (window.google && google.maps) window.googleMapsLoaded();
+  });
+</script>
+
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GOOGLE_MAPS_API_KEY'] %>&libraries=places&callback=googleMapsLoaded"
+  async defer>
+</script>

@@ -126,14 +126,8 @@
 
 <!-------------------------------- Google API Functions -------------------------------->
 
-<script
-  src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GOOGLE_MAPS_API_KEY'] %>&libraries=places&callback=googleMapsLoaded"
-  async
-  defer
-  onerror="googleMapsLoadFailed()">
-</script>
 
-  <script>
+<!--  <script>
     function initAutocomplete() {
       new google.maps.places.Autocomplete(
         document.getElementById('trip_location_box'),
@@ -143,12 +137,13 @@
       );
     }
   </script>
+-->
 
-  <script
-      src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GOOGLE_MAPS_API_KEY'] %>&libraries=places&callback=initAutocomplete"
+<!--  <script
+      src="https://maps.googleapis.com/maps/api/js?key=<%#= ENV['GOOGLE_MAPS_API_KEY'] %>&libraries=places&callback=initAutocomplete"
       async
       defer>
-  </script>
+  </script>-->
 
 <script>
   // This is the function Google calls after Maps JS finishes loading
@@ -176,37 +171,55 @@
     });
   }
 
-  function initItineraryMaps() {
-    document.querySelectorAll('.day-map').forEach(function(el) {
-      const locations = JSON.parse(el.dataset.locations || '[]');
-      if (!locations.length) return;
+function initItineraryMaps() {
+  document.querySelectorAll('.day-map').forEach((el) => {
+    const locations = JSON.parse(el.dataset.locations || "[]");
+    if (!locations.length) return;
 
-      const map = new google.maps.Map(el, {
-        zoom: 13,
-        center: { lat: 48.8566, lng: 2.3522 }
-      });
-
-      const geocoder = new google.maps.Geocoder();
-      const bounds = new google.maps.LatLngBounds();
-
-      locations.forEach(function(loc) {
-        geocoder.geocode({ address: loc.address }, function(results, status) {
-          if (status === "OK" && results[0]) {
-            const position = results[0].geometry.location;
-
-            new google.maps.Marker({
-              map: map,
-              position: position,
-              title: loc.label || loc.address
-            });
-
-            bounds.extend(position);
-            map.fitBounds(bounds);
-          }
-        });
-      });
+    const map = new google.maps.Map(el, {
+      zoom: 13,
+      center: { lat: 0, lng: 0 }
     });
-  }
+
+    const bounds = new google.maps.LatLngBounds();
+
+    // PlacesService must be attached to a map or div
+    const service = new google.maps.places.PlacesService(map);
+
+    locations.forEach((loc) => {
+      service.findPlaceFromQuery(
+        {
+          query: loc.address,
+          fields: ["name", "geometry"]
+        },
+        (results, status) => {
+          if (
+            status !== google.maps.places.PlacesServiceStatus.OK ||
+            !results ||
+            !results[0] ||
+            !results[0].geometry
+          ) {
+            console.warn("Place lookup failed:", loc.address);
+            return;
+          }
+
+          const place = results[0];
+          const position = place.geometry.location;
+
+          new google.maps.Marker({
+            map: map,
+            position: position,
+            title: place.name || loc.label
+          });
+
+          bounds.extend(position);
+          map.fitBounds(bounds);
+        }
+      );
+    });
+  });
+}
+
 
 
 
@@ -368,6 +381,33 @@
   });
 </script>
 <!---------------------------------------------------->
+
+
+
+<!-----------  more google API Stuff: auto-fill ----------------------------------------->
+<script>
+  // Global callback for Google script
+  window.googleMapsLoaded = function () {
+    // only run if the input exists on THIS page
+    if (document.getElementById("trip_location_box")) initAutocomplete();
+
+    // only run if agenda maps exist on THIS page
+    if (document.querySelector(".day-map")) initItineraryMaps();
+
+    // only run if place cards exist on THIS page
+    if (document.querySelector(".place-cell")) initPlaceCards();
+  };
+
+  // Works with Turbo navigation too
+  document.addEventListener("turbo:load", () => {
+    if (window.google && google.maps) window.googleMapsLoaded();
+  });
+</script>
+
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GOOGLE_MAPS_API_KEY'] %>&libraries=places&callback=googleMapsLoaded"
+  async defer>
+</script>
 
   </body>
 </html>

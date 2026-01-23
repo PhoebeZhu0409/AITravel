@@ -68,8 +68,8 @@
 }
 
 .list-item img {
-  width: 330px;
-  height: 190px;
+  width: 360px;
+  height: 200px;
 }
 
 /* ======================================= */
@@ -342,8 +342,10 @@ article.agenda-day.active {
 
 /* --------------- table column witdth --------------- */
 .agenda-table {
-  table-layout: fixed;   /* allows proportional control */
-  width: 100%;
+  table-layout: auto; 
+  /* table-layout: fixed;    */
+  /* allows proportional control */
+  /* width: 100%; */
 }
 
 .agenda-table th:nth-child(1),
