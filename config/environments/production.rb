@@ -81,16 +81,18 @@ Rails.application.configure do
 
   config.action_mailer.delivery_method = :smtp
 
-  config.action_mailer.smtp_settings = {
-    address: ENV.fetch("SMTP_ADDRESS", "smtp.postmarkapp.com"),
-    port: ENV.fetch("SMTP_PORT", 587).to_i,
-    user_name: ENV.fetch("SMTP_USERNAME", "postmark"),   # usually "postmark"
-    password: ENV.fetch("SMTP_PASSWORD"),    # Postmark SERVER API token (for SMTP)
-    user_name: smtp_username,
-    password: smtp_password,
-    authentication: :plain,
-    enable_starttls_auto: true
-  }
+  # .........temperarily comment the below out .........
+  # config.action_mailer.smtp_settings = {
+  #   address: ENV.fetch("SMTP_ADDRESS", "smtp.postmarkapp.com"),
+  #   port: ENV.fetch("SMTP_PORT", 587).to_i,
+  #   user_name: ENV.fetch("SMTP_USERNAME", "postmark"),   # usually "postmark"
+  #   password: ENV.fetch("SMTP_PASSWORD"),    # Postmark SERVER API token (for SMTP)
+  #   user_name: smtp_username,
+  #   password: smtp_password,
+  #   authentication: :plain,
+  #   enable_starttls_auto: true
+  # }
+# .........temperarily comment the above out .........
 
   config.action_mailer.default_options = {
     from: ENV.fetch("MAIL_FROM") # e.g. "Phoebe @ Nalu <hello@nahloo.com>"
