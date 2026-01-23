@@ -81,11 +81,15 @@ Rails.application.configure do
 
   config.action_mailer.delivery_method = :smtp
 
+  smtp_username = "postmark"
+  smtp_password = "2fdf6eb1-4121-44aa-a693-07011150864c"
   config.action_mailer.smtp_settings = {
     address: ENV.fetch("SMTP_ADDRESS", "smtp.postmarkapp.com"),
     port: ENV.fetch("SMTP_PORT", 587).to_i,
-    user_name: ENV.fetch("SMTP_USERNAME"),   # usually "postmark"
-    password: ENV.fetch("SMTP_PASSWORD"),    # Postmark SERVER API token (for SMTP)
+    # user_name: ENV.fetch("SMTP_USERNAME"),   # usually "postmark"
+    # password: ENV.fetch("SMTP_PASSWORD"),    # Postmark SERVER API token (for SMTP)
+    user_name: smtp_username,
+    password: smtp_password,
     authentication: :plain,
     enable_starttls_auto: true
   }
