@@ -345,6 +345,11 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.9)
+    postmark (1.25.1)
+      json
+    postmark-rails (0.22.1)
+      actionmailer (>= 3.0.0)
+      postmark (>= 1.21.3, < 2.0)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
@@ -632,6 +637,7 @@ DEPENDENCIES
   letter_opener_web
   pagy
   pg (~> 1.1)
+  postmark-rails
   propshaft
   pry-rails
   puma (>= 5.0)
