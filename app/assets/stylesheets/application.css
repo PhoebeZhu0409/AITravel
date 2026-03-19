@@ -43,7 +43,10 @@
 }
 
 .sign-in-brand {
-  margin: 0;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 320px;
+  text-align: left;
   font-size: clamp(2.75rem, 10vw, 3.75rem);
   font-weight: 600;
   letter-spacing: -0.045em;
@@ -52,16 +55,72 @@
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+.sign-in-brand-word {
+  letter-spacing: -0.045em;
+}
+
+/* Smaller “.AI” on same baseline as “Nalu” */
+.sign-in-brand-suffix {
+  font-size: 0.38em;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #1f2937;
+  margin-left: 0.06em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+
+.sign-in-card {
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  padding: 1.35rem 1.35rem 1.25rem;
+  box-sizing: border-box;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+}
+
 .sign-in-title {
-  margin: 0.35rem 0 1.75rem;
+  margin: 0 0 0.85rem;
   font-size: 1.0625rem;
   font-weight: 500;
   color: #374151;
+  text-align: center;
+}
+
+.sign-in-lead {
+  margin: 0 auto 1.15rem;
+  max-width: 320px;
+  width: 100%;
+  padding: 0 0.25rem;
+  box-sizing: border-box;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.45;
+  color: #6b7280;
+  text-align: left;
+}
+
+.sign-in-tutorial {
+  margin: 1.35rem 0 1.25rem;
+  text-align: center;
+}
+
+.sign-in-tutorial-link {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #6b7487;
+  text-decoration: none;
+}
+
+.sign-in-tutorial-link:hover {
+  text-decoration: underline;
 }
 
 .sign-in-form-block {
   width: 100%;
-  max-width: 320px;
+  max-width: 100%;
   text-align: left;
 }
 
@@ -128,6 +187,11 @@
 
 .sign-in-submit:hover {
   background: #262626 !important;
+}
+
+.sign-in-submit:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 3px;
 }
 
 .sign-in-links {
