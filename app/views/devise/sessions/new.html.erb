@@ -1,54 +1,33 @@
+<div class="sign-in-page">
+  <h1 class="sign-in-brand">Nalu</h1>
+  <p class="sign-in-title">Sign in</p>
 
-<div class="login-layout">
-  <div class="login-info">
-    <h3> Hi, I'm Nalu :)</h3>
-    <p class="link-text"> I am your personal AI trip planner! 🤖📝 </p>
-    
-      <p class="list-item">
-        <%= image_tag "GOWITHME.png", alt: "Go with me" %>
-      </p>
-      <p class="link-text">📹 <a href="https://app.screencast.com/Sp4BIB4jNqbWG">How to use</a><p>
-    <div>
-
-    <br>
-    <div class="wip-note">
-      <p>"As you can see...👀 Nalu is working on herself...🧘‍♀️ but she’s ready to help you plan your next adventure today💪 :)"</p>
-      <br>
-      <p> Optimized for desktop. <br>Our mobile app is in the works✨ </p>
-    </div>
-  
-      📧: <a class="link-text" href="mailto:phoebezhu1611@gmail.com"> Write to Phoebe?  (feedback/wishlist) </a>
-  
-    </div>
-
-</div>
-
-  <div class="login-form">
-    <h2>Log in</h2>
-    <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name), html: { autocomplete: "off" }) do |f| %>
-      <div class="form-group">
-        <%= f.input :email,
-                    required: false,
-                    autofocus: true,
-                    input_html: { autocomplete: "off", autocapitalize: "none", spellcheck: "false" } %>
-        <%= f.input :password,
-                    required: false,
-                    input_html: { autocomplete: "new-password" } %>
-        <%= f.input :remember_me, as: :boolean if devise_mapping.rememberable? %>
-      </div>
-
-      <div class="form-actions">
-        <%= f.button :submit, "Log in" %>
+  <div class="sign-in-form-block">
+    <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name), html: { autocomplete: "off", class: "sign-in-form" }) do |f| %>
+      <%= f.input :email,
+                  required: false,
+                  autofocus: true,
+                  label: "Email",
+                  input_html: { autocomplete: "off", autocapitalize: "none", spellcheck: "false", class: "sign-in-input" } %>
+      <%= f.input :password,
+                  required: false,
+                  label: "Password",
+                  input_html: { autocomplete: "new-password", class: "sign-in-input" } %>
+      <% if devise_mapping.rememberable? %>
+        <%= f.input :remember_me, as: :boolean, wrapper_html: { class: "sign-in-remember" } %>
+      <% end %>
+      <div class="sign-in-actions">
+        <%= f.button :submit, "Log in", class: "sign-in-submit" %>
       </div>
     <% end %>
-    <div class="wip-note"><p> "Password recovery is currently not working... please don't forget your password for now!" </p></div>
-    <%= render "devise/shared/links" %>
+
+    <div class="sign-in-links">
+      <%= render "devise/shared/links" %>
+    </div>
   </div>
+
+  <p class="sign-in-meaning">
+    &quot;Nalu&quot; (pronounced NAH-loo) is a Hawaiian word meaning &ldquo;wave&rdquo; and &ldquo;flow.&rdquo; 🌊<br>
+    It represents strength, movement, and connection — just like you, on the edge of your next great adventure.
+  </p>
 </div>
-
-<br>
-<br>
-
-  <div>
-  <p class="brand-note"> "Nalu" (pronounced NAH-loo) is a Hawaiian word meaning “wave” and “flow.”🌊 <br> It represents strength, movement, and connection — just like you, on the edge of your next great adventure.</p>
-  </div>

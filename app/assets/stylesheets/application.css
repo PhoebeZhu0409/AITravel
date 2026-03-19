@@ -11,20 +11,10 @@
 
 @import "custom-image.css";
 
-/* ======Log in page layout======== */
-.brand-note {
-  font-size: 15px !important;
-  font-style: italic !important;
-  line-height: 1.6;
-  color: #4084e48f !important;
-
-  margin-bottom: 22px;
-}
-
-.link-text{
+/* ====== Sign in page (minimal) ====== */
+.link-text {
   font-size: 15px !important;
 }
-
 
 .wip-note {
   margin-top: 12px;
@@ -32,44 +22,141 @@
 }
 
 .wip-note p {
-  margin: 4px 0;          /* keeps them close together */
+  margin: 4px 0;
   font-style: italic !important;
-  font-size: 14px;       /* smaller */
+  font-size: 14px;
   line-height: 1.4;
-  color: #6b7280d0;        /* soft gray */
+  color: #6b7280d0;
 }
 
-
-.login-layout {
-  display: grid;
-  grid-template-columns: minmax(240px, 1fr) minmax(320px, 1fr);
-  gap: 3rem;
-  align-items: start;
+.sign-in-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: min(640px, calc(100dvh - 14rem));
+  padding: 2rem 1.25rem 3rem;
+  margin: 0 auto;
+  max-width: 100%;
+  background: #fff;
+  text-align: center;
 }
 
-.login-info {
-  background: #dfe8f082;
-  padding: 1rem;
+.sign-in-brand {
+  margin: 0;
+  font-size: clamp(2.75rem, 10vw, 3.75rem);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  color: #0a0a0a;
+  line-height: 1.05;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.sign-in-title {
+  margin: 0.35rem 0 1.75rem;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.sign-in-form-block {
+  width: 100%;
+  max-width: 320px;
+  text-align: left;
+}
+
+.sign-in-form .input,
+.sign-in-form .field_with_errors,
+.sign-in-form .sign-in-remember {
+  margin-top: 0 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.sign-in-form label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1f2937;
+  margin-bottom: 0.15rem !important;
+}
+
+.sign-in-input {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   border-radius: 10px;
+  border: 1px solid #d1d5db;
+  padding: 0.55rem 0.75rem;
+  font-size: 1rem;
+  background: #fff;
+  margin-top: 0.15rem !important;
+  margin-bottom: 0 !important;
 }
 
-.login-form {
-  max-width: 420px;
+.sign-in-input:focus {
+  outline: none;
+  border-color: #9ca3af;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
 }
 
-@media (max-width: 900px) {
-  .login-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .login-form {
-    max-width: 100%;
-  }
+.sign-in-remember label {
+  font-weight: 400;
+  font-size: 0.875rem;
 }
 
-.list-item img {
-  width: 360px;
-  height: 200px;
+.sign-in-actions {
+  margin-top: 0.35rem !important;
+  margin-bottom: 0 !important;
+}
+
+.sign-in-submit {
+  width: 100%;
+  border-radius: 9999px;
+  background: #0a0a0a !important;
+  color: #fff !important;
+  border: none !important;
+  padding: 0.65rem 1.5rem !important;
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  cursor: pointer;
+  margin: 0 !important;
+}
+
+.sign-in-form input[type="checkbox"] {
+  margin: 0 0.4rem 0 0 !important;
+  vertical-align: middle;
+}
+
+.sign-in-submit:hover {
+  background: #262626 !important;
+}
+
+.sign-in-links {
+  margin-top: 1.75rem;
+  text-align: center;
+  line-height: 1.9;
+}
+
+.sign-in-links a {
+  color: #2563eb;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.sign-in-links a:hover {
+  text-decoration: underline;
+}
+
+.sign-in-meaning {
+  margin: 2.75rem auto 0;
+  max-width: 320px;
+  width: 100%;
+  padding: 0;
+  font-size: 0.6875rem;
+  line-height: 1.55;
+  color: #8ec5f0;
+  text-align: left;
+  font-style: normal;
 }
 
 /* ======================================= */
@@ -147,33 +234,136 @@
 }
 
 .collapsible-btn {
-  display: inline-block;
-  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 1.1rem;
   margin: 10px 0;
-  background-color: #c5ebf3;   /* blue button */
-  color: white;
-  border-radius: 8px;
+  background-color: #0a0a0a;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff;
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 1rem;
   border: none;
   user-select: none;
+  list-style: none;
+  text-align: left;
+  transition: background-color 0.15s ease;
 }
 
 .collapsible-btn:hover {
-  background-color: #89bcf3;
+  background-color: #262626;
 }
 
 .collapsible-btn:active {
-  background-color: #005bb5;
+  background-color: #1a1a1a;
 }
 
-/* Hide the default marker/arrow */
 .collapsible-btn::-webkit-details-marker {
   display: none;
 }
-.collapsible-btn {
-  width: 100%;
-  text-align: left;  /* or center */
+
+/* Hide native disclosure + Pico extras so only our chevron shows */
+details.collapsible > summary.collapsible-btn {
+  list-style-type: none !important;
+}
+
+details.collapsible > summary.collapsible-btn::marker,
+details.collapsible > summary.collapsible-btn::-webkit-details-marker {
+  display: none;
+  content: "";
+}
+
+details.collapsible > summary.collapsible-btn::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Single white SVG chevron: right when closed, down when open */
+.collapsible-btn::after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  margin-left: 0.75rem;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M4 1.5L8.5 6L4 10.5' stroke='%23ffffff' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  transform: rotate(0deg);
+  transition: transform 0.2s ease;
+}
+
+details.collapsible[open] > .collapsible-btn::after {
+  transform: rotate(90deg);
+}
+
+/* Pico/link styles on summary — force readable text on black bar */
+details.collapsible > summary.collapsible-btn,
+article details.collapsible > summary.collapsible-btn {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff;
+}
+
+/* Expanded “Tell me more?” panel — light grey (not white) */
+details.collapsible > .content {
+  background-color: #e8eaef;
+  padding: 1.15rem 1.15rem 1.35rem;
+  margin-top: 0;
+  border-radius: 0 0 12px 12px;
+  border: 1px solid #d5d9e0;
+  border-top: none;
+}
+
+details.collapsible[open] > summary.collapsible-btn {
+  border-radius: 12px 12px 0 0;
+  margin-bottom: 0;
+}
+
+details.collapsible > .content article {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0;
+  margin: 0;
+}
+
+details.collapsible > .content hr {
+  border-color: #cfd4dc;
+}
+
+/* “Anything else…” notes block — light blue */
+.trip-notes-section {
+  background: #e8f4fc !important;
+  border: 1px solid #c5e3f5 !important;
+  box-shadow: none !important;
+  border-radius: 12px;
+  padding: 1.15rem 1.25rem 1.25rem !important;
+  margin-top: 0.5rem;
+}
+
+.trip-notes-section label {
+  color: #1a4a66;
+}
+
+#trip_notes_box {
+  background-color: #dff2fc;
+  border: 1px solid #a8d8f0;
+  border-radius: 8px;
+  color: #1e293b;
+}
+
+#trip_notes_box::placeholder {
+  color: #5a7a8f;
+  opacity: 0.9;
+}
+
+#trip_notes_box:focus {
+  outline: none;
+  border-color: #6bb8e6;
+  box-shadow: 0 0 0 2px rgba(107, 184, 230, 0.25);
 }
 
 
@@ -218,7 +408,7 @@
   border-radius: 8px;
   width: 400px;
   z-index: 10;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .plan-brief:hover .plan-full {
@@ -266,7 +456,7 @@ article.agenda-day.active {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   transition: all 0.15s ease;
 }
 
@@ -374,15 +564,18 @@ article.agenda-day.active {
 }
 /* -----------------complete plan check----------------- */
 
-tr.done td { background: #f3f4f6; opacity: 0.6; }
+tr.done td {
+  background: #f3f4f6;
+  opacity: 0.6;
+}
 
 /* ------------------------- footer css --------------------------- */
 .site-footer {
-  padding: 48px 0 24px;              /* remove huge side padding */
+  padding: 48px 0 24px;
   background: #fff;
   color: #333;
   font-size: 14px;
-  border-top: 1px solid rgba(0,0,0,0.08);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 /* Add a centered inner container (you can apply this to the wrapper div if you have one) */
@@ -436,7 +629,7 @@ tr.done td { background: #f3f4f6; opacity: 0.6; }
 .footer-bottom {
   margin-top: 26px;
   padding-top: 18px;
-  border-top: 1px solid rgba(0,0,0,0.08);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
