@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   devise_for :users
 
+  # Public pages (no sign-in)
+  get("/legal-notices", { :controller => "pages", :action => "legal_notices" })
+  get("/terms-of-use", { :controller => "pages", :action => "terms_of_use" })
+  get("/privacy-policy", { :controller => "pages", :action => "privacy_policy", :as => :privacy_policy })
   # Routes for the Trip resource:
 
   # CREATE

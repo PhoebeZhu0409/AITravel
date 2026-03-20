@@ -62,9 +62,9 @@
 /* Smaller “.AI” on same baseline as “Nalu” */
 .sign-in-brand-suffix {
   font-size: 0.38em;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  color: #1f2937;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: #2b2d2f;
   margin-left: 0.06em;
   vertical-align: baseline;
   white-space: nowrap;
@@ -221,6 +221,71 @@
   color: #8ec5f0;
   text-align: left;
   font-style: normal;
+}
+
+/* ----- Legal / policy pages (privacy, terms, etc.) ----- */
+.legal-page {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 0 0 2.5rem;
+  text-align: left;
+  color: #1f2937;
+  line-height: 1.65;
+}
+
+.legal-page__header {
+  margin-bottom: 1.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.legal-page__header h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.125rem);
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.legal-page__meta {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.legal-page__section {
+  margin-bottom: 1.75rem;
+}
+
+.legal-page__section h2 {
+  margin: 0 0 0.65rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.01em;
+}
+
+.legal-page__section p {
+  margin: 0 0 0.85rem;
+  font-size: 0.9375rem;
+}
+
+.legal-page__section p:last-child {
+  margin-bottom: 0;
+}
+
+.legal-page__section ul {
+  margin: 0 0 0.85rem;
+  padding-left: 1.25rem;
+  font-size: 0.9375rem;
+}
+
+.legal-page__section li {
+  margin-bottom: 0.4rem;
+}
+
+.legal-page__section li:last-child {
+  margin-bottom: 0;
 }
 
 /* ======================================= */
