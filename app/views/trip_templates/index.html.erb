@@ -1,7 +1,6 @@
 <nav aria-label="breadcrumb">
   <ul>
     <li><a href="/">Home</a></li>
-    
   </ul>
 </nav>
 <hr>
@@ -11,30 +10,21 @@
     src="https://loremflickr.com/1200/400/OCEAN"
     style="width: 100%; height: auto; border-radius: 8px;"
   >
+</article>
 
-    <header style="margin-top: 15px;">
-      <h2>My Future Trips</h2>
-    </header>
+<div class="home-tabs" role="tablist" aria-label="Plan and browse trips">
+  <button type="button" class="home-tab" role="tab" id="tab-plan" aria-selected="true" aria-controls="home-panel-plan" data-tab-target="plan">
+    Plan A New Trip
+  </button>
+  <button type="button" class="home-tab" role="tab" id="tab-future" aria-selected="false" aria-controls="home-panel-future" data-tab-target="future">
+    My Future Trips
+  </button>
+  <button type="button" class="home-tab" role="tab" id="tab-past" aria-selected="false" aria-controls="home-panel-past" data-tab-target="past">
+    Past Trips
+  </button>
+</div>
 
-    <% active_trips = @list_of_trips.where(trip_start_date: (Date.today...)).order(:trip_start_date) %>
-
-    <ul id="future-trips-list">
-      <% active_trips.each_with_index do |a_trip, idx| %>
-        <li class="<%= 'extra-trip' if idx >= 3 %>">
-          <a href="/trips/<%= a_trip.id %>">
-            📍 <%= a_trip.trip_name %>
-          </a>
-        </li>
-      <% end %>
-    </ul>
-
-    <% if active_trips.size > 3 %>
-      <button id="show-more-trips" class="btn-view-more">
-        View more
-      </button>
-    <% end %>
-  </article>
-
+<div id="home-panel-plan" class="home-tab-panel" role="tabpanel" aria-labelledby="tab-plan">
   <article>
     <header>
       <h2>
@@ -42,14 +32,18 @@
       </h2>
     </header>
 
-    <form action="/insert_trip" method="post">
+    <% tf = (@trip_form || {}).stringify_keys %>
+    <% todos = Array(tf["query_todo"]).flatten.compact.map(&:to_s) %>
+    <% optional_open = tf["query_budget"].present? || tf["query_people"].present? || tf["query_live_area"].present? || todos.any? %>
+
+    <form id="plan-trip-form" action="/insert_trip" method="post">
     <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
       <div>
         <label for="trip_name_box">
           Trip name
         </label>
 
-        <input type="text" id="trip_name_box" name="query_trip_name">
+        <input type="text" id="trip_name_box" name="query_trip_name" value="<%= tf["query_trip_name"] %>">
       </div>
 
       <div>
@@ -58,7 +52,8 @@
          id="trip_location_box"
          name="query_trip_location"
          placeholder="Search a city..."
-         autocomplete="off">
+         autocomplete="off"
+         value="<%= tf["query_trip_location"] %>">
       </div>
 
       <div>
@@ -66,7 +61,7 @@
           How many days
         </label>
 
-        <input type="number" id="trip_duration_days_box" name="query_trip_duration_days" step="1">
+        <input type="number" id="trip_duration_days_box" name="query_trip_duration_days" step="1" value="<%= tf["query_trip_duration_days"] %>">
       </div>
 
       <div>
@@ -74,11 +69,11 @@
           Trip starts
         </label>
 
-        <input type="date" id="trip_start_date_box" name="query_trip_start_date">
+        <input type="date" id="trip_start_date_box" name="query_trip_start_date" value="<%= tf["query_trip_start_date"] %>">
       </div>
 
       <!-- Collapsible section -->
-      <details class="collapsible">
+      <details class="collapsible"<%= " open".html_safe if optional_open %>>
         <summary class="collapsible-btn">Tell me more? (optional)</summary>
 
         <div class="content">
@@ -86,38 +81,44 @@
           <article>
             <div>
               <label>You want my trip to be...</label>
-              <label><input type="radio" name="query_budget" value="luxury"> Luxury</label>
-              <label><input type="radio" name="query_budget" value="budget friendly"> Budget friendly  </label>
-              <label><input type="radio" name="query_budget" value="A mix of both luxury and budget friendly"> A mix of both</label>
+              <label><input type="radio" name="query_budget" value="luxury"<%= " checked".html_safe if tf["query_budget"].to_s == "luxury" %>> Luxury</label>
+              <label><input type="radio" name="query_budget" value="budget friendly"<%= " checked".html_safe if tf["query_budget"].to_s == "budget friendly" %>> Budget friendly  </label>
+              <label><input type="radio" name="query_budget" value="A mix of both luxury and budget friendly"<%= " checked".html_safe if tf["query_budget"].to_s == "A mix of both luxury and budget friendly" %>> A mix of both</label>
             </div>
             <hr>
             <div>
               <label>You are...</label>
-              <label><input type="radio" name="query_people" value="solo traveling"> Solo traveling</label>
-              <label><input type="radio" name="query_people" value="traveling with my partner">Traveling with my partner</label>
-              <label><input type="radio" name="query_people" value="traveling with my friends">Traveling with my friends</label>
-              <label><input type="radio" name="query_people" value="traveling with my family">Traveling with my family</label>
+              <label><input type="radio" name="query_people" value="solo traveling"<%= " checked".html_safe if tf["query_people"].to_s == "solo traveling" %>> Solo traveling</label>
+              <label><input type="radio" name="query_people" value="traveling with my partner"<%= " checked".html_safe if tf["query_people"].to_s == "traveling with my partner" %>>Traveling with my partner</label>
+              <label><input type="radio" name="query_people" value="traveling with my friends"<%= " checked".html_safe if tf["query_people"].to_s == "traveling with my friends" %>>Traveling with my friends</label>
+              <label><input type="radio" name="query_people" value="traveling with my family"<%= " checked".html_safe if tf["query_people"].to_s == "traveling with my family" %>>Traveling with my family</label>
             </div>
             <hr>
             <div>
               <label>Your trip should include...</label>
               <div>
-                <label><input type="checkbox" name="query_todo[]" value="Local's favorite resturants or spots, or things to do that involves local culture ">Local's favorite food or spot, culture </label>
+                <% v = "Local's favorite resturants or spots, or things to do that involves local culture " %>
+                <label><input type="checkbox" name="query_todo[]" value="<%= v %>"<%= " checked".html_safe if todos.include?(v) %>>Local's favorite food or spot, culture </label>
               </div>
               <div>
-                <label><input type="checkbox" name="query_todo[]" value="Museums, art, and history">Museums, art, history</label>
+                <% v = "Museums, art, and history" %>
+                <label><input type="checkbox" name="query_todo[]" value="<%= v %>"<%= " checked".html_safe if todos.include?(v) %>>Museums, art, history</label>
               </div>
               <div>
-                <label><input type="checkbox" name="query_todo[]" value="Outdoors & nature">Outdoors, nature</label>
+                <% v = "Outdoors & nature" %>
+                <label><input type="checkbox" name="query_todo[]" value="<%= v %>"<%= " checked".html_safe if todos.include?(v) %>>Outdoors, nature</label>
               </div>
               <div>
-                <label><input type="checkbox" name="query_todo[]" value="Nightlife & bars">Nightlife, bars</label>
+                <% v = "Nightlife & bars" %>
+                <label><input type="checkbox" name="query_todo[]" value="<%= v %>"<%= " checked".html_safe if todos.include?(v) %>>Nightlife, bars</label>
               </div>
               <div>
-                <label><input type="checkbox" name="query_todo[]" value="Shopping">Shopping</label>
+                <% v = "Shopping" %>
+                <label><input type="checkbox" name="query_todo[]" value="<%= v %>"<%= " checked".html_safe if todos.include?(v) %>>Shopping</label>
               </div>
               <div>
-                <label><input type="checkbox" name="query_todo[]" value="High-end restaurants and luxury experience">High-end restaurants and luxury experience </label>
+                <% v = "High-end restaurants and luxury experience" %>
+                <label><input type="checkbox" name="query_todo[]" value="<%= v %>"<%= " checked".html_safe if todos.include?(v) %>>High-end restaurants and luxury experience </label>
               </div>
             </div>
           </article>
@@ -128,7 +129,7 @@
                 Which area do you live? 
               </label>
 
-              <input type="text" id="live_area" name="query_live_area">
+              <input type="text" id="live_area" name="query_live_area" value="<%= tf["query_live_area"] %>">
             </div>
 
           </article>
@@ -149,7 +150,7 @@
             I arrive/leave at...
             TEXT
           %>
-          <textarea id="trip_notes_box" name="query_trip_notes" rows="4" placeholder="<%= placeholder_text %>"></textarea>
+          <textarea id="trip_notes_box" name="query_trip_notes" rows="4" placeholder="<%= placeholder_text %>"><%= tf["query_trip_notes"] %></textarea>
         </div>
 
       </article>
@@ -158,11 +159,77 @@
         Build agenda for my trip!
       </button>
     </form>
+
+    <div
+      id="agenda-loading-overlay"
+      class="agenda-loading-overlay"
+      hidden
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+      aria-hidden="true"
+    >
+      <div class="agenda-loading-minimal">
+        <div class="agenda-wave-rail" aria-hidden="true">
+          <svg
+            class="agenda-waves-svg"
+            viewBox="0 0 400 56"
+            preserveAspectRatio="xMidYMid meet"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              class="agenda-wave-line agenda-wave-line--1"
+              d="M0,18 Q25,8 50,18 T100,18 T150,18 T200,18 T250,18 T300,18 T350,18 T400,18"
+              fill="none"
+            />
+            <path
+              class="agenda-wave-line agenda-wave-line--2"
+              d="M0,30 Q30,14 60,30 T120,30 T180,30 T240,30 T300,30 T360,30 T400,30"
+              fill="none"
+            />
+            <path
+              class="agenda-wave-line agenda-wave-line--3"
+              d="M0,42 Q22,52 44,42 T88,42 T132,42 T176,42 T220,42 T264,42 T308,42 T352,42 T400,42"
+              fill="none"
+            />
+          </svg>
+          <div class="agenda-surfer-mover">
+            <span class="agenda-surfer-bob"><span class="agenda-surfer-emoji">🏄</span></span>
+          </div>
+        </div>
+        <p class="agenda-loading-message">Agenda is being customized...</p>
+      </div>
+    </div>
   </article>
+</div>
 
-  <hr>
+<div id="home-panel-future" class="home-tab-panel" role="tabpanel" aria-labelledby="tab-future" hidden>
+  <article>
+    <header style="margin-top: 15px;">
+      <h2>My Future Trips</h2>
+    </header>
 
+    <% active_trips = @list_of_trips.where(trip_start_date: (Date.today...)).order(:trip_start_date) %>
 
+    <ul id="future-trips-list">
+      <% active_trips.each_with_index do |a_trip, idx| %>
+        <li class="<%= 'extra-trip' if idx >= 5 %>">
+          <a href="/trips/<%= a_trip.id %>">
+            📍 <%= a_trip.trip_name %>
+          </a>
+        </li>
+      <% end %>
+    </ul>
+
+    <% if active_trips.size > 5 %>
+      <button id="show-more-trips" class="btn-view-more">
+        View more
+      </button>
+    <% end %>
+  </article>
+</div>
+
+<div id="home-panel-past" class="home-tab-panel" role="tabpanel" aria-labelledby="tab-past" hidden>
   <article>
     <header style="margin-top: 15px;">
       <h2>Past Trips</h2>
@@ -186,3 +253,59 @@
       </button>
     <% end %>
   </article>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var tabs = document.querySelectorAll(".home-tab");
+    var panels = {
+      plan: document.getElementById("home-panel-plan"),
+      future: document.getElementById("home-panel-future"),
+      past: document.getElementById("home-panel-past")
+    };
+    if (!tabs.length) return;
+
+    function activate(target) {
+      tabs.forEach(function (tab) {
+        var isOn = tab.getAttribute("data-tab-target") === target;
+        tab.setAttribute("aria-selected", isOn ? "true" : "false");
+        tab.classList.toggle("home-tab--active", isOn);
+      });
+      Object.keys(panels).forEach(function (key) {
+        var panel = panels[key];
+        if (!panel) return;
+        if (key === target) {
+          panel.removeAttribute("hidden");
+        } else {
+          panel.setAttribute("hidden", "");
+        }
+      });
+    }
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        activate(tab.getAttribute("data-tab-target"));
+      });
+    });
+
+    activate("plan");
+
+    var planForm = document.getElementById("plan-trip-form");
+    var agendaOverlay = document.getElementById("agenda-loading-overlay");
+    if (planForm && agendaOverlay) {
+      function showAgendaLoading() {
+        agendaOverlay.removeAttribute("hidden");
+        agendaOverlay.setAttribute("aria-hidden", "false");
+      }
+      planForm.addEventListener("submit", function () {
+        showAgendaLoading();
+      });
+      document.addEventListener("turbo:submit-start", function (ev) {
+        var el = ev.detail && ev.detail.formSubmission && ev.detail.formSubmission.formElement;
+        if (el && el.id === "plan-trip-form") {
+          showAgendaLoading();
+        }
+      });
+    }
+  });
+</script>

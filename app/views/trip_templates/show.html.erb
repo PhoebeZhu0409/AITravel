@@ -9,13 +9,15 @@
 <article>
   <div class="trip-hero">
     <% location = @the_trip.trip_location %>
-    <% location = location.gsub(", ", "_")%>
+    <% location_tag = location.gsub(", ", "_") %>
+    <% hero_default_path = image_path("trip_hero_default.png") %>
 
     <img
-    src="https://loremflickr.com/1200/400/<%=location%>"
-    alt="<%= location %>"
-    style="width: 9000px; height: auto; border-radius: 8px;"
-  >
+      src="https://loremflickr.com/1200/400/<%= ERB::Util.url_encode(location_tag) %>"
+      alt="<%= location %>"
+      style="width: 100%; max-width: 100%; height: auto; border-radius: 8px; display: block;"
+      onerror="this.onerror=null;this.src='<%= hero_default_path %>';"
+    >
 
       <!-----------------------------------------Botton:   Update trip name. ------------------------------------------>
       <!------------ VIEW MODE ------------>
@@ -155,20 +157,28 @@
                   rel: "noopener" %>
 <!--                    </td>-->
 <!---------------------------------------------------->
-                    <td class="place-cell"
-                        data-location="<%= a_day.plan_location %>">
+                    <td class="place-cell<%= " place-cell--cached" if a_day.google_place_cached? %>"
+                        <% unless a_day.google_place_cached? %>data-location="<%= a_day.plan_location %>"<% end %>>
                       <a
                         href="https://www.google.com/maps/search/?api=1&query=<%= ERB::Util.url_encode(a_day.plan_location) %>"
                         target="_blank"
                         rel="noopener"
                         class="place-card-link">
                         <div class="place-card">
-                          <div class="place-photo"></div>
+                          <div class="place-photo<%= " place-photo--failed" if a_day.google_place_cached? && !a_day.place_thumbnail.attached? %>">
+                            <% if a_day.place_thumbnail.attached? %>
+                              <%= image_tag a_day.place_thumbnail, alt: (a_day.place_display_name.presence || a_day.plan_location) %>
+                            <% end %>
+                          </div>
                           <div class="place-info">
                             <div class="place-name">
-                              <%= a_day.plan_location.split(",").first %>
+                              <%= a_day.place_display_name.presence || a_day.plan_location.split(",").first %>
                             </div>
-                            <div class="place-rating"></div>
+                            <div class="place-rating">
+                              <% if a_day.place_rating.present? %>
+                                <%= number_with_precision(a_day.place_rating, precision: 1) %> ★ (<%= a_day.place_user_ratings_total.to_i %>)
+                              <% end %>
+                            </div>
                           </div>
                         </div>
                       </a>
@@ -196,7 +206,12 @@
       id="map-day-<%= i + 1 %>"
       class="day-map"
       data-locations="<%= h(this_day.map { |p|
-          { label: p.plan_location.split(",").first, address: p.plan_location }
+          row = { label: p.plan_location.split(",").first, address: p.plan_location }
+          if p.place_latitude.present? && p.place_longitude.present?
+            row[:lat] = p.place_latitude.to_f
+            row[:lng] = p.place_longitude.to_f
+          end
+          row
         }.to_json) %>">
             </div>
             

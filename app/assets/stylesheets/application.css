@@ -495,7 +495,68 @@ details.collapsible > .content hr {
   box-shadow: 0 0 0 2px rgba(107, 184, 230, 0.25);
 }
 
+/* ----- Home index: trip section tabs ----- */
+.home-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 1.1rem 0 1.25rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
 
+/* Pill shape (short + full stadium ends); beat Pico button styles */
+.home-tab {
+  appearance: none;
+  margin: 0;
+  box-sizing: border-box;
+  border: 1px solid #d1d5db !important;
+  background: #eceef2 !important;
+  color: #374151 !important;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  padding: 0.3rem 1rem !important;
+  min-height: 0;
+  border-radius: 9999px !important;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1.2;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.home-tab:hover {
+  border-color: #b8bcc4 !important;
+  background: #e2e5eb !important;
+  color: #1f2937 !important;
+}
+
+.home-tab:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.home-tab[aria-selected="true"],
+.home-tab.home-tab--active {
+  background: #2563eb !important;
+  border-color: #1d4ed8 !important;
+  color: #fff !important;
+}
+
+.home-tab[aria-selected="true"]:hover,
+.home-tab.home-tab--active:hover {
+  background: #1d4ed8 !important;
+  border-color: #1e40af !important;
+  color: #fff !important;
+}
+
+.home-tab-panel[hidden] {
+  display: none !important;
+}
+
+.home-tab-panel {
+  margin-bottom: 0.5rem;
+}
 
 .place-card {
   display: flex;
@@ -805,4 +866,163 @@ tr.done td {
     align-items: flex-start;
   }
 }
+
+/* ===== Agenda build loading overlay (Plan a trip → OpenAI) ===== */
+.agenda-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.agenda-loading-overlay[hidden] {
+  display: none !important;
+}
+
+/* No card — waves + surfer only, centered on dimmed backdrop (~30% larger rail) */
+.agenda-loading-minimal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.625rem;
+  width: min(546px, 94vw);
+  text-align: center;
+}
+
+.agenda-wave-rail {
+  position: relative;
+  width: 100%;
+  height: 83px;
+}
+
+.agenda-waves-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.agenda-wave-line {
+  stroke: rgba(255, 255, 255, 0.92);
+  stroke-width: 2.3;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  animation: agenda-wave-drift 3.2s linear infinite;
+}
+
+.agenda-wave-line--1 {
+  stroke-opacity: 0.55;
+  animation-duration: 2.8s;
+}
+
+.agenda-wave-line--2 {
+  stroke-opacity: 0.88;
+  animation-duration: 3.4s;
+  animation-delay: -0.4s;
+}
+
+.agenda-wave-line--3 {
+  stroke-opacity: 0.45;
+  animation-duration: 3s;
+  animation-delay: -0.8s;
+}
+
+@keyframes agenda-wave-drift {
+  0% {
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    stroke-dashoffset: -62;
+  }
+}
+
+.agenda-wave-line--1,
+.agenda-wave-line--2,
+.agenda-wave-line--3 {
+  stroke-dasharray: 16 11;
+}
+
+.agenda-surfer-mover {
+  position: absolute;
+  left: 0;
+  bottom: 38%;
+  margin-left: 0;
+  animation: agenda-surf-cross 3.2s linear infinite;
+  pointer-events: none;
+}
+
+.agenda-surfer-bob {
+  display: inline-block;
+  transform: translateX(-50%);
+  animation: agenda-surf-bob 0.75s ease-in-out infinite;
+}
+
+.agenda-surfer-emoji {
+  display: block;
+  font-size: clamp(1.75rem, 5.85vw, 2.15rem);
+  line-height: 1;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.4));
+}
+
+@keyframes agenda-surf-cross {
+  0% {
+    left: 6%;
+  }
+
+  100% {
+    left: 94%;
+  }
+}
+
+@keyframes agenda-surf-bob {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(3px) rotate(-8deg);
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(-13px) rotate(6deg);
+  }
+}
+
+.agenda-loading-message {
+  margin: 0;
+  max-width: 36ch;
+  padding: 0;
+  border-radius: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #0f172a;
+  line-height: 1.45;
+  background: none;
+  box-shadow: none;
+  /* Light halo so dark type stays readable on blurred / mixed backdrop */
+  text-shadow:
+    0 0 10px rgba(255, 255, 255, 0.95),
+    0 0 3px rgba(255, 255, 255, 0.9),
+    0 1px 2px rgba(255, 255, 255, 0.85);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agenda-wave-line,
+  .agenda-surfer-mover,
+  .agenda-surfer-bob {
+    animation: none !important;
+  }
+
+  .agenda-surfer-mover {
+    left: 50%;
+  }
+}
+
 /* ---------------------------------------------------------------- */

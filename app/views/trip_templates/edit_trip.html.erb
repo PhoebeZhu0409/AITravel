@@ -7,7 +7,9 @@
 </nav>
 <hr>
 
-
+<% pf = @rebuild_prefill || ::RebuildFormPrefill.from_trip_notes(nil) %>
+<% todos_saved = Array(pf[:todos]).map(&:to_s) %>
+<% optional_open = pf[:budget].present? || pf[:people].present? || pf[:live_area].present? || todos_saved.any? %>
 
 <article>
   <header>
@@ -16,7 +18,8 @@
     </h2>
   </header>
 
-  <form action="/modify_trip/<%= @the_trip.id %>"  method="post" >
+  <form id="rebuild-agenda-form" action="/modify_trip/<%= @the_trip.id %>" method="post">
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
     <div>
       <label for="trip_name_box">
         Trip name
@@ -48,11 +51,11 @@
         Trip starts
       </label>
 
-      <input type="date" id="trip_start_date_box" name="query_trip_start_date" value="<%= @the_trip.trip_start_date %>">
+      <input type="date" id="trip_start_date_box" name="query_trip_start_date" value="<%= @the_trip.trip_start_date&.strftime("%Y-%m-%d") %>">
     </div>
 
       <!-- Collapsible section -->
-      <details class="collapsible">
+      <details class="collapsible"<%= " open".html_safe if optional_open %>>
         <summary class="collapsible-btn">Tell me more?</summary>
 
         <div class="content">
@@ -60,38 +63,44 @@
           <article>
             <div>
               <label>You want my trip to be...</label>
-              <label><input type="radio" name="query_budget" value="luxury"> Luxury</label>
-              <label><input type="radio" name="query_budget" value="budget friendly"> Budget friendly  </label>
-              <label><input type="radio" name="query_budget" value="A mix of both luxury and budget friendly"> A mix of both</label>
+              <label><input type="radio" name="query_budget" value="luxury"<%= " checked".html_safe if pf[:budget].to_s == "luxury" %>> Luxury</label>
+              <label><input type="radio" name="query_budget" value="budget friendly"<%= " checked".html_safe if pf[:budget].to_s == "budget friendly" %>> Budget friendly  </label>
+              <label><input type="radio" name="query_budget" value="A mix of both luxury and budget friendly"<%= " checked".html_safe if pf[:budget].to_s == "A mix of both luxury and budget friendly" %>> A mix of both</label>
             </div>
             <hr>
             <div>
               <label>You are...</label>
-              <label><input type="radio" name="query_people" value="solo traveling"> Solo traveling</label>
-              <label><input type="radio" name="query_people" value="traveling with my partner">Traveling with my partner</label>
-              <label><input type="radio" name="query_people" value="traveling with my friends">Traveling with my friends</label>
-              <label><input type="radio" name="query_people" value="traveling with my family">Traveling with my family</label>
+              <label><input type="radio" name="query_people" value="solo traveling"<%= " checked".html_safe if pf[:people].to_s == "solo traveling" %>> Solo traveling</label>
+              <label><input type="radio" name="query_people" value="traveling with my partner"<%= " checked".html_safe if pf[:people].to_s == "traveling with my partner" %>>Traveling with my partner</label>
+              <label><input type="radio" name="query_people" value="traveling with my friends"<%= " checked".html_safe if pf[:people].to_s == "traveling with my friends" %>>Traveling with my friends</label>
+              <label><input type="radio" name="query_people" value="traveling with my family"<%= " checked".html_safe if pf[:people].to_s == "traveling with my family" %>>Traveling with my family</label>
             </div>
             <hr>
             <div>
               <label>Your trip should include...</label>
               <div>
-                <label><input type="checkbox" name="query_todo[]" value="Local's favorite resturants or spots, or things to do that involves local culture ">Local's favorite food or spot, culture </label>
+                <% v = "Local's favorite resturants or spots, or things to do that involves local culture " %>
+                <label><input type="checkbox" name="query_todo[]" value="<%= v %>"<%= " checked".html_safe if todos_saved.include?(v) %>>Local's favorite food or spot, culture </label>
               </div>
               <div>
-                <label><input type="checkbox" name="query_todo[]" value="Museums, art, and history">Museums, art, history</label>
+                <% v = "Museums, art, and history" %>
+                <label><input type="checkbox" name="query_todo[]" value="<%= v %>"<%= " checked".html_safe if todos_saved.include?(v) %>>Museums, art, history</label>
               </div>
               <div>
-                <label><input type="checkbox" name="query_todo[]" value="Outdoors & nature">Outdoors, nature</label>
+                <% v = "Outdoors & nature" %>
+                <label><input type="checkbox" name="query_todo[]" value="<%= v %>"<%= " checked".html_safe if todos_saved.include?(v) %>>Outdoors, nature</label>
               </div>
               <div>
-                <label><input type="checkbox" name="query_todo[]" value="Nightlife & bars">Nightlife, bars</label>
+                <% v = "Nightlife & bars" %>
+                <label><input type="checkbox" name="query_todo[]" value="<%= v %>"<%= " checked".html_safe if todos_saved.include?(v) %>>Nightlife, bars</label>
               </div>
               <div>
-                <label><input type="checkbox" name="query_todo[]" value="Shopping">Shopping</label>
+                <% v = "Shopping" %>
+                <label><input type="checkbox" name="query_todo[]" value="<%= v %>"<%= " checked".html_safe if todos_saved.include?(v) %>>Shopping</label>
               </div>
               <div>
-                <label><input type="checkbox" name="query_todo[]" value="High-end restaurants and luxury experience">High-end restaurants and luxury experience </label>
+                <% v = "High-end restaurants and luxury experience" %>
+                <label><input type="checkbox" name="query_todo[]" value="<%= v %>"<%= " checked".html_safe if todos_saved.include?(v) %>>High-end restaurants and luxury experience </label>
               </div>
             </div>
           </article>
@@ -102,7 +111,7 @@
                 Which area do you live? 
               </label>
 
-              <input type="text" id="live_area" name="query_live_area">
+              <input type="text" id="live_area" name="query_live_area" value="<%= pf[:live_area] %>">
             </div>
 
           </article>
@@ -125,7 +134,7 @@
             I arrive/leave at...
             TEXT
           %>
-          <textarea id="trip_notes_box" name="query_trip_notes" rows="4" placeholder="<%= placeholder_text %>"></textarea>
+          <textarea id="trip_notes_box" name="query_trip_notes" rows="4" placeholder="<%= placeholder_text %>"><%= pf[:trip_notes] %></textarea>
         </div>
 
       </article>
@@ -136,4 +145,78 @@
 
 
   </form>
+
+  <div
+    id="agenda-loading-overlay"
+    class="agenda-loading-overlay"
+    hidden
+    role="status"
+    aria-live="polite"
+    aria-busy="true"
+    aria-hidden="true"
+  >
+    <div class="agenda-loading-minimal">
+      <div class="agenda-wave-rail" aria-hidden="true">
+        <svg
+          class="agenda-waves-svg"
+          viewBox="0 0 400 56"
+          preserveAspectRatio="xMidYMid meet"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            class="agenda-wave-line agenda-wave-line--1"
+            d="M0,18 Q25,8 50,18 T100,18 T150,18 T200,18 T250,18 T300,18 T350,18 T400,18"
+            fill="none"
+          />
+          <path
+            class="agenda-wave-line agenda-wave-line--2"
+            d="M0,30 Q30,14 60,30 T120,30 T180,30 T240,30 T300,30 T360,30 T400,30"
+            fill="none"
+          />
+          <path
+            class="agenda-wave-line agenda-wave-line--3"
+            d="M0,42 Q22,52 44,42 T88,42 T132,42 T176,42 T220,42 T264,42 T308,42 T352,42 T400,42"
+            fill="none"
+          />
+        </svg>
+        <div class="agenda-surfer-mover">
+          <span class="agenda-surfer-bob"><span class="agenda-surfer-emoji">🏄</span></span>
+        </div>
+      </div>
+      <p class="agenda-loading-message">Agenda is being customized...</p>
+    </div>
+  </div>
 </article>
+
+<script>
+  (function () {
+    function showAgendaLoading() {
+      var overlay = document.getElementById("agenda-loading-overlay");
+      if (!overlay) return;
+      overlay.removeAttribute("hidden");
+      overlay.setAttribute("aria-hidden", "false");
+    }
+
+    function wireRebuildForm() {
+      var form = document.getElementById("rebuild-agenda-form");
+      if (!form || form.dataset.agendaLoadingWired === "true") return;
+      form.dataset.agendaLoadingWired = "true";
+      form.addEventListener("submit", function () {
+        showAgendaLoading();
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", wireRebuildForm);
+    document.addEventListener("turbo:load", wireRebuildForm);
+
+    if (!window.__agendaRebuildTurboSubmit) {
+      window.__agendaRebuildTurboSubmit = true;
+      document.addEventListener("turbo:submit-start", function (ev) {
+        var el = ev.detail && ev.detail.formSubmission && ev.detail.formSubmission.formElement;
+        if (el && el.id === "rebuild-agenda-form") {
+          showAgendaLoading();
+        }
+      });
+    }
+  })();
+</script>

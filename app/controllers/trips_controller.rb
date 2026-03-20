@@ -21,6 +21,7 @@ class TripsController < ApplicationController
   def index
     matching_trips = current_user.trips
     @list_of_trips = matching_trips.order({ :created_at => :desc })
+    @trip_form = (session.delete(:trip_form_draft) || {}).stringify_keys
 
     render({ :template => "trip_templates/index" })
   end
@@ -65,6 +66,7 @@ class TripsController < ApplicationController
     the_id = params.fetch("path_id")
     matching_trips = Trip.where({ :id => the_id })
     @the_trip = matching_trips.at(0)
+    @rebuild_prefill = ::RebuildFormPrefill.from_trip_notes(@the_trip&.trip_notes)
     render({ :template => "trip_templates/edit_trip" })
   end
 
@@ -169,27 +171,7 @@ class TripsController < ApplicationController
 
       @plan = JSON.parse(raw, symbolize_names: true)
 
-      ActiveRecord::Base.transaction do
-        the_trip.trip_plans.destroy_all
-
-        @plan[:days].each do |day|
-          date = Date.parse(day[:date])
-
-          day[:items].each do |item|
-            TripPlan.create!(
-              trip: the_trip,
-              #trip_id: the_trip.id,
-              date: date,
-              start_time: Time.parse(item[:start_time]),
-              end_time: Time.parse(item[:end_time]),
-              trip_plan: item[:activity],
-              plan_brief: item[:plan_brief],
-              plan_location: item[:location],
-              plan_details: item[:commute],
-            )
-          end
-        end
-      end
+      replace_trip_plans_from_ai!(the_trip, @plan)
       # ===========================================================================
       #render template: "trip_templates/ai_agenda"
       redirect_to("/trips/#{the_trip.id}", { :notice => "Trip updated successfully." })
@@ -290,33 +272,58 @@ class TripsController < ApplicationController
 
       @plan = JSON.parse(raw, symbolize_names: true)
 
-      ActiveRecord::Base.transaction do
-        the_trip.trip_plans.destroy_all
-
-        @plan[:days].each do |day|
-          date = Date.parse(day[:date])
-
-          day[:items].each do |item|
-            TripPlan.create!(
-              trip: the_trip,
-              #trip_id: the_trip.id,
-              date: date,
-              start_time: Time.parse(item[:start_time]),
-              end_time: Time.parse(item[:end_time]),
-              trip_plan: item[:activity],
-              plan_brief: item[:plan_brief],
-              user_id:the_trip.user_id,
-              plan_location: item[:location],
-              plan_details: item[:commute],
-            )
-          end
-        end
-      end
+      replace_trip_plans_from_ai!(the_trip, @plan)
       # ===========================================================================
       #render template: "trip_templates/ai_agenda"
       redirect_to("/trips/#{the_trip.id}", { :notice => "Trip created successfully." })
     else
+      session[:trip_form_draft] = trip_form_draft_params.to_h
       redirect_to("/trips", { :alert => the_trip.errors.full_messages.to_sentence })
     end
+  end
+
+  private
+
+  # Replaces trip_plans from parsed AI JSON; enriches each row once via Google Places after commit
+  # (HTTP stays out of the DB transaction).
+  def replace_trip_plans_from_ai!(the_trip, plan_hash)
+    new_plans = []
+    ActiveRecord::Base.transaction do
+      the_trip.trip_plans.destroy_all
+
+      plan_hash[:days].each do |day|
+        date = Date.parse(day[:date])
+
+        day[:items].each do |item|
+          new_plans << TripPlan.create!(
+            trip: the_trip,
+            date: date,
+            start_time: Time.parse(item[:start_time]),
+            end_time: Time.parse(item[:end_time]),
+            trip_plan: item[:activity],
+            plan_brief: item[:plan_brief],
+            user_id: the_trip.user_id,
+            plan_location: item[:location],
+            plan_details: item[:commute],
+          )
+        end
+      end
+    end
+
+    new_plans.each { |tp| ::GooglePlacesEnricher.enrich_trip_plan(tp) }
+  end
+
+  def trip_form_draft_params
+    params.permit(
+      :query_trip_name,
+      :query_trip_location,
+      :query_trip_duration_days,
+      :query_trip_start_date,
+      :query_budget,
+      :query_people,
+      :query_live_area,
+      :query_trip_notes,
+      query_todo: []
+    )
   end
 end

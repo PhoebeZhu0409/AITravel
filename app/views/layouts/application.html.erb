@@ -182,17 +182,44 @@ function initItineraryMaps() {
     });
 
     const bounds = new google.maps.LatLngBounds();
-
-    // PlacesService must be attached to a map or div
     const service = new google.maps.places.PlacesService(map);
 
+    function hasCachedCoords(loc) {
+      return (
+        loc.lat != null &&
+        loc.lng != null &&
+        !Number.isNaN(Number(loc.lat)) &&
+        !Number.isNaN(Number(loc.lng))
+      );
+    }
+
+    function finishBounds() {
+      if (!bounds.isEmpty()) {
+        map.fitBounds(bounds);
+      }
+    }
+
+    let pendingApi = 0;
     locations.forEach((loc) => {
+      if (hasCachedCoords(loc)) {
+        const position = { lat: Number(loc.lat), lng: Number(loc.lng) };
+        new google.maps.Marker({
+          map: map,
+          position: position,
+          title: loc.label || loc.address
+        });
+        bounds.extend(position);
+        return;
+      }
+
+      pendingApi++;
       service.findPlaceFromQuery(
         {
           query: loc.address,
           fields: ["name", "geometry"]
         },
         (results, status) => {
+          pendingApi--;
           if (
             status !== google.maps.places.PlacesServiceStatus.OK ||
             !results ||
@@ -200,23 +227,26 @@ function initItineraryMaps() {
             !results[0].geometry
           ) {
             console.warn("Place lookup failed:", loc.address);
-            return;
+          } else {
+            const place = results[0];
+            const position = place.geometry.location;
+            new google.maps.Marker({
+              map: map,
+              position: position,
+              title: place.name || loc.label
+            });
+            bounds.extend(position);
           }
-
-          const place = results[0];
-          const position = place.geometry.location;
-
-          new google.maps.Marker({
-            map: map,
-            position: position,
-            title: place.name || loc.label
-          });
-
-          bounds.extend(position);
-          map.fitBounds(bounds);
+          if (pendingApi === 0) {
+            finishBounds();
+          }
         }
       );
     });
+
+    if (pendingApi === 0) {
+      finishBounds();
+    }
   });
 }
 
@@ -224,7 +254,7 @@ function initItineraryMaps() {
 
 
   function initPlaceCards() {
-    const cells = document.querySelectorAll(".place-cell");
+    const cells = document.querySelectorAll(".place-cell:not(.place-cell--cached)");
     if (!cells.length) return;
 
     // PlacesService needs a map or a dummy div
@@ -307,6 +337,22 @@ function initItineraryMaps() {
         });
 
       // hide the button once expanded
+      btn.style.display = "none";
+    });
+  });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const btn = document.getElementById("show-more-past");
+    if (!btn) return;
+
+    btn.addEventListener("click", function () {
+      document.querySelectorAll("#past-trips-list .extra-trip")
+        .forEach(function (li) {
+          li.style.display = "block";
+        });
+
       btn.style.display = "none";
     });
   });
