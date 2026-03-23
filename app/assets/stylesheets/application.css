@@ -307,6 +307,169 @@
   overflow: hidden;
 }
 
+/* Trip show hero: same crop box as loremflickr 1200×400 (3:1); fallback + API images fill with cover */
+.trip-hero-image-wrap {
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 1200 / 400;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #e5e7eb;
+}
+
+.trip-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Trip show: title is an inline-editable field (looks like a heading, not a Pico input) */
+.trip-name-inline-wrap {
+  margin: 1.75rem 0 0.5rem;
+}
+
+.trip-name-inline-form {
+  display: block;
+}
+
+/* Firstdraft adds vertical padding to all .pico forms — skip it here */
+body.pico article .trip-name-inline-form {
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
+}
+
+/* Base: reads as a heading; underline reserved so hover/focus don’t shift layout */
+.trip-name-inline-form input.trip-name-field {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 0 0.06rem 0;
+  font-size: clamp(1.65rem, 4.2vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #0a0a0a;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  outline: none;
+  border-bottom: 2px solid transparent;
+  cursor: default;
+  caret-color: #1c6fb8;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.trip-name-inline-form input.trip-name-field:hover:not(:focus) {
+  cursor: text;
+  border-bottom-color: rgba(15, 23, 42, 0.22);
+}
+
+.trip-name-inline-form input.trip-name-field:focus,
+.trip-name-inline-form input.trip-name-field:active {
+  cursor: text;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  border-radius: 0;
+  border-bottom: 2px solid #1c6fb8;
+  outline: none;
+}
+
+.trip-name-inline-form input.trip-name-field::placeholder {
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+/*
+ * Pico: `.pico input` beats a lone class and redraws border/background/focus ring.
+ * These declarations must stay at least as specific as `.pico input` (0,1,1).
+ */
+body.pico article .trip-name-inline-form input.trip-name-field {
+  height: auto !important;
+  min-height: 0;
+  padding: 0 0 0.06rem 0;
+  background-color: transparent !important;
+  background-image: none;
+  border: none !important;
+  border-bottom: 2px solid transparent;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+body.pico article .trip-name-inline-form input.trip-name-field:hover:not(:focus) {
+  border-bottom-color: rgba(15, 23, 42, 0.22);
+}
+
+body.pico article .trip-name-inline-form input.trip-name-field:focus,
+body.pico article .trip-name-inline-form input.trip-name-field:active {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-bottom: 2px solid #1c6fb8 !important;
+  border-radius: 0 !important;
+  outline: none !important;
+}
+
+/* One row, compact; Pico sets submit buttons to width:100% — override below */
+.trip-name-actions {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.trip-name-save-btn,
+.trip-name-cancel-btn {
+  box-sizing: border-box;
+  width: 5.75rem;
+  min-width: 5.75rem;
+  max-width: 5.75rem;
+  padding: 0.28rem 0.5rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.trip-name-save-btn {
+  background: #1c6fb8;
+  color: #fff;
+}
+
+.trip-name-save-btn:hover {
+  background: #185a9a;
+}
+
+.trip-name-cancel-btn {
+  background: #9ca3af;
+  color: #fff;
+}
+
+.trip-name-cancel-btn:hover {
+  background: #6b7280;
+}
+
+/* Beat `.pico button[type=submit] { width: 100% }` */
+body.pico article .trip-name-actions button.trip-name-save-btn,
+body.pico article .trip-name-actions button.trip-name-cancel-btn {
+  width: 5.75rem !important;
+  min-width: 5.75rem !important;
+  max-width: 5.75rem !important;
+}
 
 .trip-actions {
   margin-top: 1.5rem;
@@ -611,10 +774,11 @@ details.collapsible > .content hr {
 
 
 /* ------------------------------ pages -------------------------------*/
-/* Container for carousel */
+/* Agenda carousel: day tab strip + one visible day */
 .agenda-carousel {
   position: relative;
   width: 100%;
+  max-width: 100%;
 }
 
 /* Only one day visible at a time */
@@ -626,58 +790,603 @@ article.agenda-day.active {
   display: block;
 }
 
-/* Arrows on left/right, centered vertically */
-.agenda-arrow {
-  position: absolute;
-  top: 3%;
-  transform: translateY(-50%);
-  z-index: 50;
-
-  background: white;
+/* Agenda: one card — toolbar (days + jump) sits above the table body */
+.agenda-day-panel {
+  background: #fff;
   border: 1px solid #e5e7eb;
-  border-radius: 999px;
-  width: 50px;
-  height: 50px;
-  font-size: 20px;
-  font-weight: 600;
-  color: #333;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  /* Don’t clip toolbar (e.g. “Go to day” on the right) */
+  overflow: visible;
+  max-width: 100%;
+}
 
+/* Center column = day picker; right column reserves space so jump isn’t clipped */
+.agenda-integrated-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(8.6rem, 1fr);
+  align-items: center;
+  gap: 0.45rem 0.65rem;
+  padding: 0.4rem 0.75rem 0.45rem 0.55rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+  box-sizing: border-box;
+}
+
+.agenda-integrated-toolbar__days {
+  grid-column: 2;
+  justify-self: center;
+  min-width: 0;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  /* Match toolbar row height to jump column without stretching the day rail */
+  align-items: center;
+}
+
+.agenda-integrated-toolbar__jump {
+  grid-column: 3;
+  justify-self: end;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.18rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 9.6rem;
+  min-width: 0;
+  padding-right: 2px;
+}
+
+.agenda-day-panel .agenda-table thead th {
+  background-color: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  vertical-align: middle;
+}
+
+/* —— Day picker: rounded cards in a tray, grey idle / blue selected, square nav —— */
+.agenda-day-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0 auto 0.85rem;
+  max-width: 28rem;
+  padding: 0 0.25rem;
+}
+
+/* Compact: inside agenda card toolbar — smaller, no outer margin */
+.agenda-day-picker--compact {
+  margin: 0;
+  max-width: none;
+  width: 100%;
+  padding: 0;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+/* Light rail behind the three day cards */
+.agenda-day-tabs {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0.4rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 17.5rem;
+  padding: 0.4rem 0.45rem;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.agenda-day-picker--compact .agenda-day-tabs {
+  display: inline-flex;
+  flex: 0 1 auto;
+  width: fit-content;
+  max-width: min(100%, 26rem);
+  height: fit-content;
+  box-sizing: border-box;
+  padding: 0.22rem 0.4rem;
+  gap: 0.32rem;
+  border-radius: 8px;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+}
+
+.agenda-day-tab {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 5.5rem;
+  min-height: 4.1rem;
+  padding: 0.45rem 0.35rem;
+  margin: 0;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #e5e7eb;
+  color: #374151;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+/* Compact tabs: two lines — “Day N” then date (not single-line) */
+.agenda-day-tab--compact {
+  flex: 0 0 auto;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+  max-width: 4.6rem;
+  min-width: 3.35rem;
+  min-height: 0;
+  padding: 0.26rem 0.28rem;
+  border-radius: 7px;
+  font-size: 0.72rem;
+  white-space: normal;
+  box-sizing: border-box;
+}
+
+.agenda-day-tab__num {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #4b5563;
+}
+
+.agenda-day-tab--compact .agenda-day-tab__num {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.agenda-day-tab__date {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.agenda-day-tab--compact .agenda-day-tab__date {
+  display: block;
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.agenda-day-tab:hover:not(.is-active) {
+  background: #dce0e5;
+  border-color: #c4c9d1;
+}
+
+.agenda-day-tab:hover:not(.is-active) .agenda-day-tab__num {
+  color: #374151;
+}
+
+.agenda-day-tab:hover:not(.is-active) .agenda-day-tab__date {
+  color: #52525b;
+}
+
+.agenda-day-tab.is-active {
+  background: #1c6fb8;
+  border-color: #18649f;
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(28, 111, 184, 0.32);
+}
+
+.agenda-day-tab--compact.is-active {
+  box-shadow: 0 2px 6px rgba(28, 111, 184, 0.28);
+}
+
+.agenda-day-tab.is-active .agenda-day-tab__num,
+.agenda-day-tab.is-active .agenda-day-tab__date {
+  color: #fff;
+}
+
+.agenda-day-tab:focus-visible {
+  outline: 2px solid #1c6fb8;
+  outline-offset: 2px;
+}
+
+.agenda-day-tab:focus:not(:focus-visible) {
+  outline: none;
+}
+
+body.pico .agenda-day-tabs button.agenda-day-tab {
+  width: auto;
+}
+
+/*
+ * Pico: `.pico [type=button]` uses primary blue (0,1,1) and beats `.agenda-day-tab` (0,1,0).
+ * Day picker also lives outside <article>. Force grey for non-selected tabs.
+ */
+body.pico .agenda-day-tabs button.agenda-day-tab[type="button"]:not(.is-active) {
+  --pico-background-color: #e5e7eb;
+  --pico-border-color: #d1d5db;
+  --pico-color: #374151;
+  --pico-box-shadow: none;
+  background-color: #e5e7eb !important;
+  border-color: #d1d5db !important;
+  color: #374151 !important;
+  box-shadow: none !important;
+}
+
+body.pico .agenda-day-tabs button.agenda-day-tab[type="button"]:not(.is-active):hover,
+body.pico .agenda-day-tabs button.agenda-day-tab[type="button"]:not(.is-active):active {
+  --pico-background-color: #dce0e5;
+  --pico-border-color: #c4c9d1;
+  --pico-color: #1f2937;
+  background-color: #dce0e5 !important;
+  border-color: #c4c9d1 !important;
+  color: #1f2937 !important;
+}
+
+body.pico .agenda-day-tabs button.agenda-day-tab[type="button"]:not(.is-active):focus {
+  --pico-background-color: #e5e7eb;
+  background-color: #e5e7eb !important;
+}
+
+body.pico .agenda-day-tabs button.agenda-day-tab[type="button"]:not(.is-active) .agenda-day-tab__num {
+  color: #4b5563 !important;
+}
+
+body.pico .agenda-day-tabs button.agenda-day-tab[type="button"]:not(.is-active) .agenda-day-tab__date {
+  color: #6b7280 !important;
+}
+
+body.pico .agenda-day-tabs button.agenda-day-tab[type="button"]:not(.is-active):hover .agenda-day-tab__num {
+  color: #374151 !important;
+}
+
+body.pico .agenda-day-tabs button.agenda-day-tab[type="button"]:not(.is-active):hover .agenda-day-tab__date {
+  color: #52525b !important;
+}
+
+body.pico .agenda-day-tabs button.agenda-day-tab.is-active[type="button"] {
+  --pico-background-color: #1c6fb8;
+  --pico-border-color: #18649f;
+  --pico-color: #fff;
+  background-color: #1c6fb8 !important;
+  border-color: #18649f !important;
+  color: #fff !important;
+  box-shadow: 0 3px 10px rgba(28, 111, 184, 0.32) !important;
+}
+
+body.pico .agenda-day-tabs button.agenda-day-tab--compact.is-active[type="button"] {
+  box-shadow: 0 2px 6px rgba(28, 111, 184, 0.28) !important;
+}
+
+/* Pico adds margin-bottom to [type=button] — caused extra space below tabs in grey rail */
+body.pico .agenda-day-picker--compact .agenda-day-tabs button.agenda-day-tab--compact[type="button"] {
+  margin-bottom: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+body.pico .agenda-day-tabs button.agenda-day-tab.is-active[type="button"]:hover,
+body.pico .agenda-day-tabs button.agenda-day-tab.is-active[type="button"]:active {
+  --pico-background-color: #185a9a;
+  --pico-border-color: #154e85;
+  background-color: #185a9a !important;
+  border-color: #154e85 !important;
+}
+
+/* Square controls, shorter than day cards — prev = light, next = solid blue */
+.agenda-tab-arrow {
+  flex-shrink: 0;
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  transition: all 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.12s ease,
+    opacity 0.15s ease;
 }
 
-/* Left side */
-.agenda-arrow.left {
-  left: -50px;  /* move inward/outward as you like */
+.agenda-tab-arrow--prev {
+  border: 1px solid #c7d2fe;
+  background: #e8eefc;
+  color: #1e3a8a;
+  box-shadow: 0 1px 2px rgba(30, 58, 138, 0.08);
 }
 
-/* Right side */
-.agenda-arrow.right {
-  right: -50px;
+.agenda-tab-arrow--prev:hover:not(:disabled) {
+  background: #dbe4f8;
+  border-color: #a5b4fc;
+  color: #172554;
 }
 
-/* Hover state */
-.agenda-arrow:hover:not(:disabled) {
-  background: #f9fafb;
-  transform: translateY(-50%) scale(1.08);
+.agenda-tab-arrow--next {
+  border: 1px solid #18649f;
+  background: #1c6fb8;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(28, 111, 184, 0.28);
 }
 
-/* Disabled arrows */
-.agenda-arrow:disabled {
-  opacity: 0.3;
-  cursor: default;
+.agenda-tab-arrow--next:hover:not(:disabled) {
+  background: #185a9a;
+  border-color: #154e85;
 }
 
-/* Pagination label below */
-.agenda-pagination {
-  text-align: center;
-  margin-top: 12px;
-  font-size: 14px;
-  color: #555;
+.agenda-tab-arrow:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.agenda-day-picker--compact .agenda-tab-arrow {
+  width: 2.05rem;
+  height: 2.05rem;
+  font-size: 0.92rem;
+  border-radius: 6px;
+  align-self: center;
+}
+
+.agenda-jump-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #475569;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.agenda-integrated-toolbar .agenda-jump-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.agenda-jump-select {
+  width: auto;
+  min-width: min(100%, 14rem);
+  max-width: 100%;
+  padding: 0.35rem 2rem 0.35rem 0.65rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #0f172a;
+  background-color: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  cursor: pointer;
+  line-height: 1.3;
+}
+
+.agenda-jump-select--compact {
+  min-width: 6.8rem;
+  max-width: 9.2rem;
+  padding: 0.12rem 1.15rem 0.12rem 0.35rem;
+  /* Match .agenda-integrated-toolbar .agenda-jump-label (0.7rem) */
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 6px;
+  line-height: 1.2;
+}
+
+.agenda-jump-select--compact option {
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.agenda-jump-select:focus {
+  outline: 2px solid rgba(28, 111, 184, 0.35);
+  outline-offset: 1px;
+  border-color: #1c6fb8;
+}
+
+body.pico .agenda-jump-select {
+  width: auto !important;
+  max-width: min(100%, 18rem);
+}
+
+body.pico .agenda-jump-select--compact {
+  max-width: 9.6rem !important;
+}
+
+/* Pico: `.pico select` sets font-size: 1rem — match label text */
+body.pico .agenda-integrated-toolbar select.agenda-jump-select--compact {
+  font-size: 0.7rem !important;
+  line-height: 1.2 !important;
+  font-weight: 600 !important;
+  padding: 0.12rem 1.15rem 0.12rem 0.35rem !important;
+}
+
+body.pico .agenda-tab-arrow {
+  width: 2.35rem !important;
+  height: 2.35rem !important;
+  max-width: none;
+}
+
+body.pico .agenda-day-picker--compact .agenda-tab-arrow {
+  width: 2.05rem !important;
+  height: 2.05rem !important;
+}
+
+/* Pico primary styling on [type=button] — keep arrow colors */
+body.pico .agenda-tab-arrow[type="button"] {
+  margin-bottom: 0;
+  font-size: 1.05rem;
+  line-height: 1;
+  padding: 0;
+}
+
+body.pico .agenda-day-picker--compact .agenda-tab-arrow[type="button"] {
+  font-size: 0.92rem;
+}
+
+body.pico .agenda-tab-arrow--prev[type="button"]:not(:disabled) {
+  --pico-background-color: #e8eefc;
+  --pico-border-color: #c7d2fe;
+  --pico-color: #1e3a8a;
+  background-color: #e8eefc !important;
+  border-color: #c7d2fe !important;
+  color: #1e3a8a !important;
+}
+
+body.pico .agenda-tab-arrow--prev[type="button"]:hover:not(:disabled) {
+  --pico-background-color: #dbe4f8;
+  background-color: #dbe4f8 !important;
+}
+
+body.pico .agenda-tab-arrow--next[type="button"]:not(:disabled) {
+  --pico-background-color: #1c6fb8;
+  --pico-border-color: #18649f;
+  --pico-color: #fff;
+  background-color: #1c6fb8 !important;
+  border-color: #18649f !important;
+  color: #fff !important;
+}
+
+body.pico .agenda-tab-arrow--next[type="button"]:hover:not(:disabled) {
+  --pico-background-color: #185a9a;
+  background-color: #185a9a !important;
+  border-color: #154e85 !important;
+}
+
+@media (max-width: 520px) {
+  .agenda-day-picker {
+    gap: 0.35rem;
+    margin-bottom: 0.7rem;
+    max-width: 100%;
+  }
+
+  .agenda-day-tabs {
+    max-width: none;
+    padding: 0.35rem 0.35rem;
+    gap: 0.3rem;
+  }
+
+  .agenda-day-tab {
+    min-height: 3.65rem;
+    padding: 0.35rem 0.25rem;
+    max-width: none;
+    border-radius: 8px;
+  }
+
+  .agenda-day-tab__num {
+    font-size: 0.74rem;
+  }
+
+  .agenda-day-tab__date {
+    font-size: 0.68rem;
+  }
+
+  .agenda-tab-arrow {
+    width: 2.05rem !important;
+    height: 2.05rem !important;
+    font-size: 0.95rem;
+    border-radius: 7px;
+  }
+
+  .agenda-integrated-toolbar {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding: 0.35rem 0.4rem 0.4rem;
+    gap: 0.5rem;
+  }
+
+  .agenda-integrated-toolbar__days {
+    grid-column: 1;
+    justify-self: center;
+  }
+
+  .agenda-integrated-toolbar__jump {
+    grid-column: 1;
+    justify-self: center;
+    align-items: center;
+    width: 100%;
+    max-width: 7.6rem;
+  }
+
+  .agenda-integrated-toolbar .agenda-jump-label {
+    text-align: center;
+  }
+
+  /* Compact toolbar: keep short tabs on small screens */
+  .agenda-day-picker--compact {
+    margin-bottom: 0;
+  }
+
+  .agenda-day-picker--compact .agenda-day-tabs {
+    max-width: 100%;
+    padding: 0.22rem 0.3rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+  }
+
+  .agenda-day-tab--compact {
+    flex-direction: column;
+    min-height: 2.65rem;
+    flex: 0 0 auto;
+    max-width: 4.25rem;
+    min-width: 3rem;
+    padding: 0.28rem 0.22rem;
+    gap: 0.1rem;
+  }
+
+  .agenda-day-tab--compact .agenda-day-tab__num {
+    font-size: 0.7rem;
+  }
+
+  .agenda-day-tab--compact .agenda-day-tab__date {
+    font-size: 0.64rem;
+  }
+
+  .agenda-day-picker--compact .agenda-tab-arrow {
+    width: 1.85rem !important;
+    height: 1.85rem !important;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  body.pico .agenda-day-picker--compact .agenda-tab-arrow {
+    width: 1.85rem !important;
+    height: 1.85rem !important;
+  }
+
+  .agenda-jump-select--compact {
+    max-width: 100%;
+    min-width: 0;
+  }
 }
 
 
@@ -695,7 +1404,7 @@ article.agenda-day.active {
 
 
 .place-photo {
-  width: 100%;              /* full column width */
+  width: 85%;               /* 15% smaller than full column; centered via .place-card */
   aspect-ratio: 1 / 1;      /* ← makes it a perfect square */
   border-radius: 12px;
   overflow: hidden;         /* crop overflow so image stays inside */
@@ -745,18 +1454,7 @@ article.agenda-day.active {
 
 .agenda-table th:nth-child(4),
 .agenda-table td:nth-child(4) {
-  width: 25%;   /* Get Around */
-}
-
-.agenda-table th:nth-child(5),
-.agenda-table td:nth-child(5) {
-  width: 10%;   /* Get Around */
-}
-/* -----------------complete plan check----------------- */
-
-tr.done td {
-  background: #f3f4f6;
-  opacity: 0.6;
+  width: 25%;   /* Get around */
 }
 
 /* ------------------------- footer css --------------------------- */

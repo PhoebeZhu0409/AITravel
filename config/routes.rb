@@ -25,10 +25,6 @@ Rails.application.routes.draw do
   # DELETE
   get("/delete_trip/:path_id", { :controller => "trips", :action => "destroy" })
 
-  # complete a plan in a trip
-  patch("/trips/:path_id/toggle_done", { :controller => "trips", :action => "toggle_done" })
-
-
   # ------------------------------
 
   # Routes for the Trip plan resource:

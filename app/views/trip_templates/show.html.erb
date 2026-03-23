@@ -12,83 +12,35 @@
     <% location_tag = location.gsub(", ", "_") %>
     <% hero_default_path = image_path("trip_hero_default.png") %>
 
-    <img
-      src="https://loremflickr.com/1200/400/<%= ERB::Util.url_encode(location_tag) %>"
-      alt="<%= location %>"
-      style="width: 100%; max-width: 100%; height: auto; border-radius: 8px; display: block;"
-      onerror="this.onerror=null;this.src='<%= hero_default_path %>';"
-    >
+    <div class="trip-hero-image-wrap">
+      <img
+        class="trip-hero-image"
+        src="https://loremflickr.com/1200/400/<%= ERB::Util.url_encode(location_tag) %>"
+        alt="<%= location %>"
+        onerror="this.onerror=null;this.src='<%= hero_default_path %>';"
+      >
+    </div>
 
-      <!-----------------------------------------Botton:   Update trip name. ------------------------------------------>
-      <!------------ VIEW MODE ------------>
-      <div id="trip-name-view"
-     style="display: flex; align-items: center; gap: 10px;">
-
-        <h1 style="margin: 30px 0;">
-          <%= @the_trip.trip_name %>
-        </h1>
-
-        <button type="button"
-          id="edit-trip-name-btn"
-          data-nopico
-          style="background: none; border: none; padding: 4px; cursor: pointer;">
-          ✏️
-        </button>
-      </div>
-
-      <!------------ EDIT MODE (hidden by default) ------------>
-      <div id="trip-name-edit"
-     style="display: none; flex-direction: column; gap: 10px;">
-
-        <%= form_with model: @the_trip,
-                url: "/trip_name_update/#{@the_trip.id}",
-                method: :post,
-                local: true do |form| %>
-
-          <input type="text"
-           name="query_trip_name"
-           value="<%= @the_trip.trip_name %>"
-           style="font-size: 1.5rem; padding: 4px; width: 100%;">
-
-          <!-- BUTTON ROW -->
-          <div style="display: flex; gap: 10px;">
-
-            <button type="submit"
-              data-nopico
-              style="
-                padding: 8px 20px;
-                background: #1c6fb8;
-                color: white;
-                border-radius: 6px;
-                border: none;
-                cursor: pointer;
-                display: inline-block;
-                width: auto;
-              ">
-              Save
-            </button>
-
-            <button type="button"
-              id="cancel-trip-name-btn"
-              data-nopico
-              style="
-                padding: 8px 20px;
-                background: #999;
-                color: white;
-                border-radius: 6px;
-                border: none;
-                cursor: pointer;
-                display: inline-block;
-                width: auto;
-              ">
-              Cancel
-            </button>
-
+      <%# Inline trip name: hover = text cursor; click to edit; Save / Cancel when editing %>
+      <div class="trip-name-inline-wrap">
+        <%= form_with url: "/trip_name_update/#{@the_trip.id}", method: :post, local: true, html: { class: "trip-name-inline-form", data: { turbo: false } } do %>
+          <input
+            type="text"
+            id="trip-name-field"
+            class="trip-name-field"
+            name="query_trip_name"
+            value="<%= @the_trip.trip_name %>"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Trip name"
+            data-original-name="<%= h(@the_trip.trip_name) %>"
+          >
+          <div class="trip-name-actions" id="trip-name-actions" hidden>
+            <button type="submit" class="trip-name-save-btn" data-nopico>Save</button>
+            <button type="button" class="trip-name-cancel-btn" id="trip-name-cancel-btn" data-nopico>Cancel</button>
           </div>
-
         <% end %>
       </div>
-      <!-------------------------------------------------------------------------------------------------------------------->
 
       <div>
         <div><%= @the_trip.trip_location %></div>
@@ -115,31 +67,83 @@
     <%
   start_date = @the_trip.trip_start_date
   end_date = @the_trip.trip_start_date + @the_trip.trip_duration_days.day-1.day
+  agenda_dates = (start_date..end_date).to_a
+  agenda_day_count = agenda_dates.length
 %>
 
 <div class="agenda-carousel">
-<button id="agenda-prev" class="agenda-arrow left">&lt;</button>
-<div class="agenda-wrapper">
-    <% (start_date..end_date).each_with_index do |date, i| %>
-       <article class="agenda-day <%= 'active' if i == 0 %>">
+  <%# Single card: toolbar (day toggles + jump) reads as part of the table block %>
+  <div class="agenda-day-panel">
+    <div class="agenda-integrated-toolbar">
+      <div class="agenda-integrated-toolbar__days">
+        <div class="agenda-day-picker agenda-day-picker--compact" id="agenda-day-picker">
+          <button
+            type="button"
+            id="agenda-window-prev"
+            class="agenda-tab-arrow agenda-tab-arrow--prev"
+            aria-label="<%= agenda_day_count > 3 ? 'Show earlier days in list' : 'Previous day' %>"
+            <% if agenda_day_count <= 1 %>hidden<% end %>>
+            ‹
+          </button>
+          <div class="agenda-day-tabs" role="tablist" aria-label="Agenda days">
+            <% agenda_dates.each_with_index do |date, i| %>
+              <button
+                type="button"
+                role="tab"
+                id="agenda-tab-<%= i %>"
+                class="agenda-day-tab agenda-day-tab--compact <%= 'is-active' if i == 0 %>"
+                data-day-index="<%= i %>"
+                aria-selected="<%= i == 0 ? 'true' : 'false' %>"
+                tabindex="<%= i == 0 ? 0 : -1 %>"
+              >
+                <span class="agenda-day-tab__num">Day <%= i + 1 %></span>
+                <span class="agenda-day-tab__date"><%= agenda_brief_date(date) %></span>
+              </button>
+            <% end %>
+          </div>
+          <button
+            type="button"
+            id="agenda-window-next"
+            class="agenda-tab-arrow agenda-tab-arrow--next"
+            aria-label="<%= agenda_day_count > 3 ? 'Show later days in list' : 'Next day' %>"
+            <% if agenda_day_count <= 1 %>hidden<% end %>>
+            ›
+          </button>
+        </div>
+      </div>
+      <div class="agenda-integrated-toolbar__jump">
+        <label class="agenda-jump-label" for="agenda-jump-select">Go to day</label>
+        <select id="agenda-jump-select" class="agenda-jump-select agenda-jump-select--compact" data-nopico aria-label="Jump to a specific day">
+          <% agenda_dates.each_with_index do |date, i| %>
+            <option value="<%= i %>" <%= "selected" if i == 0 %>>
+              Day <%= i + 1 %> — <%= agenda_brief_date(date) %>
+            </option>
+          <% end %>
+        </select>
+      </div>
+    </div>
+
+    <div class="agenda-wrapper">
+    <% agenda_dates.each_with_index do |date, i| %>
+       <article class="agenda-day <%= 'active' if i == 0 %>" data-day-index="<%= i %>">
 
           <div class="overflow-auto">
-            <div class="day-header" style="color: #1c49a9ff;">Day <%= i + 1 %>: <%= date.strftime("%B %-d, %Y") %></div>
             <% this_day = @the_trip.trip_plans.where(date: date.strftime("%Y-%m-%d")) %>
-            
+
 <div class="overflow-auto">
             <table class="agenda-table">
               <thead>
-                <th>Time</th>
-                <th>Plan</th>
-                <th>Location</th>
-                <th>Get around</th>
-                <th>✔️</th>
+                <tr>
+                  <th>Time</th>
+                  <th>Plan</th>
+                  <th>Location</th>
+                  <th>Get around</th>
+                </tr>
               </thead>
 
               <tbody>
                 <% this_day.order(:start_time).each do |a_day| %>
-                  <tr class="<%= 'done' if a_day.done %>">
+                  <tr>
 
                     <td><%= a_day.start_time.strftime("%I:%M&nbsp;%p").html_safe %> - <%= a_day.end_time.strftime("%I:%M&nbsp;%p").html_safe %></td>
               
@@ -185,15 +189,6 @@
                     </td>
   <!---------------------------------------------------->
                     <td style="font-size: 0.9rem;"><%= a_day.plan_details %></td>
-
-                    <!--<td class="done-cell">  <input type="checkbox" class="done-checkbox"> </td>-->
-                    <td class="done-cell">
-                      <%= form_with url: "/trips/#{@the_trip.id}/toggle_done", method: :patch, local: true do %>
-                        <%= hidden_field_tag :a_day, a_day.id %>
-                        <%= hidden_field_tag :done, "false" %>
-                        <%= check_box_tag :done, "true", a_day.done, onchange: "this.form.submit()" %>
-                      <% end %>
-                    </td>
                   </tr>
                 <% end %>
               </tbody>
@@ -221,30 +216,75 @@
 
         </article>
     <% end %>
+    </div>
+  </div>
 </div>
 
 
 
-<button id="agenda-next" class="agenda-arrow right">&gt;</button>
-</div>
-
-<div class="agenda-pagination">
-  <span id="agenda-label"></span>
-</div>
-
-
-
-    <!---------------------------- JAVA SCRIPT: Update my trip name in agenda ----------------------------->
     <script>
-      document.getElementById("edit-trip-name-btn").addEventListener("click", () => {
-        document.getElementById("trip-name-view").style.display = "none";
-        document.getElementById("trip-name-edit").style.display = "flex";
-      });
+      (function initTripNameInlineEdit() {
+        var field = document.getElementById("trip-name-field");
+        var actions = document.getElementById("trip-name-actions");
+        var cancelBtn = document.getElementById("trip-name-cancel-btn");
+        if (!field || !actions) return;
 
-      document.getElementById("cancel-trip-name-btn").addEventListener("click", () => {
-        document.getElementById("trip-name-edit").style.display = "none";
-        document.getElementById("trip-name-view").style.display = "flex";
-      });
+        var original = field.getAttribute("data-original-name") || field.value;
+
+        function showActions() {
+          actions.removeAttribute("hidden");
+        }
+
+        function hideActionsIfClean() {
+          if (field.value === original) {
+            actions.setAttribute("hidden", "");
+          }
+        }
+
+        field.addEventListener("focus", showActions);
+        field.addEventListener("input", function () {
+          if (field.value !== original) {
+            showActions();
+          } else {
+            hideActionsIfClean();
+          }
+        });
+
+        field.addEventListener("blur", function () {
+          setTimeout(function () {
+            if (document.activeElement === cancelBtn || document.activeElement === actions.querySelector(".trip-name-save-btn")) {
+              return;
+            }
+            if (field.value === original) {
+              actions.setAttribute("hidden", "");
+            }
+          }, 120);
+        });
+
+        if (cancelBtn) {
+          cancelBtn.addEventListener("click", function () {
+            field.value = original;
+            actions.setAttribute("hidden", "");
+            field.blur();
+          });
+        }
+
+        field.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            var form = field.closest("form");
+            if (form && field.value.trim() !== "") {
+              form.requestSubmit();
+            }
+          }
+          if (e.key === "Escape") {
+            field.value = original;
+            actions.setAttribute("hidden", "");
+            field.blur();
+          }
+        });
+
+      })();
     </script>
 
 

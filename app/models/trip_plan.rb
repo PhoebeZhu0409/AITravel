@@ -4,7 +4,6 @@
 #
 #  id                       :bigint           not null, primary key
 #  date                     :date
-#  done                     :boolean
 #  end_time                 :time
 #  place_display_name       :string
 #  place_latitude           :decimal(10, 7)
