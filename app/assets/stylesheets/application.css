@@ -492,7 +492,20 @@ body.pico article .trip-name-actions button.trip-name-cancel-btn {
 .trip-actions {
   margin-top: 1.5rem;
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 1rem;
+}
+
+.trip-actions__primary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.trip-actions .btn-share {
+  margin-left: auto;
 }
 
 .btn-delete, .btn-rebuild {
@@ -520,6 +533,89 @@ body.pico article .trip-name-actions button.trip-name-cancel-btn {
 }
 .btn-rebuild:hover {
   background-color: #0063cc;
+}
+
+/* Outline share → PDF download */
+.btn-share {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid #0f172a;
+  background: #fff;
+  color: #0f172a;
+  text-decoration: none;
+  font-weight: 400;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  transition: 0.2s ease-in-out;
+}
+
+.btn-share:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+/* Rebuild disabled when regular user hits 6-month generation cap */
+span.btn-rebuild--disabled {
+  display: inline-block;
+  cursor: not-allowed;
+  opacity: 0.55;
+  background-color: #94a3b8;
+  color: #f8fafc;
+}
+span.btn-rebuild--disabled:hover {
+  background-color: #94a3b8;
+}
+
+/* Trip generation quota (optional boxed default — most UI uses --plain) */
+.trip-generation-quota {
+  margin: 0.75rem 0 1rem;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: #334155;
+  background: #f1f5f9;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+/* No background; light blue copy (e.g. “N free trip generations remaining.”) */
+.trip-generation-quota.trip-generation-quota--plain {
+  background: transparent;
+  border: none;
+  padding: 0.35rem 0;
+  margin: 0.5rem 0 1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #7dd3fc;
+}
+
+.trip-generation-quota.trip-generation-quota--plain.trip-generation-quota--plain-warn {
+  color: #f87171;
+}
+
+/* Devise edit profile */
+.devise-registration-edit .account-status-readonly {
+  margin: 0 0 1.25rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.devise-registration-edit .account-status-readonly dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.25rem;
+}
+
+.devise-registration-edit .account-status-readonly dd {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0f172a;
 }
 
 

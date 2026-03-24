@@ -29,6 +29,8 @@
       </h2>
     </header>
 
+
+
     <% tf = (@trip_form || {}).stringify_keys %>
     <% todos = Array(tf["query_todo"]).flatten.compact.map(&:to_s) %>
     <% optional_open = tf["query_budget"].present? || tf["query_people"].present? || tf["query_live_area"].present? || todos.any? %>
@@ -152,10 +154,31 @@
 
       </article>
 
-      <button type="submit">
+      <% plan_quota_full = user_signed_in? && !current_user.premium? && !current_user.can_generate_trip? %>
+      <button type="submit"<%= " disabled aria-disabled=\"true\"".html_safe if plan_quota_full %>>
         Build agenda for my trip!
       </button>
     </form>
+
+
+      <% if user_signed_in? %>
+      <% if current_user.premium? %>
+        <p class="trip-generation-quota trip-generation-quota--plain" role="status">
+          Premium account: unlimited trip generations.
+        </p>
+      <% else %>
+        <% rem = current_user.trip_generations_remaining %>
+        <% if rem.positive? %>
+          <p class="trip-generation-quota trip-generation-quota--plain" role="status">
+            <%= rem %> free trip generations remaining.
+          </p>
+        <% else %>
+          <p class="trip-generation-quota trip-generation-quota--plain trip-generation-quota--plain-warn" role="status">
+            You have run out of 5 free trip generations within the last 6 months..
+          </p>
+        <% end %>
+      <% end %>
+    <% end %>
 
     <div
       id="agenda-loading-overlay"

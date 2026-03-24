@@ -111,3 +111,6 @@ end
 group :development do
   gem "letter_opener_web"
 end
+
+gem "prawn", "~> 2.5"
+gem "prawn-table", "~> 0.2.2"

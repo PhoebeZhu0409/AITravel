@@ -1,5 +1,5 @@
 class TripsController < ApplicationController
-  before_action :set_owned_trip, only: %i[show trip_name_update rebuild_form destroy update]
+  before_action :set_owned_trip, only: %i[show trip_name_update rebuild_form destroy update agenda_pdf]
 
   def index
     matching_trips = current_user.trips
@@ -17,6 +17,20 @@ class TripsController < ApplicationController
     render({ :template => "trip_templates/show" })
   end
 
+  def agenda_pdf
+    pdf_bytes = ::TripAgendaPdf.new(@the_trip).render
+    base = @the_trip.trip_name.to_s.parameterize.presence || "trip"
+    filename = "#{base}-agenda.pdf"
+    headers["Content-Disposition"] = ActionDispatch::Http::ContentDisposition.format(
+      disposition: "attachment",
+      filename: filename
+    )
+    send_data pdf_bytes, type: "application/pdf", disposition: nil
+  rescue StandardError => e
+    Rails.logger.error("agenda_pdf failed for trip #{@the_trip&.id}: #{e.class} #{e.message}\n#{e.backtrace&.first(15)&.join("\n")}")
+    redirect_to("/trips/#{@the_trip.id}", alert: "Could not generate the PDF. Please try again.")
+  end
+
   def trip_name_update
     @the_trip.trip_name = params.fetch("query_trip_name")
     if @the_trip.save
@@ -27,6 +41,11 @@ class TripsController < ApplicationController
   end
 
   def rebuild_form
+    unless current_user.can_generate_trip?
+      redirect_to("/trips/#{@the_trip.id}", { alert: trip_generation_limit_message })
+      return
+    end
+
     @rebuild_prefill = ::RebuildFormPrefill.from_trip_notes(@the_trip.trip_notes)
     render({ :template => "trip_templates/edit_trip" })
   end
@@ -38,6 +57,11 @@ class TripsController < ApplicationController
 
   # =============================== Update =================================
   def update
+    unless current_user.can_generate_trip?
+      redirect_to("/trips/#{@the_trip.id}", { alert: trip_generation_limit_message })
+      return
+    end
+
     @the_trip.trip_name = params.fetch("query_trip_name")
     @the_trip.trip_location = params.fetch("query_trip_location")
     @the_trip.trip_duration_days = params.fetch("query_trip_duration_days")
@@ -55,6 +79,7 @@ class TripsController < ApplicationController
       begin
         plan_hash = generate_ai_plan_for(@the_trip)
         replace_trip_plans_from_ai!(@the_trip, plan_hash)
+        current_user.record_trip_generation!(trip: @the_trip)
 
         redirect_to("/trips/#{@the_trip.id}", { notice: "Trip updated successfully." })
       rescue JSON::ParserError => e
@@ -71,6 +96,12 @@ class TripsController < ApplicationController
 
   # =============================== Create =================================
   def create
+    unless current_user.can_generate_trip?
+      session[:trip_form_draft] = trip_form_draft_params.to_h
+      redirect_to("/trips", { alert: trip_generation_limit_message })
+      return
+    end
+
     the_trip = Trip.new
     the_trip.user_id = current_user.id
     the_trip.trip_name = params.fetch("query_trip_name")
@@ -86,6 +117,7 @@ class TripsController < ApplicationController
       begin
         plan_hash = generate_ai_plan_for(the_trip)
         replace_trip_plans_from_ai!(the_trip, plan_hash)
+        current_user.record_trip_generation!(trip: the_trip)
 
         redirect_to("/trips/#{the_trip.id}", { notice: "Trip created successfully." })
       rescue JSON::ParserError => e
@@ -103,8 +135,16 @@ class TripsController < ApplicationController
 
   private
 
+  def trip_generation_limit_message
+    "Regular accounts can generate or rebuild up to #{User::REGULAR_GENERATION_LIMIT} trips every " \
+      "6 months. You have reached that limit. Contact support or upgrade to premium for unlimited generations."
+  end
+
   def set_owned_trip
-    @the_trip = current_user.trips.find_by(id: params.fetch("path_id"))
+    @the_trip = current_user.trips
+      .with_attached_location_hero
+      .includes(trip_plans: :place_thumbnail_attachment)
+      .find_by(id: params.fetch("path_id"))
     return if @the_trip
 
     redirect_to("/trips", alert: "Trip not found.")
@@ -148,7 +188,7 @@ class TripsController < ApplicationController
       Destination: #{the_trip.trip_location}.
       Start date: #{the_trip.trip_start_date}.
       Duration: #{the_trip.trip_duration_days} days.
-      Notes: #{the_trip.trip_notes}
+      Notes (from the trip form; free-form text and saved preferences): #{the_trip.trip_notes}
       Produce the itinerary JSON as specified. No prose outside JSON.
     TEXT
   end
@@ -164,6 +204,8 @@ class TripsController < ApplicationController
       Rules:
       - Cover every calendar day from the user's start date through the full trip duration; one object per day in "days".
       - Each day: at most 5 items; choose 4–5 must-do highlights per day (not more).
+      - The user message includes a "Notes:" line (form + textarea; any wording). Ignore noise or off-topic text. Prioritize normal destination must-sees and a balanced trip; use Notes only as a light preference layer on top.
+      - If Notes mention a hobby, food preference, or similar, reflect it sparingly: a few fitting stops or occasional slots—not the same idea on most days, and never a single-topic trip unless the user explicitly demands it (only that, every day, whole trip about X).
       - start_time / end_time: local time at destination, 24-hour HH:MM.
       - activity: at most ONE sentence.
       - plan_brief: max 4 words.

@@ -14,6 +14,7 @@
 #
 class Trip < ApplicationRecord
   has_many  :trip_plans, class_name: "TripPlan", foreign_key: "trip_id", dependent: :destroy
+  has_many  :trip_generation_events, dependent: :nullify
   belongs_to :user, required: true, class_name: "User", foreign_key: "user_id"
 
   # Google Places photo for trip_location; cached so the home “Future trips” hero does not call APIs each visit.

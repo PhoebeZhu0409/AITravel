@@ -7,6 +7,19 @@
 </nav>
 <hr>
 
+<% if user_signed_in? && !current_user.premium? %>
+  <% rem = current_user.trip_generations_remaining %>
+  <% if rem.positive? %>
+    <p class="trip-generation-quota trip-generation-quota--plain" role="status">
+      <%= rem %> free trip generations remaining.
+    </p>
+  <% else %>
+    <p class="trip-generation-quota trip-generation-quota--plain trip-generation-quota--plain-warn" role="status">
+      You have run out of 5 free trip generations within the last 6 months.
+    </p>
+  <% end %>
+<% end %>
+
 <% pf = @rebuild_prefill || ::RebuildFormPrefill.from_trip_notes(nil) %>
 <% todos_saved = Array(pf[:todos]).map(&:to_s) %>
 <% optional_open = pf[:budget].present? || pf[:people].present? || pf[:live_area].present? || todos_saved.any? %>
@@ -139,7 +152,8 @@
 
       </article>
 
-    <button type="submit">
+    <% rebuild_quota_full = user_signed_in? && !current_user.premium? && !current_user.can_generate_trip? %>
+    <button type="submit"<%= " disabled aria-disabled=\"true\"".html_safe if rebuild_quota_full %>>
       Rebuild my agenda!
     </button>
 

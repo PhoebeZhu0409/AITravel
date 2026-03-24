@@ -15,6 +15,10 @@ Rails.application.routes.draw do
   #get("/", { :controller => "trips", :action => "index" })
   root to: "trips#index"
 
+  # No ".pdf" in the path — some hosts/proxies try to serve it as a static file and never hit Rails.
+  get("/trips/:path_id/download_agenda", { :controller => "trips", :action => "agenda_pdf", :as => :trip_agenda_pdf })
+  get("/trips/:path_id/agenda.pdf", { :controller => "trips", :action => "agenda_pdf" })
+
   get("/trips/:path_id", { :controller => "trips", :action => "show" })
 
   # UPDATE

@@ -184,6 +184,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_24_150000) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
+  create_table "trip_generation_events", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "trip_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["trip_id"], name: "index_trip_generation_events_on_trip_id"
+    t.index ["user_id", "created_at"], name: "index_trip_generation_events_on_user_and_created"
+    t.index ["user_id"], name: "index_trip_generation_events_on_user_id"
+  end
+
   create_table "trip_plans", force: :cascade do |t|
     t.integer "trip_id"
     t.string "trip_plan"
@@ -225,6 +235,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_24_150000) do
     t.string "username"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "account_tier", default: "regular", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -237,4 +248,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_24_150000) do
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "trip_generation_events", "trips", on_delete: :nullify
+  add_foreign_key "trip_generation_events", "users"
 end

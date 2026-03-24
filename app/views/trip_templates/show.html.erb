@@ -53,13 +53,30 @@
       </div>
 
       <div class="trip-actions">
-        <a class="btn-rebuild" href="/modify/<%= @the_trip.id %>">
-          Rebuild My Agenda
-        </a>
+        <div class="trip-actions__primary">
+          <% rebuild_blocked = !current_user.premium? && !current_user.can_generate_trip? %>
+          <% if rebuild_blocked %>
+            <span class="btn-rebuild btn-rebuild--disabled" aria-disabled="true" title="Generation limit reached for regular accounts">
+              Rebuild My Agenda
+            </span>
+          <% else %>
+            <a class="btn-rebuild" href="/modify/<%= @the_trip.id %>">
+              Rebuild My Agenda
+            </a>
+          <% end %>
 
-        <a class="btn-delete" href="/delete_trip/<%= @the_trip.id %>">
-          Delete This Trip
-        </a>
+          <a class="btn-delete" href="/delete_trip/<%= @the_trip.id %>">
+            Delete This Trip
+          </a>
+        </div>
+
+        <%# Full navigation in a new tab: avoids Turbo + broken “download” fetches; filename comes from Content-Disposition. %>
+        <%= link_to "Share",
+            trip_agenda_pdf_path(path_id: @the_trip.id),
+            class: "btn-share",
+            target: "_blank",
+            rel: "noopener",
+            data: { turbo: false } %>
       </div>
 
     </article>
@@ -160,7 +177,7 @@
                    <!-- <td>-->
                       <%# short_loc = a_day.plan_location.split(",").first %>
                       <%#= link_to short_loc,
-                  "https://www.google.com/maps/search/?api=1&query=#{ERB::Util.url_encode(a_day.plan_location)}",
+                  a_day.google_maps_search_url,
                   target: "_blank",
                   rel: "noopener" %>
 <!--                    </td>-->
@@ -169,7 +186,7 @@
                         data-label="Location"
                         <% unless a_day.google_place_cached? %>data-location="<%= a_day.plan_location %>"<% end %>>
                       <a
-                        href="https://www.google.com/maps/search/?api=1&query=<%= ERB::Util.url_encode(a_day.plan_location) %>"
+                        href="<%= a_day.google_maps_search_url.presence || "#" %>"
                         target="_blank"
                         rel="noopener"
                         class="place-card-link">

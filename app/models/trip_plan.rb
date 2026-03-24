@@ -28,6 +28,14 @@ class TripPlan < ApplicationRecord
 
   has_one_attached :place_thumbnail
 
+  # Same URL as the agenda card link (show template); use in PDF so links match the website.
+  def google_maps_search_url
+    return if plan_location.blank?
+
+    q = ERB::Util.url_encode(plan_location.to_s)
+    "https://www.google.com/maps/search/?api=1&query=#{q}"
+  end
+
   # Populated once at agenda generation; show page skips client-side Places if true.
   def google_place_cached?
     place_thumbnail.attached? ||
