@@ -1210,7 +1210,8 @@ body.pico .agenda-day-tabs button.agenda-day-tab.is-active[type="button"]:active
 .agenda-jump-select--compact {
   min-width: 6.8rem;
   max-width: 9.2rem;
-  padding: 0.12rem 1.15rem 0.12rem 0.35rem;
+  /* ~10% taller than 0.12rem vertical padding (matches prior total control height) */
+  padding: 0.175rem 1.15rem 0.175rem 0.35rem;
   /* Match .agenda-integrated-toolbar .agenda-jump-label (0.7rem) */
   font-size: 0.7rem;
   font-weight: 600;
@@ -1243,7 +1244,7 @@ body.pico .agenda-integrated-toolbar select.agenda-jump-select--compact {
   font-size: 0.7rem !important;
   line-height: 1.2 !important;
   font-weight: 600 !important;
-  padding: 0.12rem 1.15rem 0.12rem 0.35rem !important;
+  padding: 0.175rem 1.15rem 0.175rem 0.35rem !important;
 }
 
 body.pico .agenda-tab-arrow {
