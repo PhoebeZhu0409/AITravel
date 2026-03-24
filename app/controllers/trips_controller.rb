@@ -4,6 +4,9 @@ class TripsController < ApplicationController
   def index
     matching_trips = current_user.trips
     @list_of_trips = matching_trips.order({ :created_at => :desc })
+    @future_trips = matching_trips
+      .where(trip_start_date: (Date.today...))
+      .order(:trip_start_date)
     @trip_form = (session.delete(:trip_form_draft) || {}).stringify_keys
 
     render({ :template => "trip_templates/index" })
@@ -43,6 +46,11 @@ class TripsController < ApplicationController
 
     if @the_trip.valid?
       @the_trip.save
+      # Refresh stored Places hero when destination changed, or when we never got one (e.g. first run failed / no key).
+      # Rebuild with the same location used to skip this — that left loremflickr/placeholder forever.
+      if @the_trip.saved_change_to_trip_location? || !@the_trip.location_hero.attached?
+        ::GooglePlacesEnricher.enrich_trip_destination!(@the_trip)
+      end
 
       begin
         plan_hash = generate_ai_plan_for(@the_trip)
@@ -73,6 +81,7 @@ class TripsController < ApplicationController
 
     if the_trip.valid?
       the_trip.save
+      ::GooglePlacesEnricher.enrich_trip_destination!(the_trip)
 
       begin
         plan_hash = generate_ai_plan_for(the_trip)
@@ -182,6 +191,7 @@ class TripsController < ApplicationController
         date = Date.parse(day[:date])
 
         day.fetch(:items, []).first(5).each do |item|
+          location = item[:location].to_s.strip
           new_plans << TripPlan.create!(
             trip: the_trip,
             date: date,
@@ -191,7 +201,7 @@ class TripsController < ApplicationController
             trip_plan: item[:activity],
             plan_brief: item[:plan_brief],
             user_id: the_trip.user_id,
-            plan_location: item[:location],
+            plan_location: location,
             plan_details: item[:commute]
           )
         end

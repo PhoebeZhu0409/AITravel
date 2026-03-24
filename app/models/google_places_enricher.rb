@@ -56,6 +56,31 @@ class GooglePlacesEnricher
       # Leave plan row usable without cache
     end
 
+    # One-time hero image for the trip’s destination (Find Place + Photo → Active Storage).
+    def enrich_trip_destination!(trip)
+      key = ENV.fetch("GOOGLE_MAPS_API_KEY", "").to_s.strip
+      return if key.blank?
+
+      query = trip.trip_location.to_s.strip
+      return if query.blank?
+
+      data = find_place_json(query, key)
+      return unless data && data["status"] == "OK"
+
+      cand = data["candidates"]&.first
+      return unless cand
+
+      photo_ref = cand.dig("photos", 0, "photo_reference")
+      return if photo_ref.blank?
+
+      trip.location_hero.purge if trip.location_hero.attached?
+
+      attach_location_hero_from_photo_ref(trip, photo_ref, key)
+      trip.save!
+    rescue StandardError => e
+      Rails.logger.warn("[GooglePlacesEnricher] trip destination hero: #{e.class}: #{e.message}")
+    end
+
     # IANA id (e.g. "America/New_York") for the user's trip destination string from the form.
     # Uses Find Place + Time Zone API (same key as enrich). reference_date is used for the timezone request.
     def timezone_id_for_location(location_query, reference_date)
@@ -141,6 +166,31 @@ class GooglePlacesEnricher
       trip_plan.place_thumbnail.attach(
         io: StringIO.new(body),
         filename: "place-#{trip_plan.id}-#{SecureRandom.hex(4)}.#{ext}",
+        content_type: ctype
+      )
+    end
+
+    def attach_location_hero_from_photo_ref(trip, photo_ref, key)
+      uri = URI(PHOTO_URL)
+      uri.query = URI.encode_www_form(maxwidth: 1200, photo_reference: photo_ref, key: key)
+      res = http_get_follow(uri)
+      return unless res.is_a?(Net::HTTPSuccess)
+
+      body = res.body
+      return if body.blank?
+
+      ctype = res.content_type.to_s.split(";").first.presence || "image/jpeg"
+      ext = if ctype.include?("png")
+              "png"
+            elsif ctype.include?("webp")
+              "webp"
+            else
+              "jpg"
+            end
+
+      trip.location_hero.attach(
+        io: StringIO.new(body),
+        filename: "trip-#{trip.id}-destination-#{SecureRandom.hex(4)}.#{ext}",
         content_type: ctype
       )
     end

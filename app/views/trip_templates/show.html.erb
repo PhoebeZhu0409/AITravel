@@ -9,16 +9,21 @@
 <article>
   <div class="trip-hero">
     <% location = @the_trip.trip_location %>
-    <% location_tag = location.gsub(", ", "_") %>
     <% hero_default_path = image_path("trip_hero_default.png") %>
 
     <div class="trip-hero-image-wrap">
-      <img
-        class="trip-hero-image"
-        src="https://loremflickr.com/1200/400/<%= ERB::Util.url_encode(location_tag) %>"
-        alt="<%= location %>"
-        onerror="this.onerror=null;this.src='<%= hero_default_path %>';"
-      >
+      <% if @the_trip.location_hero.attached? %>
+        <%= image_tag @the_trip.location_hero, alt: location, class: "trip-hero-image" %>
+      <% else %>
+        <%# No Google Places photo (missing key, no photos, etc.) — same default asset every time. %>
+        <img
+          class="trip-hero-image"
+          src="<%= hero_default_path %>"
+          alt="<%= location %>"
+          loading="lazy"
+          onerror="this.onerror=null;this.classList.add('trip-hero-image--placeholder');this.removeAttribute('src');"
+        >
+      <% end %>
     </div>
 
       <%# Inline trip name: hover = text cursor; click to edit; Save / Cancel when editing %>

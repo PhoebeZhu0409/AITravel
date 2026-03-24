@@ -5,13 +5,6 @@
 </nav>
 <hr>
 
-<article>
-  <img
-    src="https://loremflickr.com/1200/400/OCEAN"
-    style="width: 100%; height: auto; border-radius: 8px;"
-  >
-</article>
-
 <div class="home-tabs" role="tablist" aria-label="Plan and browse trips">
   <button type="button" class="home-tab" role="tab" id="tab-plan" aria-selected="true" aria-controls="home-panel-plan" data-tab-target="plan">
     Plan A New Trip
@@ -24,7 +17,11 @@
   </button>
 </div>
 
+<% index_hero_fallback = image_path("trip_hero_default.png") %>
+<%# Same decorative hero on Plan, My Future Trips, Past Trips; trip show uses Google-stored photo. %>
+<% index_lorem_hero_src = "https://loremflickr.com/1200/400/sunrise" %>
 <div id="home-panel-plan" class="home-tab-panel" role="tabpanel" aria-labelledby="tab-plan">
+  <%= render "trip_templates/home_index_hero", src: index_lorem_hero_src, fallback: index_hero_fallback %>
   <article>
     <header>
       <h2>
@@ -204,15 +201,14 @@
 </div>
 
 <div id="home-panel-future" class="home-tab-panel" role="tabpanel" aria-labelledby="tab-future" hidden>
+  <%= render "trip_templates/home_index_hero", src: index_lorem_hero_src, fallback: index_hero_fallback %>
   <article>
-    <header style="margin-top: 15px;">
+    <header>
       <h2>My Future Trips</h2>
     </header>
 
-    <% active_trips = @list_of_trips.where(trip_start_date: (Date.today...)).order(:trip_start_date) %>
-
     <ul id="future-trips-list">
-      <% active_trips.each_with_index do |a_trip, idx| %>
+      <% @future_trips.each_with_index do |a_trip, idx| %>
         <li class="<%= 'extra-trip' if idx >= 5 %>">
           <a href="/trips/<%= a_trip.id %>">
             📍 <%= a_trip.trip_name %>
@@ -221,7 +217,7 @@
       <% end %>
     </ul>
 
-    <% if active_trips.size > 5 %>
+    <% if @future_trips.size > 5 %>
       <button id="show-more-trips" class="btn-view-more">
         View more
       </button>
@@ -230,8 +226,9 @@
 </div>
 
 <div id="home-panel-past" class="home-tab-panel" role="tabpanel" aria-labelledby="tab-past" hidden>
+  <%= render "trip_templates/home_index_hero", src: index_lorem_hero_src, fallback: index_hero_fallback %>
   <article>
-    <header style="margin-top: 15px;">
+    <header>
       <h2>Past Trips</h2>
     </header>
 

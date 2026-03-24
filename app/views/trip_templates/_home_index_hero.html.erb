@@ -1,0 +1,12 @@
+<%# Shared hero for Plan, My Future Trips, Past Trips (same size, margins, classes). %>
+<div class="trip-hero-image-wrap home-tab-hero home-tab-hero--plan" aria-hidden="true">
+  <img
+    class="trip-hero-image"
+    src="<%= src %>"
+    alt=""
+    width="1200"
+    height="400"
+    loading="lazy"
+    onerror="this.onerror=null;this.src='<%= fallback %>';this.onerror=function(){this.classList.add('trip-hero-image--placeholder');this.removeAttribute('src');};"
+  >
+</div>

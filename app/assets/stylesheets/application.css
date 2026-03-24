@@ -307,8 +307,9 @@
   overflow: hidden;
 }
 
-/* Trip show hero: same crop box as loremflickr 1200×400 (3:1); fallback + API images fill with cover */
+/* Trip show hero: 3:1 crop; Google hero (Active Storage) or app/assets/images/trip_hero_default.png */
 .trip-hero-image-wrap {
+  position: relative;
   width: 100%;
   max-width: 100%;
   aspect-ratio: 1200 / 400;
@@ -318,11 +319,28 @@
 }
 
 .trip-hero-image {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
   display: block;
+}
+
+/* If default PNG is missing or fails to load — gradient (onerror adds this class + removes src) */
+.trip-hero-image.trip-hero-image--placeholder {
+  object-fit: none;
+  background: linear-gradient(145deg, #dbeafe 0%, #e0e7ef 45%, #cbd5e1 100%);
+}
+
+.home-tab-hero--plan .trip-hero-image.trip-hero-image--placeholder {
+  background: linear-gradient(145deg, #cffafe 0%, #e0f2fe 50%, #bae6fd 100%);
+}
+
+/* Home index: hero above tab panels */
+.home-tab-hero {
+  margin-bottom: 1rem;
 }
 
 /* Trip show: title is an inline-editable field (looks like a heading, not a Pico input) */
@@ -1377,7 +1395,7 @@ body.pico .agenda-tab-arrow--next[type="button"]:hover:not(:disabled) {
 
 
 .place-photo {
-  width: 85%;               /* 15% smaller than full column; centered via .place-card */
+  width: 76.5%;             /* 10% smaller than 85%; centered via .place-card */
   aspect-ratio: 1 / 1;      /* ← makes it a perfect square */
   border-radius: 12px;
   overflow: hidden;         /* crop overflow so image stays inside */
@@ -1412,7 +1430,7 @@ body.pico .agenda-tab-arrow--next[type="button"]:hover:not(:disabled) {
 
 .agenda-table th:nth-child(1),
 .agenda-table td:nth-child(1) {
-  width: 13%;   /* From-To */
+  width: 13%;   /* Time */
 }
 
 .agenda-table th:nth-child(2),
