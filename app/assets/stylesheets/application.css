@@ -945,10 +945,10 @@ article.agenda-day.active {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 0.18rem;
+  gap: 0.28rem;
   box-sizing: border-box;
   width: 100%;
-  max-width: 9.6rem;
+  max-width: 12.5rem;
   min-width: 0;
   padding-right: 2px;
 }
@@ -1273,26 +1273,33 @@ body.pico .agenda-day-tabs button.agenda-day-tab.is-active[type="button"]:active
 }
 
 .agenda-jump-label {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #475569;
+  letter-spacing: 0.01em;
+  color: #334155;
   margin: 0;
   white-space: nowrap;
+  line-height: 1.35;
 }
 
 .agenda-integrated-toolbar .agenda-jump-label {
-  font-size: 0.7rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  color: #64748b;
-  line-height: 1.2;
-  text-align: left;
+  letter-spacing: 0.02em;
+  color: #1e293b;
+  line-height: 1.35;
+  width: 100%;
+  text-align: right;
+  -webkit-font-smoothing: antialiased;
 }
 
 .agenda-jump-select {
   width: auto;
   min-width: min(100%, 14rem);
   max-width: 100%;
-  padding: 0.35rem 2rem 0.35rem 0.65rem;
+  min-height: 2.5rem;
+  padding: 0.55rem 2.25rem 0.55rem 0.75rem;
   font-size: 0.8125rem;
   font-weight: 500;
   color: #0f172a;
@@ -1300,23 +1307,25 @@ body.pico .agenda-day-tabs button.agenda-day-tab.is-active[type="button"]:active
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   cursor: pointer;
-  line-height: 1.3;
+  line-height: 1.35;
+  box-sizing: border-box;
 }
 
 .agenda-jump-select--compact {
   min-width: 6.8rem;
-  max-width: 9.2rem;
-  /* ~10% taller than 0.12rem vertical padding (matches prior total control height) */
-  padding: 0.175rem 1.15rem 0.175rem 0.35rem;
-  /* Match .agenda-integrated-toolbar .agenda-jump-label (0.7rem) */
-  font-size: 0.7rem;
+  max-width: 100%;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 1.85rem 0.5rem 0.65rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  border-radius: 6px;
-  line-height: 1.2;
+  border-radius: 8px;
+  line-height: 1.35;
+  box-sizing: border-box;
 }
 
 .agenda-jump-select--compact option {
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   font-weight: 500;
 }
 
@@ -1332,15 +1341,17 @@ body.pico .agenda-jump-select {
 }
 
 body.pico .agenda-jump-select--compact {
-  max-width: 9.6rem !important;
+  max-width: 100% !important;
 }
 
-/* Pico: `.pico select` sets font-size: 1rem — match label text */
+/* Pico: `.pico select` sets font-size: 1rem — keep compact toolbar but readable height */
 body.pico .agenda-integrated-toolbar select.agenda-jump-select--compact {
-  font-size: 0.7rem !important;
-  line-height: 1.2 !important;
+  font-size: 0.78rem !important;
+  line-height: 1.35 !important;
   font-weight: 600 !important;
-  padding: 0.175rem 1.15rem 0.175rem 0.35rem !important;
+  min-height: 2.75rem !important;
+  padding: 0.5rem 1.85rem 0.5rem 0.65rem !important;
+  box-sizing: border-box !important;
 }
 
 body.pico .agenda-tab-arrow {
@@ -1474,6 +1485,8 @@ body.pico .agenda-tab-arrow--next[type="button"]:hover:not(:disabled) {
   .agenda-jump-select--compact {
     max-width: 100%;
     min-width: 0;
+    width: 100%;
+    min-height: 2.75rem;
   }
 }
 
@@ -1583,14 +1596,40 @@ a.place-card-link:hover .place-name {
 
   .agenda-integrated-toolbar__jump {
     grid-column: 1;
-    justify-self: center;
-    align-items: center;
+    justify-self: stretch;
+    align-items: stretch;
     width: 100%;
-    max-width: min(100%, 20rem);
+    max-width: 100%;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
   }
 
   .agenda-integrated-toolbar .agenda-jump-label {
-    text-align: center;
+    text-align: right;
+    width: 100%;
+    margin-bottom: 0.15rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.015em;
+    color: #0f172a;
+  }
+
+  .agenda-integrated-toolbar__jump .agenda-jump-select,
+  .agenda-integrated-toolbar__jump .agenda-jump-select--compact {
+    width: 100%;
+    max-width: 100%;
+    min-height: 2.875rem;
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+    font-size: 0.875rem;
+  }
+
+  body.pico .agenda-integrated-toolbar__jump select.agenda-jump-select--compact {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 2.875rem !important;
+    font-size: 0.875rem !important;
+    padding: 0.55rem 2rem 0.55rem 0.75rem !important;
   }
 
   .agenda-day-picker--compact {
@@ -1694,6 +1733,24 @@ a.place-card-link:hover .place-name {
     word-break: break-word;
     overflow-wrap: anywhere;
     line-height: 1.45;
+  }
+
+  .agenda-day-panel .agenda-get-around-body {
+    font-size: 0.9rem;
+  }
+
+  .agenda-day-panel a.agenda-direction-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1d4ed8;
+    text-decoration: underline;
+    text-underline-offset: 0.12em;
+  }
+
+  .agenda-day-panel a.agenda-direction-link:hover {
+    color: #1e40af;
   }
 
   /* Plan tooltip: don’t overflow the viewport on small screens */

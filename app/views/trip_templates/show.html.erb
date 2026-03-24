@@ -210,7 +210,12 @@
                       </a>
                     </td>
   <!---------------------------------------------------->
-                    <td class="agenda-get-around-cell" data-label="Get around" style="font-size: 0.9rem;"><%= a_day.plan_details %></td>
+                    <td class="agenda-get-around-cell" data-label="Get around">
+                      <div class="agenda-get-around-body"><%= a_day.plan_details %></div>
+                      <% if (dir_href = a_day.google_maps_search_url.presence) %>
+                        <%= link_to "Direction >", dir_href, target: "_blank", rel: "noopener", class: "agenda-direction-link" %>
+                      <% end %>
+                    </td>
                   </tr>
                 <% end %>
               </tbody>
