@@ -1,6 +1,8 @@
+<% content_for :title, @trip_show_page_title if @trip_show_page_title.present? %>
+
 <nav aria-label="breadcrumb">
   <ul>
-    <li><a href="/">Home</a></li>
+    <li><a href="<%= @trip_show_public_demo ? new_user_session_path : "/" %>">Home</a></li>
     <li><%= @the_trip.trip_name%></li>
   </ul>
 </nav>
@@ -26,24 +28,28 @@
       <% end %>
     </div>
 
-      <%# Inline trip name: hover = text cursor; click to edit; Save / Cancel when editing %>
+      <%# Inline trip name (signed-in) vs read-only title (public showcase) %>
       <div class="trip-name-inline-wrap">
-        <%= form_with url: "/trip_name_update/#{@the_trip.id}", method: :post, local: true, html: { class: "trip-name-inline-form", data: { turbo: false } } do %>
-          <input
-            type="text"
-            id="trip-name-field"
-            class="trip-name-field"
-            name="query_trip_name"
-            value="<%= @the_trip.trip_name %>"
-            autocomplete="off"
-            spellcheck="false"
-            aria-label="Trip name"
-            data-original-name="<%= h(@the_trip.trip_name) %>"
-          >
-          <div class="trip-name-actions" id="trip-name-actions" hidden>
-            <button type="submit" class="trip-name-save-btn" data-nopico>Save</button>
-            <button type="button" class="trip-name-cancel-btn" id="trip-name-cancel-btn" data-nopico>Cancel</button>
-          </div>
+        <% if @trip_show_public_demo %>
+          <p class="trip-name-showcase-static"><%= @the_trip.trip_name %></p>
+        <% else %>
+          <%= form_with url: "/trip_name_update/#{@the_trip.id}", method: :post, local: true, html: { class: "trip-name-inline-form", data: { turbo: false } } do %>
+            <input
+              type="text"
+              id="trip-name-field"
+              class="trip-name-field"
+              name="query_trip_name"
+              value="<%= @the_trip.trip_name %>"
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="Trip name"
+              data-original-name="<%= h(@the_trip.trip_name) %>"
+            >
+            <div class="trip-name-actions" id="trip-name-actions" hidden>
+              <button type="submit" class="trip-name-save-btn" data-nopico>Save</button>
+              <button type="button" class="trip-name-cancel-btn" id="trip-name-cancel-btn" data-nopico>Cancel</button>
+            </div>
+          <% end %>
         <% end %>
       </div>
 
@@ -53,26 +59,28 @@
       </div>
 
       <div class="trip-actions">
-        <div class="trip-actions__primary">
-          <% rebuild_blocked = !current_user.premium? && !current_user.can_generate_trip? %>
-          <% if rebuild_blocked %>
-            <span class="btn-rebuild btn-rebuild--disabled" aria-disabled="true" title="Generation limit reached for regular accounts">
-              Rebuild My Agenda
-            </span>
-          <% else %>
-            <a class="btn-rebuild" href="/modify/<%= @the_trip.id %>">
-              Rebuild My Agenda
-            </a>
-          <% end %>
+        <% unless @trip_show_public_demo %>
+          <div class="trip-actions__primary">
+            <% rebuild_blocked = !current_user.premium? && !current_user.can_generate_trip? %>
+            <% if rebuild_blocked %>
+              <span class="btn-rebuild btn-rebuild--disabled" aria-disabled="true" title="Generation limit reached for regular accounts">
+                Rebuild My Agenda
+              </span>
+            <% else %>
+              <a class="btn-rebuild" href="/modify/<%= @the_trip.id %>">
+                Rebuild My Agenda
+              </a>
+            <% end %>
 
-          <a class="btn-delete" href="/delete_trip/<%= @the_trip.id %>">
-            Delete This Trip
-          </a>
-        </div>
+            <a class="btn-delete" href="/delete_trip/<%= @the_trip.id %>">
+              Delete This Trip
+            </a>
+          </div>
+        <% end %>
 
         <%# Full navigation in a new tab: avoids Turbo + broken “download” fetches; filename comes from Content-Disposition. %>
         <%= link_to "Share",
-            trip_agenda_pdf_path(path_id: @the_trip.id),
+            @trip_show_public_demo ? @showcase_agenda_pdf_path : trip_agenda_pdf_path(path_id: @the_trip.id),
             class: "btn-share",
             target: "_blank",
             rel: "noopener",

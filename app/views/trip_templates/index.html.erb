@@ -174,7 +174,7 @@
           </p>
         <% else %>
           <p class="trip-generation-quota trip-generation-quota--plain trip-generation-quota--plain-warn" role="status">
-            You have run out of 5 free trip generations within the last 6 months..
+            You have run out of 5 free trip generations within the last 6 months.
           </p>
         <% end %>
       <% end %>
@@ -308,7 +308,12 @@
       });
     });
 
-    activate("plan");
+    var tabFromHash = (location.hash || "").replace(/^#/, "");
+    if (tabFromHash === "future" || tabFromHash === "past" || tabFromHash === "plan") {
+      activate(tabFromHash);
+    } else {
+      activate("plan");
+    }
 
     var planForm = document.getElementById("plan-trip-form");
     var agendaOverlay = document.getElementById("agenda-loading-overlay");

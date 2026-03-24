@@ -5,44 +5,96 @@
   </h1>
   <p class="sign-in-lead">Plan trips. Or just today.</p>
 
-  <div class="sign-in-card">
-    <p class="sign-in-title">Sign in</p>
-
-    <div class="sign-in-form-block">
-      <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name), html: { autocomplete: "off", class: "sign-in-form" }) do |f| %>
-        <%= f.input :email,
-                    required: false,
-                    autofocus: true,
-                    label: "Email",
-                    input_html: { autocomplete: "off", autocapitalize: "none", spellcheck: "false", class: "sign-in-input" } %>
-        <%= f.input :password,
-                    required: false,
-                    label: "Password",
-                    input_html: { autocomplete: "new-password", class: "sign-in-input" } %>
-        <% if devise_mapping.rememberable? %>
-          <%= f.input :remember_me, as: :boolean, wrapper_html: { class: "sign-in-remember" } %>
-        <% end %>
-        <div class="sign-in-actions">
-          <%= f.button :submit, "Log in", class: "sign-in-submit" %>
+  <div class="sign-in-landing__featured-wrap" aria-label="Example trips">
+    <div class="sign-in-landing__featured-marquee">
+      <div class="sign-in-landing__featured-track">
+        <div class="sign-in-landing__featured-set">
+          <%= link_to showcase_madrid_path, class: "sign-in-landing__featured-link" do %>
+            <i class="bi bi-geo-alt-fill sign-in-landing__pin" aria-hidden="true"></i>
+            <span>My Solo Trip to Madrid</span>
+          <% end %>
+          <%= link_to showcase_new_york_path, class: "sign-in-landing__featured-link" do %>
+            <i class="bi bi-geo-alt-fill sign-in-landing__pin" aria-hidden="true"></i>
+            <span>Explore Classic New York</span>
+          <% end %>
+          <span class="sign-in-landing__featured-teaser">
+            <i class="bi bi-geo-alt-fill sign-in-landing__pin" aria-hidden="true"></i>
+            <span>My Sunday Plan...</span>
+          </span>
         </div>
-      <% end %>
-
-      <div class="sign-in-links">
-        <%= render "devise/shared/links" %>
+        <div class="sign-in-landing__featured-set" aria-hidden="true">
+          <%= link_to showcase_madrid_path, class: "sign-in-landing__featured-link", tabindex: "-1" do %>
+            <i class="bi bi-geo-alt-fill sign-in-landing__pin" aria-hidden="true"></i>
+            <span>My Solo Trip to Madrid</span>
+          <% end %>
+          <%= link_to showcase_new_york_path, class: "sign-in-landing__featured-link", tabindex: "-1" do %>
+            <i class="bi bi-geo-alt-fill sign-in-landing__pin" aria-hidden="true"></i>
+            <span>Explore Classic New York</span>
+          <% end %>
+          <span class="sign-in-landing__featured-teaser">
+            <i class="bi bi-geo-alt-fill sign-in-landing__pin" aria-hidden="true"></i>
+            <span>My Sunday Plan...</span>
+          </span>
+        </div>
       </div>
     </div>
   </div>
 
+  <div class="sign-in-landing__promo">
+    <div class="sign-in-landing__highlights" aria-label="What you can plan">
+      <div class="sign-in-landing__highlight">
+        <i class="bi bi-tsunami sign-in-landing__highlight-icon" aria-hidden="true"></i>
+        <span>Plan Solo Adventure</span>
+      </div>
+      <div class="sign-in-landing__highlight">
+        <i class="bi bi-sun-fill sign-in-landing__highlight-icon" aria-hidden="true"></i>
+        <span>Plan a perfect day in your city</span>
+      </div>
+      <div class="sign-in-landing__highlight">
+        <i class="bi bi-buildings sign-in-landing__highlight-icon" aria-hidden="true"></i>
+        <span>Grand trip with friends, family</span>
+      </div>
+    </div>
 
-<br>
+    <p class="sign-in-landing__signup">
+      <%= link_to "Sign Up", new_registration_path(resource_name), class: "sign-in-landing__signup-link" %>
+    </p>
+
+    <div class="sign-in-card">
+      <p class="sign-in-title">Sign in</p>
+
+      <div class="sign-in-form-block">
+        <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name), html: { autocomplete: "off", class: "sign-in-form" }) do |f| %>
+          <%= f.input :email,
+                      required: false,
+                      autofocus: true,
+                      label: "Email",
+                      input_html: { autocomplete: "off", autocapitalize: "none", spellcheck: "false", class: "sign-in-input" } %>
+          <%= f.input :password,
+                      required: false,
+                      label: "Password",
+                      input_html: { autocomplete: "new-password", class: "sign-in-input" } %>
+          <% if devise_mapping.rememberable? %>
+            <%= f.input :remember_me, as: :boolean, wrapper_html: { class: "sign-in-remember" } %>
+          <% end %>
+          <div class="sign-in-actions">
+            <%= f.button :submit, "Log in", class: "sign-in-submit" %>
+          </div>
+        <% end %>
+
+        <div class="sign-in-links">
+          <% if devise_mapping.recoverable? %>
+            <%= link_to "Forgot your password?", new_password_path(resource_name) %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
     <p class="sign-in-tutorial">
-    <a href="https://app.screencast.com/Sp4BIB4jNqbWG" class="sign-in-tutorial-link" target="_blank" rel="noopener noreferrer">🌊 Tutorial: How to use Nalu</a>
-  </p>
-
-  <p class="sign-in-meaning">
-    
-  </p>
-
-
-
+      <a href="https://app.screencast.com/Sp4BIB4jNqbWG" class="sign-in-tutorial-link" target="_blank" rel="noopener noreferrer">
+        <i class="bi bi-play-btn sign-in-tutorial-icon" aria-hidden="true"></i>
+        Tutorial: How to use Nalu
+      </a>
+    </p>
+  </div>
 </div>
