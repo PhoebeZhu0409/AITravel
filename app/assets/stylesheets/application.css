@@ -1315,29 +1315,7 @@ body.pico .agenda-tab-arrow--next[type="button"]:hover:not(:disabled) {
     border-radius: 7px;
   }
 
-  .agenda-integrated-toolbar {
-    grid-template-columns: 1fr;
-    justify-items: center;
-    padding: 0.35rem 0.4rem 0.4rem;
-    gap: 0.5rem;
-  }
-
-  .agenda-integrated-toolbar__days {
-    grid-column: 1;
-    justify-self: center;
-  }
-
-  .agenda-integrated-toolbar__jump {
-    grid-column: 1;
-    justify-self: center;
-    align-items: center;
-    width: 100%;
-    max-width: 7.6rem;
-  }
-
-  .agenda-integrated-toolbar .agenda-jump-label {
-    text-align: center;
-  }
+  /* Toolbar stacking + day-tab rail scroll: see @media (max-width: 720px) */
 
   /* Compact toolbar: keep short tabs on small screens */
   .agenda-day-picker--compact {
@@ -1345,12 +1323,7 @@ body.pico .agenda-tab-arrow--next[type="button"]:hover:not(:disabled) {
   }
 
   .agenda-day-picker--compact .agenda-day-tabs {
-    max-width: 100%;
     padding: 0.22rem 0.3rem;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    justify-content: flex-start;
   }
 
   .agenda-day-tab--compact {
@@ -1455,6 +1428,172 @@ body.pico .agenda-tab-arrow--next[type="button"]:hover:not(:disabled) {
 .agenda-table th:nth-child(4),
 .agenda-table td:nth-child(4) {
   width: 25%;   /* Get around */
+}
+
+/* Clickable location card: underline on title only, not whole block */
+a.place-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+a.place-card-link .place-name {
+  color: var(--pico-primary, #2563eb);
+}
+
+a.place-card-link .place-rating {
+  color: #666666;
+}
+
+a.place-card-link:hover .place-name {
+  text-decoration: underline;
+}
+
+/* ---------- Agenda: phones & narrow screens — same content, card rows ---------- */
+@media (max-width: 720px) {
+  /* Toolbar: stack day picker above “Go to day” so nothing crowds horizontally */
+  .agenda-integrated-toolbar {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding: 0.4rem 0.5rem 0.5rem;
+    gap: 0.55rem;
+  }
+
+  .agenda-integrated-toolbar__days {
+    grid-column: 1;
+    justify-self: center;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .agenda-integrated-toolbar__jump {
+    grid-column: 1;
+    justify-self: center;
+    align-items: center;
+    width: 100%;
+    max-width: min(100%, 20rem);
+  }
+
+  .agenda-integrated-toolbar .agenda-jump-label {
+    text-align: center;
+  }
+
+  .agenda-day-picker--compact {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+  }
+
+  .agenda-day-picker--compact .agenda-day-tabs {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+  }
+
+  /* One itinerary row = one card (labels match desktop column headers) */
+  .agenda-day-panel .agenda-day-body {
+    overflow-x: visible;
+  }
+
+  .agenda-day-panel .agenda-table {
+    display: block;
+    width: 100%;
+  }
+
+  .agenda-day-panel .agenda-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .agenda-day-panel .agenda-table tbody {
+    display: block;
+  }
+
+  .agenda-day-panel .agenda-table tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    padding: 0.85rem 1rem;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .agenda-day-panel .agenda-table tbody tr:last-child {
+    margin-bottom: 0;
+  }
+
+  .agenda-day-panel .agenda-table tbody td {
+    display: block;
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0.65rem 0;
+    border: none;
+    vertical-align: top;
+    text-align: left !important;
+    box-sizing: border-box;
+  }
+
+  .agenda-day-panel .agenda-table tbody td:first-child {
+    padding-top: 0;
+  }
+
+  .agenda-day-panel .agenda-table tbody td:last-child {
+    padding-bottom: 0;
+  }
+
+  .agenda-day-panel .agenda-table tbody td + td {
+    border-top: 1px solid #f3f4f6;
+  }
+
+  .agenda-day-panel .agenda-table tbody td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.35rem;
+  }
+
+  .agenda-day-panel .agenda-table tbody td.plan-cell {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .agenda-day-panel .agenda-table tbody td.place-cell .place-card {
+    align-items: center;
+  }
+
+  .agenda-day-panel .agenda-table tbody td.agenda-get-around-cell {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    line-height: 1.45;
+  }
+
+  /* Plan tooltip: don’t overflow the viewport on small screens */
+  .plan-full {
+    left: 0;
+    right: auto;
+    width: auto;
+    min-width: min(100%, 18rem);
+    max-width: min(calc(100vw - 2.5rem), 22rem);
+  }
+
+  .agenda-day-panel .day-map {
+    height: 220px;
+    margin-top: 0.75rem;
+  }
 }
 
 /* ------------------------- footer css --------------------------- */

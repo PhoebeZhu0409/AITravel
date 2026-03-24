@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_21_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_24_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -201,6 +201,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_21_120000) do
     t.string "place_display_name"
     t.decimal "place_latitude", precision: 10, scale: 7
     t.decimal "place_longitude", precision: 10, scale: 7
+    t.string "place_time_zone_id"
+    t.string "timezone"
   end
 
   create_table "trips", force: :cascade do |t|

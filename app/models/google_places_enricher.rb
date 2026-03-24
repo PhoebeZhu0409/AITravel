@@ -15,6 +15,7 @@ require "securerandom"
 class GooglePlacesEnricher
   FIND_PLACE_URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
   PHOTO_URL = "https://maps.googleapis.com/maps/api/place/photo"
+  TIMEZONE_URL = "https://maps.googleapis.com/maps/api/timezone/json"
 
   class << self
     def enrich_trip_plan(trip_plan)
@@ -40,6 +41,8 @@ class GooglePlacesEnricher
       if lat.present? && lng.present?
         trip_plan.place_latitude = lat
         trip_plan.place_longitude = lng
+        tz_id = fetch_time_zone_id(lat, lng, trip_plan.date, key)
+        trip_plan.place_time_zone_id = tz_id if tz_id.present?
       end
 
       photo_ref = cand.dig("photos", 0, "photo_reference")
@@ -53,7 +56,52 @@ class GooglePlacesEnricher
       # Leave plan row usable without cache
     end
 
+    # IANA id (e.g. "America/New_York") for the user's trip destination string from the form.
+    # Uses Find Place + Time Zone API (same key as enrich). reference_date is used for the timezone request.
+    def timezone_id_for_location(location_query, reference_date)
+      key = ENV.fetch("GOOGLE_MAPS_API_KEY", "").to_s.strip
+      return nil if key.blank?
+
+      query = location_query.to_s.strip
+      return nil if query.blank? || reference_date.blank?
+
+      data = find_place_json(query, key)
+      return nil unless data && data["status"] == "OK"
+
+      cand = data["candidates"]&.first
+      return nil unless cand
+
+      lat = cand.dig("geometry", "location", "lat")
+      lng = cand.dig("geometry", "location", "lng")
+      return nil unless lat.present? && lng.present?
+
+      fetch_time_zone_id(lat, lng, reference_date, key)
+    end
+
     private
+
+    # IANA zone id, e.g. "America/New_York" — used for agenda start-time abbreviations (EST, etc.).
+    def fetch_time_zone_id(lat, lng, date, key)
+      return if date.blank?
+
+      ts = Time.utc(date.year, date.month, date.day, 12, 0, 0).to_i
+      uri = URI(TIMEZONE_URL)
+      uri.query = URI.encode_www_form(
+        location: "#{lat},#{lng}",
+        timestamp: ts,
+        key: key
+      )
+      res = http_get_follow(uri)
+      return unless res.is_a?(Net::HTTPSuccess)
+
+      data = JSON.parse(res.body)
+      return unless data["status"] == "OK"
+
+      data["timeZoneId"].presence
+    rescue JSON::ParserError => e
+      Rails.logger.warn("[GooglePlacesEnricher] timezone JSON: #{e.message}")
+      nil
+    end
 
     def find_place_json(query, key)
       uri = URI(FIND_PLACE_URL)

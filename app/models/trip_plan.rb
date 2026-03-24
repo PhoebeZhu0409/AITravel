@@ -14,9 +14,11 @@
 #  plan_details             :text
 #  plan_location            :string
 #  start_time               :time
+#  timezone                 :string
 #  trip_plan                :string
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
+#  place_time_zone_id       :string
 #  trip_id                  :integer
 #  user_id                  :integer
 #

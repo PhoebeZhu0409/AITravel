@@ -1,22 +1,5 @@
 class TripsController < ApplicationController
-  # def ai
-  #   require "ai-chat"
-  #   require "dotenv/load"
-  #   i = AI::Chat.new
-  #   i.system("you provide a representative single picture that can be put in <img src=" " > based on user's input of a location")
-  #   i.schema = '{"name": "links","strict": true,"schema": {"type": "object","properties": {"link": {"type": "string","description": "The link of the picture based on user input"}},"required": ["link"],"additionalProperties": false}}'
-
-  #   the_id = params.fetch("path_id")
-  #   the_trip = Trip.where({ :id => the_id }).at(0)
-  #   @location = the_trip.trip_location
-  #   @location = @location.gsub(", ", "_")
-  #   i.user(@location)
-  #   @response = i.generate!
-  #   @pic = @response[:content][:link]
-
-  #   render({ :template => "trip_templates/ai_agenda" })
-  # end
-  
+  before_action :set_owned_trip, only: %i[show trip_name_update rebuild_form destroy update]
 
   def index
     matching_trips = current_user.trips
@@ -27,146 +10,58 @@ class TripsController < ApplicationController
   end
 
 
-
   def show
-    the_id = params.fetch("path_id")
-    matching_trips = current_user.trips.where({ :id => the_id })
-    @the_trip = matching_trips.at(0)
-    # if @the_trip == nil
-    #   redirect_to("/", { :alert => "Not found" })
-    #   return
-    # end
     render({ :template => "trip_templates/show" })
   end
 
-
   def trip_name_update
-    the_id = params.fetch("path_id")
-    the_trip = Trip.where({ :id => the_id }).at(0)
-    the_trip.trip_name = params.fetch("query_trip_name")
-    the_trip.save
-    redirect_to "/trips/#{the_trip.id}"
+    @the_trip.trip_name = params.fetch("query_trip_name")
+    if @the_trip.save
+      redirect_to "/trips/#{@the_trip.id}", notice: "Trip name updated."
+    else
+      redirect_to "/trips/#{@the_trip.id}", alert: @the_trip.errors.full_messages.to_sentence
+    end
   end
 
-
   def rebuild_form
-    the_id = params.fetch("path_id")
-    matching_trips = Trip.where({ :id => the_id })
-    @the_trip = matching_trips.at(0)
-    @rebuild_prefill = ::RebuildFormPrefill.from_trip_notes(@the_trip&.trip_notes)
+    @rebuild_prefill = ::RebuildFormPrefill.from_trip_notes(@the_trip.trip_notes)
     render({ :template => "trip_templates/edit_trip" })
   end
 
   def destroy
-    the_id = params.fetch("path_id")
-    the_trip = Trip.where({ :id => the_id }).at(0)
-
-    the_trip.destroy
-
+    @the_trip.destroy
     redirect_to("/trips", { :notice => "Trip deleted successfully." })
   end
 
+  # =============================== Update =================================
   def update
-    the_id = params.fetch("path_id")
-    the_trip = Trip.where({ :id => the_id }).at(0)
+    @the_trip.trip_name = params.fetch("query_trip_name")
+    @the_trip.trip_location = params.fetch("query_trip_location")
+    @the_trip.trip_duration_days = params.fetch("query_trip_duration_days")
+    @the_trip.trip_start_date = params.fetch("query_trip_start_date")
+    @the_trip.trip_notes = build_trip_summary
 
-    the_trip.trip_name = params.fetch("query_trip_name")
-    the_trip.trip_location = params.fetch("query_trip_location")
-    the_trip.trip_duration_days = params.fetch("query_trip_duration_days")
-    the_trip.trip_start_date = params.fetch("query_trip_start_date")
-    query_budget = params[:query_budget]
-    summary_a = "Budget wise, I want my trip to be #{query_budget}" if query_budget.present?
+    if @the_trip.valid?
+      @the_trip.save
 
-    query_people = params[:query_people]
-    summary_b = "I am #{query_people}" if query_people.present?
+      begin
+        plan_hash = generate_ai_plan_for(@the_trip)
+        replace_trip_plans_from_ai!(@the_trip, plan_hash)
 
-    query_todo = params[:query_todo]
-    summary_c = "My trip should include a mix of these: #{query_todo}" if query_todo.present?
-
-    live_area = params[:query_live_area]
-    summary_d = "I stay near #{live_area}; and I can also go any other places you recommend" if live_area.present?
-
-    trip_notes = params[:query_trip_notes]
-    summary_e = "Specifically, I have these requirements: #{trip_notes}" if trip_notes.present?
-
-    @summary = [summary_a, summary_b, summary_c, summary_d, summary_e].compact.join(" ; ")
-
-    the_trip.trip_notes = @summary
-
-    # ============================== AI Ouput ===================================
-    require "bundler/setup"
-    require "ai-chat"
-    require "dotenv/load"
-    require "json"
-    require "time"
-
-    @the_id = the_trip.id
-    @trip_location = the_trip.trip_location
-    @trip_duration_days = the_trip.trip_duration_days
-    @trip_start_date = the_trip.trip_start_date
-    @trip_notes = the_trip.trip_notes
-    @trip_name = the_trip.trip_name
-
-    @user_input = "I am traveling to " + @trip_location + ", from " + @trip_start_date.to_s + ", for " + @trip_duration_days.to_s + " days in total. " + @trip_notes + ". Can you build day by day, activity by activity, what should i do"
-    # ===========================================================================
-    if the_trip.valid?
-      the_trip.save
-      # ===========================================================================
-      i = AI::Chat.new
-      i.system("You are an trip planner. Based on user's input of where and when they are travelling to, plus their specific requirements, come up with a trip plan with start time, end time, activity, and location for each day during the traveling period. Build day by day, activity by activity, detailed agenda")
-
-      i.system(<<~SYS)
-                  You are a trip-planner agent. Your job is to return **JSON only**, with no explanations, no markdown, and no extra text.
-
-          Follow the schema *exactly*.  
-          All fields must be present.  
-          If information is unknown, make a reasonable assumption.
-
-          The JSON must look exactly like this:
-          {
-            "days": [
-              {
-                "date": "YYYY-MM-DD",
-                "items": [
-                  {
-                    "start_time": "HH:MM",
-                    "end_time": "HH:MM",
-                    "activity": "short description of the activity",
-                    "plan_brief": "the name of the activity, no more than 4 words"
-                    "location": "Name of the location as listed on Google Maps, including street, city, country, and zip code",
-                    "commute": "1–2 sentence explanation of how to get there (walking, metro, taxi, etc.). Include reservation or ticket guidance ONLY if it is strongly recommended before arrival."
-                  }
-                ]
-              }
-            ]
-          }
-          
-        Rules:
-        - **date**: calendar date of that day of the trip
-        - **start_time / end_time**: local time, 24-hour format "HH:MM"
-        - **activity**: brief 1–2 sentence description of the activity
-        - **plan_brief**: the name of the activity, no more than 4 words
-        - **location**: Name of the location as listed on Google Maps, including street, city, country, and zip code
-        - **commute**: brief 1–2 sentence note explaining how to get between items (walking, metro, taxi, etc.). Only include reservation or ticket guidance if they are strongly recommended before arrival—otherwise do not mention them
-
-        Output **ONLY valid JSON** matching this structure.
-      SYS
-
-      i.user(@user_input)
-      @response = i.generate!
-      raw = @response[:content]          # JSON string from the model
-
-      @plan = JSON.parse(raw, symbolize_names: true)
-
-      replace_trip_plans_from_ai!(the_trip, @plan)
-      # ===========================================================================
-      #render template: "trip_templates/ai_agenda"
-      redirect_to("/trips/#{the_trip.id}", { :notice => "Trip updated successfully." })
+        redirect_to("/trips/#{@the_trip.id}", { notice: "Trip updated successfully." })
+      rescue JSON::ParserError => e
+        Rails.logger.error("Trip #{@the_trip.id} JSON parse failed: #{e.message}")
+        redirect_to("/trips/#{@the_trip.id}", { alert: "Trip was updated, but the AI returned invalid JSON." })
+      rescue StandardError => e
+        Rails.logger.error("Trip #{@the_trip.id} generation failed: #{e.class} - #{e.message}")
+        redirect_to("/trips/#{@the_trip.id}", { alert: "Trip was updated, but itinerary generation failed." })
+      end
     else
-      redirect_to("/trips/#{the_trip.id}", { :alert => the_trip.errors.full_messages.to_sentence })
+      redirect_to("/trips/#{@the_trip.id}", { alert: @the_trip.errors.full_messages.to_sentence })
     end
   end
 
+  # =============================== Create =================================
   def create
     the_trip = Trip.new
     the_trip.user_id = current_user.id
@@ -174,7 +69,39 @@ class TripsController < ApplicationController
     the_trip.trip_location = params.fetch("query_trip_location")
     the_trip.trip_duration_days = params.fetch("query_trip_duration_days")
     the_trip.trip_start_date = params.fetch("query_trip_start_date")
+    the_trip.trip_notes = build_trip_summary
 
+    if the_trip.valid?
+      the_trip.save
+
+      begin
+        plan_hash = generate_ai_plan_for(the_trip)
+        replace_trip_plans_from_ai!(the_trip, plan_hash)
+
+        redirect_to("/trips/#{the_trip.id}", { notice: "Trip created successfully." })
+      rescue JSON::ParserError => e
+        Rails.logger.error("Trip #{the_trip.id} JSON parse failed: #{e.message}")
+        redirect_to("/trips/#{the_trip.id}", { alert: "Trip was saved, but the AI returned invalid JSON." })
+      rescue StandardError => e
+        Rails.logger.error("Trip #{the_trip.id} generation failed: #{e.class} - #{e.message}")
+        redirect_to("/trips/#{the_trip.id}", { alert: "Trip was saved, but itinerary generation failed." })
+      end
+    else
+      session[:trip_form_draft] = trip_form_draft_params.to_h
+      redirect_to("/trips", { alert: the_trip.errors.full_messages.to_sentence })
+    end
+  end
+
+  private
+
+  def set_owned_trip
+    @the_trip = current_user.trips.find_by(id: params.fetch("path_id"))
+    return if @the_trip
+
+    redirect_to("/trips", alert: "Trip not found.")
+  end
+
+  def build_trip_summary
     query_budget = params[:query_budget]
     summary_a = "Budget wise, I want my trip to be #{query_budget}" if query_budget.present?
 
@@ -182,7 +109,8 @@ class TripsController < ApplicationController
     summary_b = "I am #{query_people}" if query_people.present?
 
     query_todo = params[:query_todo]
-    summary_c = "My trip should include a mix of these: #{query_todo}" if query_todo.present?
+    todo_text = query_todo.is_a?(Array) ? query_todo.join(", ") : query_todo
+    summary_c = "My trip should include a mix of these: #{todo_text}" if todo_text.present?
 
     live_area = params[:query_live_area]
     summary_d = "I stay near #{live_area}; and I can also go any other places you recommend" if live_area.present?
@@ -190,114 +118,97 @@ class TripsController < ApplicationController
     trip_notes = params[:query_trip_notes]
     summary_e = "Specifically, I have these requirements: #{trip_notes}" if trip_notes.present?
 
-    @summary = [summary_a, summary_b, summary_c, summary_d, summary_e].compact.join(" ; ")
-
-    the_trip.trip_notes = @summary
-
-    # ============================== AI Ouput ===================================
-    require "bundler/setup"
-    require "ai-chat"
-    require "dotenv/load"
-    require "json"
-    require "time"
-
-    @the_id = the_trip.id
-    @trip_location = the_trip.trip_location
-    @trip_duration_days = the_trip.trip_duration_days
-    @trip_start_date = the_trip.trip_start_date
-    @trip_notes = the_trip.trip_notes
-    @trip_name = the_trip.trip_name
-
-    @user_input = "I am traveling to " + @trip_location + ", from " + @trip_start_date.to_s + ", for " + @trip_duration_days.to_s + " days in total. " + @trip_notes + ". Can you build day by day, activity by activity, what should i do"
-    # ===========================================================================
-    if the_trip.valid?
-      the_trip.save
-      # ===========================================================================
-      i = AI::Chat.new
-      i.system("You are an trip planner. Based on user's input of where and when they are travelling to, plus their specific requirements, come up with a trip plan with start time, end time, activity, and location for each day during the traveling period. Build day by day, activity by activity, detailed agenda")
-
-      i.system(<<~SYS)
-                  You are a trip-planner agent. Your job is to return **JSON only**, with no explanations, no markdown, and no extra text.
-
-          Follow the schema *exactly*.  
-          All fields must be present.  
-          If information is unknown, make a reasonable assumption.
-
-          The JSON must look exactly like this:
-          {
-            "days": [
-              {
-                "date": "YYYY-MM-DD",
-                "items": [
-                  {
-                    "start_time": "HH:MM",
-                    "end_time": "HH:MM",
-                    "activity": "short description of the activity",
-                    "plan_brief": "the name of the activity, no more than 4 words"
-                    "location": "Name of the location as listed on Google Maps, including street, city, country, and zip code",
-                    "commute": "1–2 sentence explanation of how to get there (walking, metro, taxi, etc.). Include reservation or ticket guidance ONLY if it is strongly recommended before arrival."
-                  }
-                ]
-              }
-            ]
-          }
-          
-        Rules:
-        - **date**: calendar date of that day of the trip
-        - **start_time / end_time**: local time, 24-hour format "HH:MM"
-        - **activity**: brief 1–2 sentence description of the activity
-        - **plan_brief**: the name of the activity, no more than 4 words
-        - **location**: Name of the location as listed on Google Maps, including street, city, country, and zip code
-        - **commute**: brief 1–2 sentence note explaining how to get between items (walking, metro, taxi, etc.). Only include reservation or ticket guidance if they are strongly recommended before arrival—otherwise do not mention them
-
-        Output **ONLY valid JSON** matching this structure.
-      SYS
-
-      i.user(@user_input)
-      @response = i.generate!
-      raw = @response[:content]          # JSON string from the model
-
-      @plan = JSON.parse(raw, symbolize_names: true)
-
-      replace_trip_plans_from_ai!(the_trip, @plan)
-      # ===========================================================================
-      #render template: "trip_templates/ai_agenda"
-      redirect_to("/trips/#{the_trip.id}", { :notice => "Trip created successfully." })
-    else
-      session[:trip_form_draft] = trip_form_draft_params.to_h
-      redirect_to("/trips", { :alert => the_trip.errors.full_messages.to_sentence })
-    end
+    [summary_a, summary_b, summary_c, summary_d, summary_e].compact.join(" ; ")
   end
 
-  private
+  def generate_ai_plan_for(the_trip)
+    user_input = build_user_input(the_trip)
+
+    i = AI::Chat.new
+    i.system(ai_planning_prompt)
+    i.user(user_input)
+
+    response = i.generate!
+    raw = response[:content].to_s
+
+    JSON.parse(raw, symbolize_names: true)
+  end
+
+  def build_user_input(the_trip)
+    <<~TEXT.squish
+      Destination: #{the_trip.trip_location}.
+      Start date: #{the_trip.trip_start_date}.
+      Duration: #{the_trip.trip_duration_days} days.
+      Notes: #{the_trip.trip_notes}
+      Produce the itinerary JSON as specified. No prose outside JSON.
+    TEXT
+  end
+
+  # Single compact system prompt: less input tokens, tighter output (faster / cheaper).
+  def ai_planning_prompt
+    <<~SYS
+      You output ONLY valid JSON (no markdown, no code fences, no commentary).
+
+      Shape:
+      {"days":[{"date":"YYYY-MM-DD","items":[{"start_time":"HH:MM","end_time":"HH:MM","activity":"string","plan_brief":"string","location":"string","commute":"string"}]}]}
+
+      Rules:
+      - Cover every calendar day from the user's start date through the full trip duration; one object per day in "days".
+      - Each day: at most 5 items; choose 4–5 must-do highlights per day (not more).
+      - start_time / end_time: local time at destination, 24-hour HH:MM.
+      - activity: at most ONE sentence.
+      - plan_brief: max 4 words.
+      - location: venue or place name + neighborhood or area + city (enough to find on Google Maps; do not invent street numbers).
+      - commute: at most ONE short sentence (how to get from the previous stop or hotel). Mention tickets/reservations only if essential before arrival.
+      - Omit timezone fields; times are local to the trip destination the user gave.
+      - If unknown, assume reasonably; keep text short.
+    SYS
+  end
 
   # Replaces trip_plans from parsed AI JSON; enriches each row once via Google Places after commit
   # (HTTP stays out of the DB transaction).
+  # "timezone" on each row comes from the user's trip_location (form), not from the LLM.
   def replace_trip_plans_from_ai!(the_trip, plan_hash)
     new_plans = []
+    trip_tz_id = ::GooglePlacesEnricher.timezone_id_for_location(
+      the_trip.trip_location,
+      the_trip.trip_start_date
+    )
+
     ActiveRecord::Base.transaction do
       the_trip.trip_plans.destroy_all
 
-      plan_hash[:days].each do |day|
+      plan_hash.fetch(:days, []).each do |day|
         date = Date.parse(day[:date])
 
-        day[:items].each do |item|
+        day.fetch(:items, []).first(5).each do |item|
           new_plans << TripPlan.create!(
             trip: the_trip,
             date: date,
-            start_time: Time.parse(item[:start_time]),
-            end_time: Time.parse(item[:end_time]),
+            start_time: Time.parse(item[:start_time].to_s),
+            end_time: Time.parse(item[:end_time].to_s),
+            timezone: timezone_abbreviation_for_date(trip_tz_id, date),
             trip_plan: item[:activity],
             plan_brief: item[:plan_brief],
             user_id: the_trip.user_id,
             plan_location: item[:location],
-            plan_details: item[:commute],
+            plan_details: item[:commute]
           )
         end
       end
     end
 
     new_plans.each { |tp| ::GooglePlacesEnricher.enrich_trip_plan(tp) }
+  end
+
+  # Abbreviation (e.g. EST) for a calendar day at the trip destination; handles DST using that date.
+  def timezone_abbreviation_for_date(iana_id, date)
+    return nil if iana_id.blank? || date.blank?
+
+    tz = Time.find_zone(iana_id)
+    return nil unless tz
+
+    tz.local(date.year, date.month, date.day, 12, 0, 0).strftime("%Z").presence
   end
 
   def trip_form_draft_params

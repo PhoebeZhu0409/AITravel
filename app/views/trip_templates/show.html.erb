@@ -127,10 +127,9 @@
     <% agenda_dates.each_with_index do |date, i| %>
        <article class="agenda-day <%= 'active' if i == 0 %>" data-day-index="<%= i %>">
 
-          <div class="overflow-auto">
+          <div class="overflow-auto agenda-day-body">
             <% this_day = @the_trip.trip_plans.where(date: date.strftime("%Y-%m-%d")) %>
 
-<div class="overflow-auto">
             <table class="agenda-table">
               <thead>
                 <tr>
@@ -145,9 +144,9 @@
                 <% this_day.order(:start_time).each do |a_day| %>
                   <tr>
 
-                    <td><%= a_day.start_time.strftime("%I:%M&nbsp;%p").html_safe %> - <%= a_day.end_time.strftime("%I:%M&nbsp;%p").html_safe %></td>
+                    <td data-label="Time"><%= agenda_start_time_with_zone(a_day) %></td>
               
-                    <td class="plan-cell">
+                    <td class="plan-cell" data-label="Plan">
                       <div class="plan-brief">
                         <%= a_day.plan_brief %>
                         <span class="plan-full"><%= a_day.trip_plan %></span>
@@ -162,6 +161,7 @@
 <!--                    </td>-->
 <!---------------------------------------------------->
                     <td class="place-cell<%= " place-cell--cached" if a_day.google_place_cached? %>"
+                        data-label="Location"
                         <% unless a_day.google_place_cached? %>data-location="<%= a_day.plan_location %>"<% end %>>
                       <a
                         href="https://www.google.com/maps/search/?api=1&query=<%= ERB::Util.url_encode(a_day.plan_location) %>"
@@ -188,13 +188,12 @@
                       </a>
                     </td>
   <!---------------------------------------------------->
-                    <td style="font-size: 0.9rem;"><%= a_day.plan_details %></td>
+                    <td class="agenda-get-around-cell" data-label="Get around" style="font-size: 0.9rem;"><%= a_day.plan_details %></td>
                   </tr>
                 <% end %>
               </tbody>
               
             </table>
-</div>
 
 
             <div
