@@ -239,7 +239,18 @@
       id="map-day-<%= i + 1 %>"
       class="day-map"
       data-locations="<%= h(this_day.map { |p|
-          row = { label: p.plan_location.split(",").first, address: p.plan_location }
+          row = {
+            label: p.place_display_name.presence || p.plan_location.split(",").first,
+            address: p.plan_location,
+            maps_url: p.google_maps_search_url
+          }
+          if (photo_url = plan_photo_url(@the_trip, p))
+            row[:photo_url] = photo_url
+          end
+          if p.place_rating.present?
+            row[:rating] = p.place_rating.to_f
+            row[:rating_count] = p.place_user_ratings_total.to_i
+          end
           if p.place_latitude.present? && p.place_longitude.present?
             row[:lat] = p.place_latitude.to_f
             row[:lng] = p.place_longitude.to_f
@@ -327,22 +338,4 @@
 
 
 
-<!--JAVA SCRIPT-->
-<script>
-  // Must exist BEFORE the Google script loads
-  window.googleMapsLoaded = function () {
-    initAutocomplete();
-    initItineraryMaps();
-    initPlaceCards();
-  };
-
-  // If you use Turbo (Rails 7), re-run on page navigation
-  document.addEventListener("turbo:load", () => {
-    if (window.google && google.maps) window.googleMapsLoaded();
-  });
-</script>
-
-<script
-  src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GOOGLE_MAPS_API_KEY'] %>&libraries=places&callback=googleMapsLoaded"
-  async defer>
-</script>
+<!-- Maps are loaded once from the layout; initItineraryMaps runs via googleMapsLoaded there. -->

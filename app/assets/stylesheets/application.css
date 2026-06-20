@@ -581,6 +581,90 @@ body.pico main .sign-in-page p.sign-in-tutorial {
   overflow: hidden;
 }
 
+.map-marker-popup {
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.map-marker-popup__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  width: 112px;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+a.map-marker-popup__card:hover .map-marker-popup__name {
+  text-decoration: underline;
+}
+
+.map-marker-popup__photo {
+  width: 88px;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #e5e7eb;
+}
+
+.map-marker-popup__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.map-marker-popup__info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  width: 100%;
+}
+
+.map-marker-popup__name {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #2563eb;
+  line-height: 1.3;
+  white-space: normal;
+  word-break: break-word;
+  max-width: 112px;
+}
+
+.map-marker-popup__name--plain {
+  color: #0f172a;
+}
+
+.map-marker-popup__rating {
+  font-size: 0.75rem;
+  color: #666666;
+  line-height: 1.25;
+  white-space: normal;
+}
+
+/* Google InfoWindow: don't clip our mini location card */
+.gm-style-iw-chr {
+  display: none !important;
+}
+
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-d {
+  max-height: none !important;
+}
+
+.gm-style-iw-d {
+  overflow: visible !important;
+  padding: 0.55rem 0.65rem 0.65rem !important;
+}
+
+.gm-style-iw-c {
+  padding: 0 !important;
+}
+
 /* Trip show hero: 3:1 crop; Google hero (Active Storage) or app/assets/images/trip_hero_default.png */
 .trip-hero-image-wrap {
   position: relative;
@@ -2306,6 +2390,25 @@ a.place-card-link:hover .place-name {
     0 0 10px rgba(255, 255, 255, 0.95),
     0 0 3px rgba(255, 255, 255, 0.9),
     0 1px 2px rgba(255, 255, 255, 0.85);
+}
+
+.agenda-loading-percent {
+  margin: -0.5rem 0 0;
+  font-size: clamp(2rem, 6vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  color: #0f172a;
+  line-height: 1;
+  text-shadow:
+    0 0 12px rgba(255, 255, 255, 0.95),
+    0 0 4px rgba(255, 255, 255, 0.9),
+    0 1px 2px rgba(255, 255, 255, 0.85);
+}
+
+.agenda-loading-overlay:not([hidden]) .agenda-surfer-mover {
+  animation: none;
+  transition: left 0.35s ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {

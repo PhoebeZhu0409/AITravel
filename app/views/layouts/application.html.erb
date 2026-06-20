@@ -145,12 +145,11 @@
   // This is the function Google calls after Maps JS finishes loading
   function googleMapsLoaded() {
     function runMaps() {
-      initAutocomplete();
-      initItineraryMaps();
-      initPlaceCards(); 
+      if (document.getElementById("trip_location_box")) initAutocomplete();
+      if (document.querySelector(".day-map")) initItineraryMaps();
+      if (document.querySelector(".place-cell")) initPlaceCards();
     }
 
-    // If DOM isn't ready yet, wait for it
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", runMaps);
     } else {
@@ -167,81 +166,216 @@
     });
   }
 
-function initItineraryMaps() {
-  document.querySelectorAll('.day-map').forEach((el) => {
-    const locations = JSON.parse(el.dataset.locations || "[]");
-    if (!locations.length) return;
+function initSingleItineraryMap(el) {
+  if (!el || !window.google || !google.maps) return;
 
-    const map = new google.maps.Map(el, {
-      zoom: 13,
-      center: { lat: 0, lng: 0 }
-    });
+  if (el.dataset.mapInitialized === "true" && el._itineraryMap) {
+    google.maps.event.trigger(el._itineraryMap, "resize");
+    return;
+  }
 
-    const bounds = new google.maps.LatLngBounds();
-    const service = new google.maps.places.PlacesService(map);
+  let locations;
+  try {
+    locations = JSON.parse(el.dataset.locations || "[]");
+  } catch (e) {
+    console.warn("Invalid map locations JSON:", e);
+    return;
+  }
 
-    function hasCachedCoords(loc) {
-      return (
-        loc.lat != null &&
-        loc.lng != null &&
-        !Number.isNaN(Number(loc.lat)) &&
-        !Number.isNaN(Number(loc.lng))
-      );
+  if (!locations.length) return;
+
+  const map = new google.maps.Map(el, {
+    zoom: 13,
+    center: { lat: 0, lng: 0 }
+  });
+
+  el._itineraryMap = map;
+  el.dataset.mapInitialized = "true";
+
+  const bounds = new google.maps.LatLngBounds();
+  const service = new google.maps.places.PlacesService(map);
+  const infoWindow = new google.maps.InfoWindow({ maxWidth: 140 });
+  let infoWindowCloseTimer = null;
+
+  function escapeMapHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function mapsUrlFor(loc) {
+    if (loc.maps_url) return loc.maps_url;
+    if (loc.address) {
+      return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(loc.address);
+    }
+    return "";
+  }
+
+  function buildPopupHtml(loc) {
+    const label = loc.label || loc.address || "Location";
+    const mapsUrl = mapsUrlFor(loc);
+
+    let html = '<div class="map-marker-popup">';
+    if (mapsUrl) {
+      html += '<a class="map-marker-popup__card" href="' + escapeMapHtml(mapsUrl) + '" target="_blank" rel="noopener">';
+    } else {
+      html += '<div class="map-marker-popup__card">';
     }
 
-    function finishBounds() {
+    if (loc.photo_url) {
+      html += '<div class="map-marker-popup__photo">';
+      html += '<img src="" alt="' + escapeMapHtml(label) + '" data-map-popup-photo loading="lazy">';
+      html += "</div>";
+    }
+
+    html += '<div class="map-marker-popup__info">';
+    if (mapsUrl) {
+      html += '<span class="map-marker-popup__name">' + escapeMapHtml(label) + "</span>";
+    } else {
+      html += '<span class="map-marker-popup__name map-marker-popup__name--plain">' + escapeMapHtml(label) + "</span>";
+    }
+    if (loc.rating != null && !Number.isNaN(Number(loc.rating))) {
+      const count = loc.rating_count != null ? loc.rating_count : 0;
+      html += '<span class="map-marker-popup__rating">' + Number(loc.rating).toFixed(1) + " ★ (" + count + ")</span>";
+    }
+    html += "</div>";
+
+    html += mapsUrl ? "</a>" : "</div>";
+    html += "</div>";
+    return html;
+  }
+
+  function scheduleInfoWindowClose() {
+    clearTimeout(infoWindowCloseTimer);
+    infoWindowCloseTimer = setTimeout(function () {
+      infoWindow.close();
+    }, 180);
+  }
+
+  function cancelInfoWindowClose() {
+    clearTimeout(infoWindowCloseTimer);
+  }
+
+  function wireInfoWindowPopup(loc) {
+    google.maps.event.addListenerOnce(infoWindow, "domready", function () {
+      const container = document.querySelector(".gm-style-iw-d");
+      if (container) {
+        container.addEventListener("mouseenter", cancelInfoWindowClose);
+        container.addEventListener("mouseleave", scheduleInfoWindowClose);
+      }
+
+      if (!loc.photo_url) return;
+
+      const img = document.querySelector(".map-marker-popup__photo img[data-map-popup-photo]");
+      if (!img) return;
+
+      img.addEventListener("error", function () {
+        const photoWrap = img.closest(".map-marker-popup__photo");
+        if (photoWrap) photoWrap.style.display = "none";
+      });
+      img.src = loc.photo_url;
+    });
+  }
+
+  function openMarkerPopup(marker, loc) {
+    cancelInfoWindowClose();
+    infoWindow.setContent(buildPopupHtml(loc));
+    infoWindow.open(map, marker);
+    wireInfoWindowPopup(loc);
+  }
+
+  function addMarkerWithHover(position, loc) {
+    const displayLabel = loc.label || loc.address || "Location";
+    const marker = new google.maps.Marker({
+      map: map,
+      position: position,
+      title: displayLabel
+    });
+
+    marker.addListener("mouseover", function () {
+      openMarkerPopup(marker, loc);
+    });
+
+    marker.addListener("mouseout", scheduleInfoWindowClose);
+
+    bounds.extend(position);
+  }
+
+  function hasCachedCoords(loc) {
+    return (
+      loc.lat != null &&
+      loc.lng != null &&
+      !Number.isNaN(Number(loc.lat)) &&
+      !Number.isNaN(Number(loc.lng))
+    );
+  }
+
+  function finishBounds() {
+    if (!bounds.isEmpty()) {
+      map.fitBounds(bounds);
+    }
+    google.maps.event.trigger(map, "resize");
+    setTimeout(function () {
+      google.maps.event.trigger(map, "resize");
       if (!bounds.isEmpty()) {
         map.fitBounds(bounds);
       }
+    }, 250);
+  }
+
+  let pendingApi = 0;
+  locations.forEach((loc) => {
+    if (hasCachedCoords(loc)) {
+      addMarkerWithHover(
+        { lat: Number(loc.lat), lng: Number(loc.lng) },
+        loc
+      );
+      return;
     }
 
-    let pendingApi = 0;
-    locations.forEach((loc) => {
-      if (hasCachedCoords(loc)) {
-        const position = { lat: Number(loc.lat), lng: Number(loc.lng) };
-        new google.maps.Marker({
-          map: map,
-          position: position,
-          title: loc.label || loc.address
-        });
-        bounds.extend(position);
-        return;
-      }
-
-      pendingApi++;
-      service.findPlaceFromQuery(
-        {
-          query: loc.address,
-          fields: ["name", "geometry"]
-        },
-        (results, status) => {
-          pendingApi--;
-          if (
-            status !== google.maps.places.PlacesServiceStatus.OK ||
-            !results ||
-            !results[0] ||
-            !results[0].geometry
-          ) {
-            console.warn("Place lookup failed:", loc.address);
-          } else {
-            const place = results[0];
-            const position = place.geometry.location;
-            new google.maps.Marker({
-              map: map,
-              position: position,
-              title: place.name || loc.label
-            });
-            bounds.extend(position);
-          }
-          if (pendingApi === 0) {
-            finishBounds();
-          }
+    pendingApi++;
+    service.findPlaceFromQuery(
+      {
+        query: loc.address,
+        fields: ["name", "geometry"]
+      },
+      (results, status) => {
+        pendingApi--;
+        if (
+          status !== google.maps.places.PlacesServiceStatus.OK ||
+          !results ||
+          !results[0] ||
+          !results[0].geometry
+        ) {
+          console.warn("Place lookup failed:", loc.address);
+        } else {
+          const place = results[0];
+          addMarkerWithHover(place.geometry.location, {
+            label: place.name || loc.label || loc.address,
+            address: loc.address,
+            maps_url: loc.maps_url || mapsUrlFor(loc)
+          });
         }
-      );
-    });
+        if (pendingApi === 0) {
+          finishBounds();
+        }
+      }
+    );
+  });
 
-    if (pendingApi === 0) {
-      finishBounds();
+  if (pendingApi === 0) {
+    finishBounds();
+  }
+}
+
+function initItineraryMaps() {
+  document.querySelectorAll(".day-map").forEach((el) => {
+    const dayArticle = el.closest(".agenda-day");
+    const isActive = !dayArticle || dayArticle.classList.contains("active");
+    if (isActive) {
+      initSingleItineraryMap(el);
     }
   });
 }
@@ -311,6 +445,7 @@ function initItineraryMaps() {
   window.googleMapsLoaded  = googleMapsLoaded;
   window.initAutocomplete  = initAutocomplete;
   window.initItineraryMaps = initItineraryMaps;
+  window.initSingleItineraryMap = initSingleItineraryMap;
     // expose if you like
   window.initPlaceCards = initPlaceCards;
 </script>
@@ -426,6 +561,12 @@ function initItineraryMaps() {
         ensureWindowContains(currentIndex);
         applyDayVisibility();
         updateTabs();
+
+        const activeDay = days[currentIndex];
+        if (activeDay && window.initSingleItineraryMap) {
+          const mapEl = activeDay.querySelector(".day-map");
+          if (mapEl) window.initSingleItineraryMap(mapEl);
+        }
       }
 
       applyDayVisibility();
@@ -474,26 +615,7 @@ function initItineraryMaps() {
 </script>
 
 
-<!-----------  more google API Stuff: auto-fill ----------------------------------------->
-<script>
-  // Global callback for Google script
-  window.googleMapsLoaded = function () {
-    // only run if the input exists on THIS page
-    if (document.getElementById("trip_location_box")) initAutocomplete();
-
-    // only run if agenda maps exist on THIS page
-    if (document.querySelector(".day-map")) initItineraryMaps();
-
-    // only run if place cards exist on THIS page
-    if (document.querySelector(".place-cell")) initPlaceCards();
-  };
-
-  // Works with Turbo navigation too
-  document.addEventListener("turbo:load", () => {
-    if (window.google && google.maps) window.googleMapsLoaded();
-  });
-</script>
-
+<!-----------  Maps API (single load for autocomplete, itinerary maps, place cards) --------->
 <script
   src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GOOGLE_MAPS_API_KEY'] %>&libraries=places&callback=googleMapsLoaded"
   async defer>

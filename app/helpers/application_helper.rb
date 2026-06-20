@@ -53,4 +53,21 @@ module ApplicationHelper
     index = ShowcaseImages.plan_index_for(trip, trip_plan)
     ShowcaseImages.plan_asset_name(trip.showcase_slug, index) if index
   end
+
+  def plan_photo_url(trip, trip_plan)
+    if (showcase = showcase_plan_image(trip, trip_plan))
+      return absolute_asset_url(image_url(showcase))
+    end
+
+    return absolute_asset_url(rails_blob_url(trip_plan.place_thumbnail)) if trip_plan.place_thumbnail.attached?
+
+    nil
+  end
+
+  def absolute_asset_url(url)
+    return if url.blank?
+    return url if url.match?(/\Ahttps?:\/\//i)
+
+    "#{request.base_url}#{url.start_with?('/') ? '' : '/'}#{url}"
+  end
 end
