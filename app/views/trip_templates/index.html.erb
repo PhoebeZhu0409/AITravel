@@ -182,7 +182,7 @@
           </p>
         <% else %>
           <p class="trip-generation-quota trip-generation-quota--plain trip-generation-quota--plain-warn" role="status">
-            You have run out of 5 free trip generations within the last 6 months.
+            You have run out of <%= User::REGULAR_GENERATION_LIMIT %> free trip generations within the last 6 months.
           </p>
         <% end %>
       <% end %>
