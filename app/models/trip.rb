@@ -3,6 +3,7 @@
 # Table name: trips
 #
 #  id                 :bigint           not null, primary key
+#  showcase_slug      :string
 #  trip_duration_days :integer
 #  trip_location      :string
 #  trip_name          :string
@@ -12,7 +13,13 @@
 #  updated_at         :datetime         not null
 #  user_id            :integer
 #
+# Indexes
+#
+#  index_trips_on_showcase_slug  (showcase_slug) UNIQUE WHERE (showcase_slug IS NOT NULL)
+#
 class Trip < ApplicationRecord
+  SHOWCASE_SLUGS = %w[madrid new_york].freeze
+
   has_many  :trip_plans, class_name: "TripPlan", foreign_key: "trip_id", dependent: :destroy
   has_many  :trip_generation_events, dependent: :nullify
   belongs_to :user, required: true, class_name: "User", foreign_key: "user_id"
@@ -24,5 +31,9 @@ class Trip < ApplicationRecord
   validates :trip_location, presence: true
   validates :trip_name, presence: true
   validates :trip_start_date, presence: true, comparison: { greater_than: Date.today, message: "cannot be in the past"}
-  
+  validates :showcase_slug, inclusion: { in: SHOWCASE_SLUGS }, allow_nil: true
+  validates :showcase_slug, uniqueness: true, allow_nil: true
+
+  scope :showcase, -> { where.not(showcase_slug: nil) }
+
 end

@@ -40,4 +40,17 @@ module ApplicationHelper
             end
     "#{month} #{date.day}"
   end
+
+  def showcase_hero_image(trip)
+    return unless trip.showcase_slug.present?
+
+    ShowcaseImages.hero_asset_name(trip.showcase_slug)
+  end
+
+  def showcase_plan_image(trip, trip_plan)
+    return unless trip.showcase_slug.present?
+
+    index = ShowcaseImages.plan_index_for(trip, trip_plan)
+    ShowcaseImages.plan_asset_name(trip.showcase_slug, index) if index
+  end
 end

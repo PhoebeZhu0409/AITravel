@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_24_150000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_20_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -224,6 +224,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_24_150000) do
     t.datetime "updated_at", null: false
     t.text "trip_notes"
     t.integer "user_id"
+    t.string "showcase_slug"
+    t.index ["showcase_slug"], name: "index_trips_on_showcase_slug", unique: true, where: "(showcase_slug IS NOT NULL)"
   end
 
   create_table "users", force: :cascade do |t|

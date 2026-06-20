@@ -14,7 +14,9 @@
     <% hero_default_path = image_path("trip_hero_default.png") %>
 
     <div class="trip-hero-image-wrap">
-      <% if @the_trip.location_hero.attached? %>
+      <% if (showcase_hero = showcase_hero_image(@the_trip)) %>
+        <%= image_tag showcase_hero, alt: location, class: "trip-hero-image" %>
+      <% elsif @the_trip.location_hero.attached? %>
         <%= image_tag @the_trip.location_hero, alt: location, class: "trip-hero-image" %>
       <% else %>
         <%# No Google Places photo (missing key, no photos, etc.) — same default asset every time. %>
@@ -199,8 +201,10 @@
                         rel="noopener"
                         class="place-card-link">
                         <div class="place-card">
-                          <div class="place-photo<%= " place-photo--failed" if a_day.google_place_cached? && !a_day.place_thumbnail.attached? %>">
-                            <% if a_day.place_thumbnail.attached? %>
+                          <div class="place-photo<%= " place-photo--failed" if a_day.google_place_cached? && !a_day.place_thumbnail.attached? && !showcase_plan_image(@the_trip, a_day) %>">
+                            <% if (showcase_plan = showcase_plan_image(@the_trip, a_day)) %>
+                              <%= image_tag showcase_plan, alt: (a_day.place_display_name.presence || a_day.plan_location) %>
+                            <% elsif a_day.place_thumbnail.attached? %>
                               <%= image_tag a_day.place_thumbnail, alt: (a_day.place_display_name.presence || a_day.plan_location) %>
                             <% end %>
                           </div>

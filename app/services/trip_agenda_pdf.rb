@@ -140,6 +140,10 @@ class TripAgendaPdf
   end
 
   def trip_hero_bytes_raw
+    if (static = ShowcaseImages.hero_bytes(@trip.showcase_slug))
+      return static
+    end
+
     if @trip.location_hero.attached?
       @trip.location_hero.download
     else
@@ -237,9 +241,20 @@ class TripAgendaPdf
 
   def location_subtable(pdf, plan, width)
     rows = []
-    if plan.place_thumbnail.attached?
+    thumb_data = nil
+    if @trip.showcase_slug.present?
+      index = ShowcaseImages.plan_index_for(@trip, plan)
+      thumb_data = ShowcaseImages.plan_bytes(@trip.showcase_slug, index) if index
+    end
+    if thumb_data.blank? && plan.place_thumbnail.attached?
       begin
         thumb_data = plan.place_thumbnail.download
+      rescue StandardError => e
+        Rails.logger.warn("TripAgendaPdf place thumbnail skipped: #{e.class} #{e.message}")
+      end
+    end
+    if thumb_data.present?
+      begin
         if prawn_supported_raster?(thumb_data)
           io = StringIO.new(thumb_data)
           io.rewind

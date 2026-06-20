@@ -4,10 +4,6 @@
 class PagesController < ApplicationController
   skip_before_action :authenticate_user!
 
-  # Hard-coded demo trips for /showcase/* (must match DB records).
-  SHOWCASE_TRIP_IDS = { madrid: 10, new_york: 4 }.freeze
-  ALLOWED_PUBLIC_SHOWCASE_TRIP_IDS = SHOWCASE_TRIP_IDS.values.freeze
-
   def legal_notices
    render({ :template => "trip_templates/legal_notices" })
   end
@@ -21,30 +17,30 @@ class PagesController < ApplicationController
   end
 
   def showcase_madrid
-    render_showcase_trip(SHOWCASE_TRIP_IDS[:madrid], showcase_madrid_pdf_path)
+    render_showcase_trip("madrid", showcase_madrid_pdf_path)
   end
 
   def showcase_new_york
-    render_showcase_trip(SHOWCASE_TRIP_IDS[:new_york], showcase_new_york_pdf_path)
+    render_showcase_trip("new_york", showcase_new_york_pdf_path)
   end
 
   def showcase_madrid_pdf
-    deliver_showcase_pdf(SHOWCASE_TRIP_IDS[:madrid])
+    deliver_showcase_pdf("madrid")
   end
 
   def showcase_new_york_pdf
-    deliver_showcase_pdf(SHOWCASE_TRIP_IDS[:new_york])
+    deliver_showcase_pdf("new_york")
   end
 
   private
 
-  def render_showcase_trip(trip_id, agenda_pdf_path)
-    unless ALLOWED_PUBLIC_SHOWCASE_TRIP_IDS.include?(trip_id)
+  def render_showcase_trip(slug, agenda_pdf_path)
+    unless Trip::SHOWCASE_SLUGS.include?(slug)
       head :not_found
       return
     end
 
-    @the_trip = Trip.find_by(id: trip_id)
+    @the_trip = Trip.find_by(showcase_slug: slug)
     unless @the_trip
       head :not_found
       return
@@ -56,13 +52,13 @@ class PagesController < ApplicationController
     render({ :template => "trip_templates/show" })
   end
 
-  def deliver_showcase_pdf(trip_id)
-    unless ALLOWED_PUBLIC_SHOWCASE_TRIP_IDS.include?(trip_id)
+  def deliver_showcase_pdf(slug)
+    unless Trip::SHOWCASE_SLUGS.include?(slug)
       head :not_found
       return
     end
 
-    trip = Trip.find_by(id: trip_id)
+    trip = Trip.find_by(showcase_slug: slug)
     unless trip
       head :not_found
       return
@@ -77,7 +73,7 @@ class PagesController < ApplicationController
     )
     send_data pdf_bytes, type: "application/pdf", disposition: nil
   rescue StandardError => e
-    Rails.logger.error("showcase agenda PDF failed for trip #{trip_id}: #{e.class} #{e.message}\n#{e.backtrace&.first(15)&.join("\n")}")
+    Rails.logger.error("showcase agenda PDF failed for slug #{slug}: #{e.class} #{e.message}\n#{e.backtrace&.first(15)&.join("\n")}")
     head :internal_server_error
   end
 end
