@@ -224,8 +224,20 @@
   <!---------------------------------------------------->
                     <td class="agenda-get-around-cell" data-label="Get around">
                       <div class="agenda-get-around-body"><%= a_day.plan_details %></div>
-                      <% if (dir_href = a_day.google_maps_search_url.presence) %>
-                        <%= link_to "Direction >", dir_href, target: "_blank", rel: "noopener", class: "agenda-direction-link" %>
+                      <% if a_day.google_maps_search_url.present? || a_day.uber_dropoff_url.present? %>
+                        <div class="agenda-get-around-links">
+                          <% if (dir_href = a_day.google_maps_search_url.presence) %>
+                            <%= link_to "Direction >", dir_href, target: "_blank", rel: "noopener", class: "agenda-direction-link" %>
+                          <% end %>
+                          <% if (uber_href = a_day.uber_dropoff_url.presence) %>
+                            <%= link_to "Uber there",
+                                uber_href,
+                                target: "_blank",
+                                rel: "noopener",
+                                class: "agenda-uber-link",
+                                data: { uber_mobile: a_day.uber_dropoff_mobile_url } %>
+                          <% end %>
+                        </div>
                       <% end %>
                     </td>
                   </tr>
@@ -335,6 +347,23 @@
 
       })();
     </script>
+
+<script>
+  (function () {
+    function wireUberLinks() {
+      var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (!isMobile) return;
+
+      document.querySelectorAll("a.agenda-uber-link[data-uber-mobile]").forEach(function (link) {
+        var mobileHref = link.getAttribute("data-uber-mobile");
+        if (mobileHref) link.href = mobileHref;
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", wireUberLinks);
+    document.addEventListener("turbo:load", wireUberLinks);
+  })();
+</script>
 
 
 

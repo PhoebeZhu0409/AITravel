@@ -36,11 +36,66 @@ class TripPlan < ApplicationRecord
     "https://www.google.com/maps/search/?api=1&query=#{q}"
   end
 
+  # Opens Uber with drop-off prefilled — mobile app, mobile web, or desktop browser.
+  def uber_dropoff_url
+    uber_dropoff_web_url
+  end
+
+  # Prefer in native Uber app on phones (pickup = current location).
+  def uber_dropoff_mobile_url
+    return if plan_location.blank?
+
+    nickname = place_display_name.presence || plan_location.split(",").first.to_s.strip
+    query = {
+      "action" => "setPickup",
+      "pickup" => "my_location",
+      "dropoff[formatted_address]" => plan_location.to_s
+    }
+
+    if place_latitude.present? && place_longitude.present?
+      query["dropoff[latitude]"] = place_latitude.to_f
+      query["dropoff[longitude]"] = place_longitude.to_f
+    end
+
+    query["dropoff[nickname]"] = nickname if nickname.present?
+
+    params = query.map { |key, value| "#{ERB::Util.url_encode(key)}=#{ERB::Util.url_encode(value.to_s)}" }.join("&")
+    "https://m.uber.com/ul/?#{params}"
+  end
+
   # Populated once at agenda generation; show page skips client-side Places if true.
   def google_place_cached?
     place_thumbnail.attached? ||
       place_rating.present? ||
       place_user_ratings_total.present? ||
       place_display_name.present?
+  end
+
+  private
+
+  def uber_dropoff_web_url
+    return if plan_location.blank?
+
+    nickname = place_display_name.presence || plan_location.split(",").first.to_s.strip
+
+    if place_latitude.present? && place_longitude.present?
+      drop = {
+        "latitude" => place_latitude.to_f,
+        "longitude" => place_longitude.to_f,
+        "addressLine1" => nickname.presence || plan_location.to_s,
+        "addressLine2" => plan_location.to_s
+      }
+      drop_param = ERB::Util.url_encode(drop.to_json)
+      return "https://m.uber.com/looking?drop[0]=#{drop_param}"
+    end
+
+    query = {
+      "action" => "setPickup",
+      "dropoff[formatted_address]" => plan_location.to_s
+    }
+    query["dropoff[nickname]"] = nickname if nickname.present?
+
+    params = query.map { |key, value| "#{ERB::Util.url_encode(key)}=#{ERB::Util.url_encode(value.to_s)}" }.join("&")
+    "https://m.uber.com/ul/?#{params}"
   end
 end

@@ -1928,6 +1928,28 @@ body.pico .agenda-tab-arrow--next[type="button"]:hover:not(:disabled) {
   width: 25%;   /* Get around */
 }
 
+.agenda-get-around-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.85rem;
+  margin-top: 0.45rem;
+}
+
+a.agenda-direction-link,
+a.agenda-uber-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1d4ed8;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+a.agenda-direction-link:hover,
+a.agenda-uber-link:hover {
+  color: #1e40af;
+}
+
 /* Clickable location card: underline on title only, not whole block */
 a.place-card-link {
   display: block;
@@ -2109,9 +2131,17 @@ a.place-card-link:hover .place-name {
     font-size: 0.9rem;
   }
 
-  .agenda-day-panel a.agenda-direction-link {
-    display: inline-block;
+  .agenda-day-panel .agenda-get-around-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem 1rem;
     margin-top: 0.5rem;
+  }
+
+  .agenda-day-panel a.agenda-direction-link,
+  .agenda-day-panel a.agenda-uber-link {
+    display: inline-block;
     font-size: 0.875rem;
     font-weight: 500;
     color: #1d4ed8;
@@ -2119,7 +2149,8 @@ a.place-card-link:hover .place-name {
     text-underline-offset: 0.12em;
   }
 
-  .agenda-day-panel a.agenda-direction-link:hover {
+  .agenda-day-panel a.agenda-direction-link:hover,
+  .agenda-day-panel a.agenda-uber-link:hover {
     color: #1e40af;
   }
 
