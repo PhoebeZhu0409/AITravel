@@ -52,19 +52,19 @@
       </div>
 
     <div>
-      <label for="trip_duration_days_box">
-        How many days
-      </label>
-
-      <input type="number" id="trip_duration_days_box" name="query_trip_duration_days" value="<%= @the_trip.trip_duration_days %>"  step="1">
-    </div>
-
-    <div>
       <label for="trip_start_date_box">
         Trip starts
       </label>
 
       <input type="date" id="trip_start_date_box" name="query_trip_start_date" value="<%= @the_trip.trip_start_date&.strftime("%Y-%m-%d") %>">
+    </div>
+
+    <div>
+      <label for="trip_end_date_box">
+        Trip ends
+      </label>
+
+      <input type="date" id="trip_end_date_box" name="query_trip_end_date" value="<%= @the_trip.trip_end_date&.strftime("%Y-%m-%d") %>">
     </div>
 
       <!-- Collapsible section -->
@@ -162,3 +162,23 @@
 
   <%= render "trip_templates/agenda_loading_overlay" %>
 </article>
+
+<script>
+  (function () {
+    function wireTripDateRange() {
+      var tripStart = document.getElementById("trip_start_date_box");
+      var tripEnd = document.getElementById("trip_end_date_box");
+      if (!tripStart || !tripEnd) return;
+
+      function syncTripEndMin() {
+        if (tripStart.value) tripEnd.min = tripStart.value;
+      }
+
+      tripStart.addEventListener("change", syncTripEndMin);
+      syncTripEndMin();
+    }
+
+    document.addEventListener("DOMContentLoaded", wireTripDateRange);
+    document.addEventListener("turbo:load", wireTripDateRange);
+  })();
+</script>

@@ -197,6 +197,12 @@ function initSingleItineraryMap(el) {
   const infoWindow = new google.maps.InfoWindow({ maxWidth: 140 });
   let infoWindowCloseTimer = null;
 
+  function supportsHover() {
+    return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  }
+
+  const hoverCapable = supportsHover();
+
   function escapeMapHtml(str) {
     return String(str || "")
       .replace(/&/g, "&amp;")
@@ -261,14 +267,16 @@ function initSingleItineraryMap(el) {
   function wireInfoWindowPopup(loc) {
     google.maps.event.addListenerOnce(infoWindow, "domready", function () {
       const container = document.querySelector(".gm-style-iw-d");
-      if (container) {
+      if (!container) return;
+
+      if (hoverCapable) {
         container.addEventListener("mouseenter", cancelInfoWindowClose);
         container.addEventListener("mouseleave", scheduleInfoWindowClose);
       }
 
       if (!loc.photo_url) return;
 
-      const img = document.querySelector(".map-marker-popup__photo img[data-map-popup-photo]");
+      const img = container.querySelector("img[data-map-popup-photo]");
       if (!img) return;
 
       img.addEventListener("error", function () {
@@ -281,6 +289,7 @@ function initSingleItineraryMap(el) {
 
   function openMarkerPopup(marker, loc) {
     cancelInfoWindowClose();
+    infoWindow.close();
     infoWindow.setContent(buildPopupHtml(loc));
     infoWindow.open(map, marker);
     wireInfoWindowPopup(loc);
@@ -291,16 +300,29 @@ function initSingleItineraryMap(el) {
     const marker = new google.maps.Marker({
       map: map,
       position: position,
-      title: displayLabel
+      title: displayLabel,
+      optimized: false
     });
 
-    marker.addListener("mouseover", function () {
+    marker.addListener("click", function () {
       openMarkerPopup(marker, loc);
     });
 
-    marker.addListener("mouseout", scheduleInfoWindowClose);
+    if (hoverCapable) {
+      marker.addListener("mouseover", function () {
+        openMarkerPopup(marker, loc);
+      });
+
+      marker.addListener("mouseout", scheduleInfoWindowClose);
+    }
 
     bounds.extend(position);
+  }
+
+  if (!hoverCapable) {
+    map.addListener("click", function () {
+      infoWindow.close();
+    });
   }
 
   function hasCachedCoords(loc) {
@@ -451,43 +473,6 @@ function initItineraryMaps() {
 </script>
 
 
-
-
-
-<!-------------------------------- Show more botton -------------------------------->
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const btn = document.getElementById("show-more-trips");
-    if (!btn) return;
-
-    btn.addEventListener("click", function () {
-      document.querySelectorAll("#future-trips-list .extra-trip")
-        .forEach(function (li) {
-          li.style.display = "block";
-        });
-
-      // hide the button once expanded
-      btn.style.display = "none";
-    });
-  });
-</script>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const btn = document.getElementById("show-more-past");
-    if (!btn) return;
-
-    btn.addEventListener("click", function () {
-      document.querySelectorAll("#past-trips-list .extra-trip")
-        .forEach(function (li) {
-          li.style.display = "block";
-        });
-
-      btn.style.display = "none";
-    });
-  });
-</script>
 
 
 <!----------- Agenda: day tabs (up to 3 visible), window arrows, jump select ------------>

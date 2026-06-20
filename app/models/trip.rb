@@ -36,4 +36,9 @@ class Trip < ApplicationRecord
 
   scope :showcase, -> { where.not(showcase_slug: nil) }
 
+  def trip_end_date
+    return unless trip_start_date.present? && trip_duration_days.present?
+
+    trip_start_date + trip_duration_days.days - 1.day
+  end
 end

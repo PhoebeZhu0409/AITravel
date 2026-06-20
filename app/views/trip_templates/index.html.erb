@@ -35,6 +35,14 @@
     <% todos = Array(tf["query_todo"]).flatten.compact.map(&:to_s) %>
     <% optional_open = tf["query_budget"].present? || tf["query_people"].present? || tf["query_live_area"].present? || todos.any? %>
 
+    <% trip_end_value = tf["query_trip_end_date"].presence %>
+    <% if trip_end_value.blank? && tf["query_trip_start_date"].present? && tf["query_trip_duration_days"].present? %>
+      <% begin %>
+        <% trip_end_value = (Date.parse(tf["query_trip_start_date"].to_s) + tf["query_trip_duration_days"].to_i.days - 1.day).strftime("%Y-%m-%d") %>
+      <% rescue Date::Error %>
+      <% end %>
+    <% end %>
+
     <form id="plan-trip-form" action="/insert_trip" method="post">
     <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
       <div>
@@ -56,19 +64,19 @@
       </div>
 
       <div>
-        <label for="trip_duration_days_box">
-          How many days
-        </label>
-
-        <input type="number" id="trip_duration_days_box" name="query_trip_duration_days" step="1" value="<%= tf["query_trip_duration_days"] %>">
-      </div>
-
-      <div>
         <label for="trip_start_date_box">
           Trip starts
         </label>
 
         <input type="date" id="trip_start_date_box" name="query_trip_start_date" value="<%= tf["query_trip_start_date"] %>">
+      </div>
+
+      <div>
+        <label for="trip_end_date_box">
+          Trip ends
+        </label>
+
+        <input type="date" id="trip_end_date_box" name="query_trip_end_date" value="<%= trip_end_value %>">
       </div>
 
       <!-- Collapsible section -->
@@ -191,21 +199,14 @@
       <h2>My Future Trips</h2>
     </header>
 
-    <ul id="future-trips-list">
-      <% @future_trips.each_with_index do |a_trip, idx| %>
-        <li class="<%= 'extra-trip' if idx >= 5 %>">
-          <a href="/trips/<%= a_trip.id %>">
-            📍 <%= a_trip.trip_name %>
-          </a>
-        </li>
-      <% end %>
-    </ul>
+    <%= render "trip_templates/trips_list",
+        trips: @future_trips,
+        list_id: "future-trips-list" %>
 
-    <% if @future_trips.size > 5 %>
-      <button id="show-more-trips" class="btn-view-more">
-        View more
-      </button>
-    <% end %>
+    <%= render "trip_templates/trips_pagination",
+        pagy: @pagy_future,
+        page_param: :future_page,
+        label: "Future trips pages" %>
   </article>
 </div>
 
@@ -216,23 +217,14 @@
       <h2>Past Trips</h2>
     </header>
 
-    <% past_trips = @list_of_trips.where(trip_start_date: (...Date.today)).order(trip_start_date: :desc) %>
+    <%= render "trip_templates/trips_list",
+        trips: @past_trips,
+        list_id: "past-trips-list" %>
 
-    <ul id="past-trips-list">
-      <% past_trips.each_with_index do |a_trip, idx| %>
-        <li class="<%= 'extra-trip' if idx >= 3 %>">
-          <a href="/trips/<%= a_trip.id %>">
-            📍 <%= a_trip.trip_name %>
-          </a>
-        </li>
-      <% end %>
-    </ul>
-
-    <% if past_trips.size > 3 %>
-      <button id="show-more-past" class="btn-view-more">
-        View more
-      </button>
-    <% end %>
+    <%= render "trip_templates/trips_pagination",
+        pagy: @pagy_past,
+        page_param: :past_page,
+        label: "Past trips pages" %>
   </article>
 </div>
 
@@ -269,11 +261,28 @@
       });
     });
 
-    var tabFromHash = (location.hash || "").replace(/^#/, "");
-    if (tabFromHash === "future" || tabFromHash === "past" || tabFromHash === "plan") {
-      activate(tabFromHash);
+    var params = new URLSearchParams(location.search);
+    if (params.has("past_page")) {
+      activate("past");
+    } else if (params.has("future_page")) {
+      activate("future");
     } else {
-      activate("plan");
+      var tabFromHash = (location.hash || "").replace(/^#/, "");
+      if (tabFromHash === "future" || tabFromHash === "past" || tabFromHash === "plan") {
+        activate(tabFromHash);
+      } else {
+        activate("plan");
+      }
+    }
+
+    var tripStart = document.getElementById("trip_start_date_box");
+    var tripEnd = document.getElementById("trip_end_date_box");
+    if (tripStart && tripEnd) {
+      function syncTripEndMin() {
+        if (tripStart.value) tripEnd.min = tripStart.value;
+      }
+      tripStart.addEventListener("change", syncTripEndMin);
+      syncTripEndMin();
     }
   });
 </script>

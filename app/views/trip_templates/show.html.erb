@@ -57,7 +57,7 @@
 
       <div>
         <div><%= @the_trip.trip_location %></div>
-        <div><%= @the_trip.trip_duration_days %> days, <%= @the_trip.trip_start_date.strftime("%B %-d, %Y") %></div>
+        <div><%= trip_date_range_label(@the_trip) %></div>
       </div>
 
       <div class="trip-actions">

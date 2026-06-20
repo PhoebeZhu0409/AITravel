@@ -1,0 +1,21 @@
+<%# locals: pagy, page_param, label %>
+<% if pagy.pages > 1 %>
+  <nav class="trips-pagination" aria-label="<%= label %>">
+    <% if pagy.prev %>
+      <a class="trips-page-btn" href="<%= trips_tab_page_url(page_param, pagy.prev) %>">
+        Previous page
+      </a>
+    <% end %>
+
+    <span class="trips-page-status">
+      Page <%= pagy.page %> of <%= pagy.pages %>
+      <span class="trips-page-count">(<%= pagy.from %>–<%= pagy.to %> of <%= pagy.count %>)</span>
+    </span>
+
+    <% if pagy.next %>
+      <a class="trips-page-btn trips-page-btn--primary" href="<%= trips_tab_page_url(page_param, pagy.next) %>">
+        Next page
+      </a>
+    <% end %>
+  </nav>
+<% end %>

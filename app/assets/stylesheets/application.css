@@ -581,6 +581,40 @@ body.pico main .sign-in-page p.sign-in-tutorial {
   overflow: hidden;
 }
 
+/* Keep Google marker pins and map UI from inheriting Pico [role=button] / link styles */
+.day-map .gm-style img {
+  max-width: none !important;
+  max-height: none !important;
+}
+
+body.pico .day-map .gm-style [role="button"],
+body.pico .day-map .gm-style [role="button"]:hover,
+body.pico .day-map .gm-style [role="button"]:focus,
+body.pico .day-map .gm-style [role="button"]:active {
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+  font-weight: inherit !important;
+  text-align: inherit !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+}
+
+.day-map .gm-style a[href^="https://maps.google.com"],
+.day-map .gm-style a[href^="https://www.google.com/maps"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
 .map-marker-popup {
   padding: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -643,6 +677,20 @@ a.map-marker-popup__card:hover .map-marker-popup__name {
   color: #666666;
   line-height: 1.25;
   white-space: normal;
+}
+
+/* Google InfoWindow popup — scoped so Pico link/button styles don't leak */
+.gm-style-iw-d .map-marker-popup a.map-marker-popup__card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  color: inherit !important;
+}
+
+.gm-style-iw-d .map-marker-popup a.map-marker-popup__card:hover {
+  background: transparent !important;
 }
 
 /* Google InfoWindow: don't clip our mini location card */
@@ -989,24 +1037,118 @@ span.btn-rebuild--disabled:hover {
 }
 
 
-.extra-trip {
-  display: none;
+.trips-list-wrap {
+  margin-top: 0.5rem;
 }
 
-/* simple button styling */
-.btn-view-more {
-  margin-top: 10px;
+.trips-list-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.35rem 0.75rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.trips-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+body.pico article .trips-list li {
+  list-style: none;
+  list-style-type: none;
+}
+
+body.pico article .trips-list li::marker {
+  content: none;
+}
+
+.trips-list li {
+  border-top: 1px solid #e5e7eb;
+}
+
+.trips-list li:last-child {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.trips-list-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.trips-list-row:hover .trips-list-col-name {
+  color: #1d4ed8;
+}
+
+.trips-list-col-name {
+  min-width: 0;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.trips-list-col-created {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.trips-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem 1rem;
+  margin-top: 1rem;
+}
+
+.trips-page-status {
+  font-size: 0.875rem;
+  color: #64748b;
+  text-align: center;
+}
+
+.trips-page-count {
+  color: #94a3b8;
+}
+
+.trips-page-btn {
+  display: inline-block;
   padding: 0.5rem 1rem;
   border-radius: 6px;
-  border: none;
-  background-color: #007bff;
-  color: white;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+  color: #374151;
   font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
   cursor: pointer;
 }
 
-.btn-view-more:hover {
+.trips-page-btn:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.trips-page-btn--primary {
+  border-color: #007bff;
+  background-color: #007bff;
+  color: #fff;
+}
+
+.trips-page-btn--primary:hover {
   background-color: #0063cc;
+  border-color: #0063cc;
+  color: #fff;
 }
 
 .collapsible-btn {

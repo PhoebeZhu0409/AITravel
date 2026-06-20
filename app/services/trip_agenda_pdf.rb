@@ -121,9 +121,7 @@ class TripAgendaPdf
     pdf.font_size(11) do
       pdf.text pdf_plain(@trip.trip_location.to_s), color: "525252"
       pdf.move_down 2
-      start = @trip.trip_start_date
-      meta = "#{@trip.trip_duration_days} days, #{start&.strftime('%B %-d, %Y')}"
-      pdf.text pdf_plain(meta), color: "525252"
+      pdf.text pdf_plain(trip_date_range_label(@trip)), color: "525252"
     end
     pdf.move_down 14
     pdf.font_size(15) do

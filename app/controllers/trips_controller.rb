@@ -3,10 +3,16 @@ class TripsController < ApplicationController
 
   def index
     matching_trips = current_user.trips
-    @list_of_trips = matching_trips.order({ :created_at => :desc })
-    @future_trips = matching_trips
+
+    future_scope = matching_trips
       .where(trip_start_date: (Date.today...))
       .order(:trip_start_date)
+    past_scope = matching_trips
+      .where(trip_start_date: (...Date.today))
+      .order(trip_start_date: :desc)
+
+    @pagy_future, @future_trips = pagy(future_scope, page_param: :future_page, limit: 10)
+    @pagy_past, @past_trips = pagy(past_scope, page_param: :past_page, limit: 10)
     @trip_form = (session.delete(:trip_form_draft) || {}).stringify_keys
 
     render({ :template => "trip_templates/index" })
@@ -64,8 +70,7 @@ class TripsController < ApplicationController
 
     @the_trip.trip_name = params.fetch("query_trip_name")
     @the_trip.trip_location = params.fetch("query_trip_location")
-    @the_trip.trip_duration_days = params.fetch("query_trip_duration_days")
-    @the_trip.trip_start_date = params.fetch("query_trip_start_date")
+    apply_trip_date_range!(@the_trip)
     @the_trip.trip_notes = build_trip_summary
 
     if @the_trip.valid?
@@ -106,8 +111,7 @@ class TripsController < ApplicationController
     the_trip.user_id = current_user.id
     the_trip.trip_name = params.fetch("query_trip_name")
     the_trip.trip_location = params.fetch("query_trip_location")
-    the_trip.trip_duration_days = params.fetch("query_trip_duration_days")
-    the_trip.trip_start_date = params.fetch("query_trip_start_date")
+    apply_trip_date_range!(the_trip)
     the_trip.trip_notes = build_trip_summary
 
     if the_trip.valid?
@@ -263,12 +267,27 @@ class TripsController < ApplicationController
     tz.local(date.year, date.month, date.day, 12, 0, 0).strftime("%Z").presence
   end
 
+  def apply_trip_date_range!(trip)
+    start_date = Date.parse(params.fetch("query_trip_start_date"))
+    end_date = Date.parse(params.fetch("query_trip_end_date"))
+
+    if end_date < start_date
+      trip.errors.add(:base, "Trip end must be on or after trip start.")
+      return
+    end
+
+    trip.trip_start_date = start_date
+    trip.trip_duration_days = (end_date - start_date).to_i + 1
+  rescue Date::Error, TypeError
+    trip.errors.add(:base, "Please enter valid trip start and end dates.")
+  end
+
   def trip_form_draft_params
     params.permit(
       :query_trip_name,
       :query_trip_location,
-      :query_trip_duration_days,
       :query_trip_start_date,
+      :query_trip_end_date,
       :query_budget,
       :query_people,
       :query_live_area,
