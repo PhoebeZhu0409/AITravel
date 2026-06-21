@@ -1,9 +1,20 @@
 <%# locals: active (:trip or :day) %>
-<nav aria-label="breadcrumb">
-  <ul>
-    <li><a href="/">Home</a></li>
-  </ul>
-</nav>
-<hr>
+<div class="home-plan-header">
+  <div class="home-plan-header__bar">
+    <nav aria-label="breadcrumb">
+      <ul>
+        <li><a href="/">Home</a></li>
+      </ul>
+    </nav>
 
-<%= render "trip_templates/plan_mode_nav", active: active %>
+    <% if current_user.present? %>
+      <div class="home-plan-header__account">
+        <%= render "trip_templates/header_account" %>
+      </div>
+    <% end %>
+  </div>
+
+  <hr>
+
+  <%= render "trip_templates/plan_mode_nav", active: active %>
+</div>

@@ -1129,10 +1129,103 @@ span.btn-rebuild--disabled:hover {
 .user-avatar {
   width: 32px;
   height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   object-fit: cover;
+  object-position: center;
   flex-shrink: 0;
   display: block;
+}
+
+body.pico img.user-avatar,
+body.pico img.app-header-profile__avatar {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  max-width: 36px;
+  max-height: 36px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50% !important;
+  object-fit: cover;
+  object-position: center;
+}
+
+.app-header-account-cluster {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+.app-header-profile__avatar-wrap {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: #e2e8f0;
+  line-height: 0;
+}
+
+.app-header-profile__avatar-wrap .app-header-profile__avatar,
+.app-header-profile__avatar-wrap img.user-avatar {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  border-radius: 0 !important;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+body.pico > header nav {
+  align-items: center;
+}
+
+body.pico > header nav > ul:last-child {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: nowrap;
+}
+
+body.pico > header .app-header-account {
+  margin: 0;
+  padding: 0;
+}
+
+/* Home plan pages: profile beside Home, not in top bar */
+body.pico:has(.home-plan-header) > header .app-header-account {
+  display: none;
+}
+
+/* Edit profile: same size/weight as breadcrumb Home (Pico nav link defaults) */
+.home-plan-header__bar .app-header-account-edit,
+body.pico > header .app-header-account-edit {
+  font-size: 1em;
+  font-weight: 400;
+  line-height: inherit;
+  font-family: inherit;
+  color: var(--pico-primary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.home-plan-header__bar .app-header-account-edit:hover,
+body.pico > header .app-header-account-edit:hover {
+  color: var(--pico-primary-hover);
+  text-decoration: underline;
 }
 
 .app-header-profile-wrap {
@@ -1174,6 +1267,33 @@ span.btn-rebuild--disabled:hover {
   width: 36px;
   height: 36px;
   flex-shrink: 0;
+}
+
+/* Home plan pages: breadcrumb row + account beside Home */
+.home-plan-header__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.home-plan-header__bar nav[aria-label="breadcrumb"] ul {
+  margin-bottom: 0;
+}
+
+.home-plan-header__account {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.home-plan-header__account .app-header-profile__name {
+  max-width: 12rem;
+}
+
+.home-plan-header hr {
+  margin-top: 0.35rem;
+  margin-bottom: 0.75rem;
 }
 
 .trips-list-wrap {
@@ -1527,26 +1647,26 @@ body.pico main .home-tabs .home-tab {
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.home-tab:hover {
+body.pico main .home-tabs .home-tab:hover {
   border-color: #b8bcc4 !important;
   background: #e2e5eb !important;
   color: #1f2937 !important;
 }
 
-.home-tab:focus-visible {
+body.pico main .home-tabs .home-tab:focus-visible {
   outline: 2px solid #2563eb;
   outline-offset: 2px;
 }
 
-.home-tab[aria-selected="true"],
-.home-tab.home-tab--active {
+body.pico main .home-tabs .home-tab[aria-selected="true"],
+body.pico main .home-tabs .home-tab.home-tab--active {
   background: #2563eb !important;
   border-color: #1d4ed8 !important;
   color: #fff !important;
 }
 
-.home-tab[aria-selected="true"]:hover,
-.home-tab.home-tab--active:hover {
+body.pico main .home-tabs .home-tab[aria-selected="true"]:hover,
+body.pico main .home-tabs .home-tab.home-tab--active:hover {
   background: #1d4ed8 !important;
   border-color: #1e40af !important;
   color: #fff !important;
@@ -1561,10 +1681,6 @@ body.pico main .home-tabs .home-tab {
 }
 
 /* Home breadcrumb + plan mode nav (shared header) */
-nav[aria-label="breadcrumb"] ul {
-  margin-bottom: 0;
-}
-
 nav[aria-label="breadcrumb"] + hr {
   margin-top: 0.35rem;
   margin-bottom: 0.75rem;
@@ -2636,6 +2752,20 @@ body.pico footer.site-footer .footer-col a:hover {
     gap: 1.25rem;
   }
 
+  .home-plan-header__account {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .home-plan-header__account .app-header-profile__name {
+    max-width: 4.5rem;
+  }
+
+  body.pico > header .app-header-profile__name {
+    display: none;
+  }
+
   body.pico main .home-tabs {
     margin-top: 0;
     margin-bottom: 1.15rem;
@@ -2645,6 +2775,12 @@ body.pico footer.site-footer .footer-col a:hover {
   body.pico main .home-tabs .home-tab {
     font-size: 0.75rem;
     padding: 0.28rem 0.85rem !important;
+  }
+
+  @media (max-width: 400px) {
+    .home-plan-header__account .app-header-profile__name {
+      display: none;
+    }
   }
 
   body.pico > footer.site-footer {

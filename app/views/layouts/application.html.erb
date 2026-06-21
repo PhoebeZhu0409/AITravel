@@ -45,16 +45,8 @@
 
            <% if current_user.present? %>
             <ul>
-              <li>
-                <div class="app-header-profile-wrap">
-                  <% if current_user.username.present? %>
-                    <span class="app-header-profile__name"><%= current_user.username %></span>
-                  <% end %>
-                  <%= user_avatar_tag(current_user, class: "app-header-profile__avatar") %>
-                </div>
-              </li>
-              <li>
-                <a href="/users/edit">Edit profile</a>
+              <li class="app-header-account">
+                <%= render "trip_templates/header_account" %>
               </li>
               <li>
                 <a href="/users/sign_out">Sign out</a>
