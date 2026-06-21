@@ -16,6 +16,8 @@ class GooglePlacesEnricher
   FIND_PLACE_URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
   PHOTO_URL = "https://maps.googleapis.com/maps/api/place/photo"
   TIMEZONE_URL = "https://maps.googleapis.com/maps/api/timezone/json"
+  # Bias venue search toward the trip destination (meters).
+  LOCATION_BIAS_RADIUS_M = 50_000
 
   class << self
     def enrich_trip_plan(trip_plan)
@@ -25,11 +27,12 @@ class GooglePlacesEnricher
       query = trip_plan.plan_location.to_s.strip
       return if query.blank?
 
-      data = find_place_json(query, key)
+      bias = destination_coordinates_for(trip_plan.trip, key)
+      data = find_place_json(query, key, location_bias: bias)
       return unless data
       return unless data["status"] == "OK"
 
-      cand = data["candidates"]&.first
+      cand = pick_best_candidate(query, data["candidates"])
       return unless cand
 
       trip_plan.place_display_name = cand["name"] if cand["name"].present?
@@ -128,14 +131,19 @@ class GooglePlacesEnricher
       nil
     end
 
-    def find_place_json(query, key)
-      uri = URI(FIND_PLACE_URL)
-      uri.query = URI.encode_www_form(
+    def find_place_json(query, key, location_bias: nil)
+      params = {
         input: query,
         inputtype: "textquery",
         fields: "name,rating,user_ratings_total,photos,geometry",
         key: key
-      )
+      }
+      if location_bias
+        params[:locationbias] = "circle:#{LOCATION_BIAS_RADIUS_M}@#{location_bias[:lat]},#{location_bias[:lng]}"
+      end
+
+      uri = URI(FIND_PLACE_URL)
+      uri.query = URI.encode_www_form(params)
       res = http_get_follow(uri)
       return unless res.is_a?(Net::HTTPSuccess)
 
@@ -143,6 +151,55 @@ class GooglePlacesEnricher
     rescue JSON::ParserError => e
       Rails.logger.warn("[GooglePlacesEnricher] JSON parse: #{e.message}")
       nil
+    end
+
+    # Cached per trip during a single request (e.g. batch enrich after agenda generation).
+    def destination_coordinates_for(trip, key)
+      return nil if trip.blank?
+
+      cache = destination_coordinates_cache
+      return cache[trip.id] if cache.key?(trip.id)
+
+      query = trip.trip_location.to_s.strip
+      coords = nil
+      if query.present?
+        data = find_place_json(query, key)
+        if data && data["status"] == "OK"
+          cand = data["candidates"]&.first
+          lat = cand&.dig("geometry", "location", "lat")
+          lng = cand&.dig("geometry", "location", "lng")
+          coords = { lat: lat, lng: lng } if lat.present? && lng.present?
+        end
+      end
+
+      cache[trip.id] = coords
+      coords
+    end
+
+    def destination_coordinates_cache
+      Thread.current[:google_places_destination_coords] ||= {}
+    end
+
+    def pick_best_candidate(query, candidates)
+      return nil if candidates.blank?
+      return candidates.first if candidates.size == 1
+
+      expected = normalize_place_name(query.split(",").first)
+
+      candidates.max_by do |c|
+        name = normalize_place_name(c["name"])
+        score = 0
+        score += 100 if name == expected
+        score += 50 if expected.present? && name.include?(expected)
+        score += 25 if expected.present? && expected.include?(name)
+        extra = name.split - expected.split
+        score -= extra.size * 10
+        score + [c["user_ratings_total"].to_i, 0].max / 100
+      end
+    end
+
+    def normalize_place_name(str)
+      str.to_s.downcase.gsub(/[^a-z0-9\s]/, " ").squish
     end
 
     def attach_photo(trip_plan, photo_ref, key)

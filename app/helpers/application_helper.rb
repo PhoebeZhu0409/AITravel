@@ -48,6 +48,28 @@ module ApplicationHelper
     ShowcaseImages.hero_asset_name(trip.showcase_slug)
   end
 
+  def trip_hero_default_path
+    image_path("trip_hero_default.png")
+  end
+
+  # Primary src for trip show hero: showcase asset, Google Places photo, or default PNG.
+  def trip_show_hero_src(trip)
+    if (showcase = showcase_hero_image(trip))
+      image_path(showcase)
+    elsif trip.location_hero.attached?
+      url_for(trip.location_hero)
+    else
+      trip_hero_default_path
+    end
+  end
+
+  # Fallback chain when hero src fails (missing blob on disk, etc.).
+  def trip_hero_image_onerror(fallback_path = trip_hero_default_path)
+    safe_fallback = fallback_path.to_s.gsub("'", "\\'")
+    "this.onerror=null;this.src='#{safe_fallback}';" \
+      "this.onerror=function(){this.classList.add('trip-hero-image--placeholder');this.removeAttribute('src');};"
+  end
+
   def showcase_plan_image(trip, trip_plan)
     return unless trip.showcase_slug.present?
 

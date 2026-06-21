@@ -13,23 +13,17 @@
 <article>
   <div class="trip-hero">
     <% location = @the_trip.trip_location %>
-    <% hero_default_path = image_path("trip_hero_default.png") %>
 
     <div class="trip-hero-image-wrap">
-      <% if (showcase_hero = showcase_hero_image(@the_trip)) %>
-        <%= image_tag showcase_hero, alt: location, class: "trip-hero-image" %>
-      <% elsif @the_trip.location_hero.attached? %>
-        <%= image_tag @the_trip.location_hero, alt: location, class: "trip-hero-image" %>
-      <% else %>
-        <%# No Google Places photo (missing key, no photos, etc.) — same default asset every time. %>
-        <img
-          class="trip-hero-image"
-          src="<%= hero_default_path %>"
-          alt="<%= location %>"
-          loading="lazy"
-          onerror="this.onerror=null;this.classList.add('trip-hero-image--placeholder');this.removeAttribute('src');"
-        >
-      <% end %>
+      <img
+        class="trip-hero-image"
+        src="<%= trip_show_hero_src(@the_trip) %>"
+        alt="<%= location %>"
+        width="1200"
+        height="400"
+        loading="lazy"
+        onerror="<%= trip_hero_image_onerror %>"
+      >
     </div>
 
       <%# Inline trip name (signed-in) vs read-only title (public showcase) %>

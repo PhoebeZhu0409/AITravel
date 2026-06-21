@@ -32,6 +32,11 @@ class TripPlan < ApplicationRecord
   def google_maps_search_url
     return if plan_location.blank?
 
+    if place_latitude.present? && place_longitude.present?
+      q = ERB::Util.url_encode("#{place_latitude},#{place_longitude}")
+      return "https://www.google.com/maps/search/?api=1&query=#{q}"
+    end
+
     q = ERB::Util.url_encode(plan_location.to_s)
     "https://www.google.com/maps/search/?api=1&query=#{q}"
   end
