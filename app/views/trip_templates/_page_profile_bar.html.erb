@@ -1,0 +1,11 @@
+<div class="page-profile-bar">
+  <div class="page-profile-bar__left">
+    <%= left %>
+  </div>
+
+  <% if current_user.present? %>
+    <div class="page-profile-bar__account">
+      <%= render "trip_templates/header_account" %>
+    </div>
+  <% end %>
+</div>

@@ -1,5 +1,7 @@
 <div class="devise-registration-edit">
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+  <%= render("trip_templates/page_profile_bar", left: capture do %>
+    <h2 class="page-profile-bar__title">Edit <%= resource_name.to_s.humanize %></h2>
+  <% end) %>
 
 <dl class="account-status-readonly">
   <dt>ACCOUNT STATUS:</dt>

@@ -6,10 +6,10 @@ class TripsController < ApplicationController
 
     future_scope = matching_trips
       .where(trip_start_date: (Date.today...))
-      .order(:trip_start_date)
+      .order(created_at: :desc)
     past_scope = matching_trips
       .where(trip_start_date: (...Date.today))
-      .order(trip_start_date: :desc)
+      .order(created_at: :desc)
 
     @pagy_future, @future_trips = pagy(future_scope, page_param: :future_page, limit: 10)
     @pagy_past, @past_trips = pagy(past_scope, page_param: :past_page, limit: 10)
@@ -183,13 +183,13 @@ class TripsController < ApplicationController
   def generate_ai_plan_for(the_trip)
     user_input = build_user_input(the_trip)
 
-    i = AI::Chat.new
-    chat.model = "gpt-4.1-mini"
+    chat = AI::Chat.new
+    chat.model = ENV.fetch("OPENAI_PLANNING_MODEL", "gpt-4.1-mini")
 
-    i.system(ai_planning_prompt)
-    i.user(user_input)
+    chat.system(ai_planning_prompt)
+    chat.user(user_input)
 
-    response = i.generate!
+    response = chat.generate!
     raw = response[:content].to_s
 
     JSON.parse(raw, symbolize_names: true)

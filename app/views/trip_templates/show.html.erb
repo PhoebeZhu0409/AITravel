@@ -1,11 +1,13 @@
 <% content_for :title, @trip_show_page_title if @trip_show_page_title.present? %>
 
-<nav aria-label="breadcrumb">
-  <ul>
-    <li><a href="<%= @trip_show_public_demo ? new_user_session_path : "/" %>">Home</a></li>
-    <li><%= @the_trip.trip_name%></li>
-  </ul>
-</nav>
+<%= render("trip_templates/page_profile_bar", left: capture do %>
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="<%= @trip_show_public_demo ? new_user_session_path : "/" %>">Home</a></li>
+      <li><%= @the_trip.trip_name%></li>
+    </ul>
+  </nav>
+<% end) %>
 <hr>
 
 <article>

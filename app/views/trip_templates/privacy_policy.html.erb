@@ -1,9 +1,9 @@
 <% content_for :title, "Privacy Policy · Nalu" %>
 
 <article class="legal-page">
-  <header class="legal-page__header">
-    <h1>Privacy Policy</h1>
-  </header>
+  <%= render("trip_templates/page_profile_bar", left: capture do %>
+    <h1 class="page-profile-bar__title">Privacy Policy</h1>
+  <% end) %>
 
   <div class="legal-page__section">
     <p>

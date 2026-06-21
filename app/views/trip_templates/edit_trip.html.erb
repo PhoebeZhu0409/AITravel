@@ -1,10 +1,12 @@
-<nav aria-label="breadcrumb">
-  <ul>
-    <li><a href="/">Home</a></li>
-    <li><a href="/trips/<%= @the_trip.id %>"><%= @the_trip.trip_name%></a></li>
-    <li>Rebuild My Agenda</li>
-  </ul>
-</nav>
+<%= render("trip_templates/page_profile_bar", left: capture do %>
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/trips/<%= @the_trip.id %>"><%= @the_trip.trip_name%></a></li>
+      <li>Rebuild My Agenda</li>
+    </ul>
+  </nav>
+<% end) %>
 <hr>
 
 <% if user_signed_in? && !current_user.premium? %>

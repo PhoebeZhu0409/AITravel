@@ -1,18 +1,12 @@
 <%# locals: active (:trip or :day) %>
 <div class="home-plan-header">
-  <div class="home-plan-header__bar">
+  <%= render("trip_templates/page_profile_bar", left: capture do %>
     <nav aria-label="breadcrumb">
       <ul>
         <li><a href="/">Home</a></li>
       </ul>
     </nav>
-
-    <% if current_user.present? %>
-      <div class="home-plan-header__account">
-        <%= render "trip_templates/header_account" %>
-      </div>
-    <% end %>
-  </div>
+  <% end) %>
 
   <hr>
 
