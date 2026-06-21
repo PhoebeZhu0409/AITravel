@@ -38,7 +38,7 @@
       <% end %>
     <% end %>
 
-    <form id="plan-trip-form" action="/insert_trip" method="post"
+    <form id="plan-trip-form" action="/insert_trip" method="post" data-turbo="false"
       data-max-trip-days="<%= Trip::MAX_TRIP_DURATION_DAYS %>"
       data-long-trip-warning-days="<%= Trip::LONG_TRIP_WARNING_DAYS %>">
     <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">

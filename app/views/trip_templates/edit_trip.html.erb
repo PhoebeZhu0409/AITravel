@@ -33,7 +33,7 @@
     </h2>
   </header>
 
-  <form id="rebuild-agenda-form" action="/modify_trip/<%= @the_trip.id %>" method="post"
+  <form id="rebuild-agenda-form" action="/modify_trip/<%= @the_trip.id %>" method="post" data-turbo="false"
     data-max-trip-days="<%= Trip::MAX_TRIP_DURATION_DAYS %>"
     data-long-trip-warning-days="<%= Trip::LONG_TRIP_WARNING_DAYS %>">
     <%= hidden_field_tag :authenticity_token, form_authenticity_token %>

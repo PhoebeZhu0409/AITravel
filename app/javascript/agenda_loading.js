@@ -1,7 +1,7 @@
 // Loading overlay for AI agenda generation (estimated progress — server has no real %).
 (function () {
   var progressTimer = null;
-  var ESTIMATED_MS = 75000;
+  var ESTIMATED_MS = 45000;
   var DEFAULT_MAX_TRIP_DAYS = 21;
   var DEFAULT_LONG_TRIP_WARNING_DAYS = 10;
 
@@ -233,6 +233,19 @@
     document.body.classList.add("agenda-loading-active");
   }
 
+  function hideAgendaLoading() {
+    var overlay = document.getElementById("agenda-loading-overlay");
+    if (progressTimer) {
+      clearInterval(progressTimer);
+      progressTimer = null;
+    }
+    if (!overlay) return;
+    overlay.setAttribute("hidden", "");
+    overlay.setAttribute("aria-hidden", "true");
+    document.documentElement.classList.remove("agenda-loading-active");
+    document.body.classList.remove("agenda-loading-active");
+  }
+
   function showAgendaLoading() {
     var overlay = document.getElementById("agenda-loading-overlay");
     if (!overlay) return;
@@ -325,4 +338,7 @@
 
   document.addEventListener("DOMContentLoaded", initAgendaLoading);
   document.addEventListener("turbo:load", initAgendaLoading);
+  document.addEventListener("turbo:before-visit", hideAgendaLoading);
+  window.addEventListener("pagehide", hideAgendaLoading);
+  window.addEventListener("pageshow", hideAgendaLoading);
 })();

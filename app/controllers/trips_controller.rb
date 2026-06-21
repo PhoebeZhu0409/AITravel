@@ -79,24 +79,20 @@ class TripsController < ApplicationController
 
     if @the_trip.valid?
       @the_trip.save
-      # Refresh stored Places hero when destination changed, or when we never got one (e.g. first run failed / no key).
-      # Rebuild with the same location used to skip this — that left loremflickr/placeholder forever.
-      if @the_trip.saved_change_to_trip_location? || !@the_trip.location_hero.attached?
-        ::GooglePlacesEnricher.enrich_trip_destination!(@the_trip)
-      end
 
       begin
         plan_hash = generate_ai_plan_for(@the_trip)
         replace_trip_plans_from_ai!(@the_trip, plan_hash)
         current_user.record_trip_generation!(trip: @the_trip)
+        ::TripEnrichmentJob.perform_later(@the_trip.id)
 
-        redirect_to("/trips/#{@the_trip.id}", { notice: "Trip updated successfully." })
+        redirect_to("/trips/#{@the_trip.id}", { notice: "Trip updated successfully.", status: :see_other })
       rescue JSON::ParserError => e
         Rails.logger.error("Trip #{@the_trip.id} JSON parse failed: #{e.message}")
-        redirect_to("/trips/#{@the_trip.id}", { alert: "Trip was updated, but the AI returned invalid JSON." })
+        redirect_to("/trips/#{@the_trip.id}", { alert: "Trip was updated, but the AI returned invalid JSON.", status: :see_other })
       rescue StandardError => e
         Rails.logger.error("Trip #{@the_trip.id} generation failed: #{e.class} - #{e.message}")
-        redirect_to("/trips/#{@the_trip.id}", { alert: "Trip was updated, but itinerary generation failed." })
+        redirect_to("/trips/#{@the_trip.id}", { alert: "Trip was updated, but itinerary generation failed.", status: :see_other })
       end
     else
       redirect_to("/trips/#{@the_trip.id}", { alert: @the_trip.errors.full_messages.to_sentence })
@@ -120,20 +116,20 @@ class TripsController < ApplicationController
 
     if the_trip.valid?
       the_trip.save
-      ::GooglePlacesEnricher.enrich_trip_destination!(the_trip)
 
       begin
         plan_hash = generate_ai_plan_for(the_trip)
         replace_trip_plans_from_ai!(the_trip, plan_hash)
         current_user.record_trip_generation!(trip: the_trip)
+        ::TripEnrichmentJob.perform_later(the_trip.id)
 
-        redirect_to("/trips/#{the_trip.id}", { notice: "Trip created successfully." })
+        redirect_to("/trips/#{the_trip.id}", { notice: "Trip created successfully.", status: :see_other })
       rescue JSON::ParserError => e
         Rails.logger.error("Trip #{the_trip.id} JSON parse failed: #{e.message}")
-        redirect_to("/trips/#{the_trip.id}", { alert: "Trip was saved, but the AI returned invalid JSON." })
+        redirect_to("/trips/#{the_trip.id}", { alert: "Trip was saved, but the AI returned invalid JSON.", status: :see_other })
       rescue StandardError => e
         Rails.logger.error("Trip #{the_trip.id} generation failed: #{e.class} - #{e.message}")
-        redirect_to("/trips/#{the_trip.id}", { alert: "Trip was saved, but itinerary generation failed." })
+        redirect_to("/trips/#{the_trip.id}", { alert: "Trip was saved, but itinerary generation failed.", status: :see_other })
       end
     else
       session[:trip_form_draft] = trip_form_draft_params.to_h
@@ -249,7 +245,6 @@ class TripsController < ApplicationController
   # (HTTP stays out of the DB transaction).
   # "timezone" on each row comes from the user's trip_location (form), not from the LLM.
   def replace_trip_plans_from_ai!(the_trip, plan_hash)
-    new_plans = []
     trip_tz_id = ::GooglePlacesEnricher.timezone_id_for_location(
       the_trip.trip_location,
       the_trip.trip_start_date
@@ -263,7 +258,7 @@ class TripsController < ApplicationController
 
         day.fetch(:items, []).first(5).each do |item|
           location = item[:location].to_s.strip
-          new_plans << TripPlan.create!(
+          TripPlan.create!(
             trip: the_trip,
             date: date,
             start_time: Time.parse(item[:start_time].to_s),
@@ -279,7 +274,7 @@ class TripsController < ApplicationController
       end
     end
 
-    new_plans.each { |tp| ::GooglePlacesEnricher.enrich_trip_plan(tp) }
+    # Google Places photos/ratings run in TripEnrichmentJob (after redirect).
   end
 
   # Abbreviation (e.g. EST) for a calendar day at the trip destination; handles DST using that date.
