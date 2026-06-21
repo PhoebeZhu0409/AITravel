@@ -734,7 +734,7 @@ a.map-marker-popup__card:hover .map-marker-popup__name {
   aspect-ratio: 1200 / 400;
   border-radius: 8px;
   overflow: hidden;
-  background: #e5e7eb;
+  background: linear-gradient(145deg, #dbeafe 0%, #e0e7ef 45%, #cbd5e1 100%);
 }
 
 .trip-hero-image {

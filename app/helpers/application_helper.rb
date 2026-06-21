@@ -52,20 +52,24 @@ module ApplicationHelper
     image_path("trip_hero_default.png")
   end
 
+  def trip_hero_default_url
+    absolute_asset_url(image_path("trip_hero_default.png"))
+  end
+
   # Primary src for trip show hero: showcase asset, Google Places photo, or default PNG.
   def trip_show_hero_src(trip)
     if (showcase = showcase_hero_image(trip))
-      image_path(showcase)
+      absolute_asset_url(image_path(showcase))
     elsif trip.location_hero.attached? && active_storage_file_available?(trip.location_hero)
-      url_for(trip.location_hero)
+      absolute_asset_url(rails_blob_url(trip.location_hero))
     else
-      trip_hero_default_path
+      trip_hero_default_url
     end
   end
 
   # Fallback chain when hero src fails (missing blob on disk, etc.).
-  def trip_hero_image_onerror(fallback_path = trip_hero_default_path)
-    safe_fallback = fallback_path.to_s.gsub("'", "\\'")
+  def trip_hero_image_onerror(fallback_url = trip_hero_default_url)
+    safe_fallback = fallback_url.to_s.gsub("'", "\\'")
     "this.onerror=null;this.src='#{safe_fallback}';" \
       "this.onerror=function(){this.classList.add('trip-hero-image--placeholder');this.removeAttribute('src');};"
   end
@@ -79,7 +83,7 @@ module ApplicationHelper
 
   def plan_photo_url(trip, trip_plan)
     if (showcase = showcase_plan_image(trip, trip_plan))
-      return absolute_asset_url(image_url(showcase))
+      return absolute_asset_url(image_path(showcase))
     end
 
     return absolute_asset_url(rails_blob_url(trip_plan.place_thumbnail)) if
@@ -112,6 +116,23 @@ module ApplicationHelper
 
   def trips_tab_page_url(page_param, page)
     root_path({ page_param => page })
+  end
+
+  # Full-window navigation — required inside Envoy / mobile WebViews (avoids document.txt downloads).
+  def top_nav_link_to(name = nil, url = nil, **html_options, &block)
+    opts = nav_link_html_options(html_options)
+    if block
+      link_to(name, opts, &block)
+    else
+      link_to(name, url, opts)
+    end
+  end
+
+  def nav_link_html_options(html_options)
+    html_options[:data] = (html_options[:data] || {}).merge(turbo: false)
+    html_options[:target] = "_top"
+    html_options[:rel] = [html_options[:rel], "noopener"].compact.join(" ").presence || "noopener"
+    html_options
   end
 
   def user_avatar_tag(user, **options)

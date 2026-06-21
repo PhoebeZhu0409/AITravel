@@ -1,7 +1,7 @@
 <%# locals: active (:trip or :day) %>
 <nav class="plan-mode-nav" aria-label="Planning mode">
   <div class="plan-mode-nav__tabs">
-    <%= link_to root_path,
+    <%= top_nav_link_to root_path,
         class: "plan-mode-nav__tab#{' plan-mode-nav__tab--active' if active == :trip}",
         aria: { current: active == :trip ? "page" : false } do %>
       Plan A Trip
@@ -10,7 +10,7 @@
       <% end %>
     <% end %>
 
-    <%= link_to plan_a_day_path,
+    <%= top_nav_link_to plan_a_day_path,
         class: "plan-mode-nav__tab#{' plan-mode-nav__tab--active' if active == :day}",
         aria: { current: active == :day ? "page" : false } do %>
       Plan A Day

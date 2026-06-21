@@ -67,6 +67,7 @@ class PagesController < ApplicationController
     pdf_bytes = ::TripAgendaPdf.new(trip).render
     base = trip.trip_name.to_s.parameterize.presence || "trip"
     filename = "#{base}-agenda.pdf"
+    headers["Cache-Control"] = "no-store, private"
     headers["Content-Disposition"] = ActionDispatch::Http::ContentDisposition.format(
       disposition: "attachment",
       filename: filename

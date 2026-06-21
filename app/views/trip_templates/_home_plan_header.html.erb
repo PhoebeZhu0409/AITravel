@@ -3,7 +3,7 @@
   <%= render("trip_templates/page_profile_bar", left: capture do %>
     <nav aria-label="breadcrumb">
       <ul>
-        <li><a href="/">Home</a></li>
+        <li><%= top_nav_link_to "Home", root_path %></li>
       </ul>
     </nav>
   <% end) %>

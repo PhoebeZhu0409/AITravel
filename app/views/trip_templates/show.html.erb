@@ -3,7 +3,7 @@
 <%= render("trip_templates/page_profile_bar", left: capture do %>
   <nav aria-label="breadcrumb">
     <ul>
-      <li><a href="<%= @trip_show_public_demo ? new_user_session_path : "/" %>">Home</a></li>
+      <li><%= top_nav_link_to "Home", @trip_show_public_demo ? new_user_session_path : root_path %></li>
       <li><%= @the_trip.trip_name%></li>
     </ul>
   </nav>
@@ -21,7 +21,8 @@
         alt="<%= location %>"
         width="1200"
         height="400"
-        loading="lazy"
+        loading="eager"
+        decoding="async"
         onerror="<%= trip_hero_image_onerror %>"
       >
     </div>

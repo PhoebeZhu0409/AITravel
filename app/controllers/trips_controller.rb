@@ -31,6 +31,7 @@ class TripsController < ApplicationController
     pdf_bytes = ::TripAgendaPdf.new(@the_trip).render
     base = @the_trip.trip_name.to_s.parameterize.presence || "trip"
     filename = "#{base}-agenda.pdf"
+    headers["Cache-Control"] = "no-store, private"
     headers["Content-Disposition"] = ActionDispatch::Http::ContentDisposition.format(
       disposition: "attachment",
       filename: filename
@@ -83,6 +84,7 @@ class TripsController < ApplicationController
       begin
         plan_hash = generate_ai_plan_for(@the_trip)
         replace_trip_plans_from_ai!(@the_trip, plan_hash)
+        ensure_trip_destination_hero!(@the_trip)
         current_user.record_trip_generation!(trip: @the_trip)
         ::TripEnrichmentJob.perform_later(@the_trip.id)
 
@@ -120,6 +122,7 @@ class TripsController < ApplicationController
       begin
         plan_hash = generate_ai_plan_for(the_trip)
         replace_trip_plans_from_ai!(the_trip, plan_hash)
+        ensure_trip_destination_hero!(the_trip)
         current_user.record_trip_generation!(trip: the_trip)
         ::TripEnrichmentJob.perform_later(the_trip.id)
 
@@ -321,5 +324,17 @@ class TripsController < ApplicationController
       :query_trip_notes,
       query_todo: []
     )
+  end
+
+  # Hero photo is fetched synchronously so the trip page shows an image on first load (mobile).
+  def ensure_trip_destination_hero!(trip)
+    return if trip.trip_location.blank?
+
+    if trip.location_hero.attached?
+      blob = trip.location_hero.blob
+      return if blob.service.exist?(blob.key)
+    end
+
+    ::GooglePlacesEnricher.enrich_trip_destination!(trip)
   end
 end
