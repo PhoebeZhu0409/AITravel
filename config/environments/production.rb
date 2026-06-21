@@ -23,6 +23,13 @@ Rails.application.configure do
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
+  # Serve through the app so laptop/mobile get the same URL behavior (no redirect quirks).
+  config.active_storage.resolve_model_to_route = :rails_storage_proxy
+
+  config.action_controller.default_url_options = {
+    host: ENV.fetch("APP_HOST", "localhost"),
+    protocol: ENV.fetch("APP_PROTOCOL", "https")
+  }
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true

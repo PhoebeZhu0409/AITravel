@@ -56,7 +56,7 @@ module ApplicationHelper
   def trip_show_hero_src(trip)
     if (showcase = showcase_hero_image(trip))
       image_path(showcase)
-    elsif trip.location_hero.attached?
+    elsif trip.location_hero.attached? && active_storage_file_available?(trip.location_hero)
       url_for(trip.location_hero)
     else
       trip_hero_default_path
@@ -82,7 +82,8 @@ module ApplicationHelper
       return absolute_asset_url(image_url(showcase))
     end
 
-    return absolute_asset_url(rails_blob_url(trip_plan.place_thumbnail)) if trip_plan.place_thumbnail.attached?
+    return absolute_asset_url(rails_blob_url(trip_plan.place_thumbnail)) if
+      trip_plan.place_thumbnail.attached? && active_storage_file_available?(trip_plan.place_thumbnail)
 
     nil
   end
@@ -116,11 +117,38 @@ module ApplicationHelper
   def user_avatar_tag(user, **options)
     classes = [options[:class], "user-avatar"].compact.join(" ")
     alt = user.display_name.presence || "Profile"
+    html_options = options.except(:class)
 
-    if user.avatar.attached?
-      image_tag user.avatar, class: classes, alt: alt
+    image_tag(
+      user_avatar_src(user),
+      **html_options.merge(class: classes, alt: alt, onerror: user_avatar_onerror)
+    )
+  end
+
+  def user_avatar_default_path
+    image_path("default_avatar.svg")
+  end
+
+  def user_avatar_src(user)
+    if user.avatar.attached? && active_storage_file_available?(user.avatar)
+      url_for(user.avatar)
     else
-      image_tag "default_avatar.svg", class: classes, alt: alt
+      user_avatar_default_path
     end
+  end
+
+  def user_avatar_onerror
+    safe_fallback = user_avatar_default_path.to_s.gsub("'", "\\'")
+    "this.onerror=null;this.src='#{safe_fallback}';"
+  end
+
+  # DB may say attached after a deploy when the disk file was wiped (Render local storage).
+  def active_storage_file_available?(attachment)
+    return false unless attachment.attached?
+
+    attachment.blob.service.exist?(attachment.blob.key)
+  rescue StandardError => e
+    Rails.logger.warn("[ActiveStorage] blob check failed: #{e.class} #{e.message}")
+    false
   end
 end

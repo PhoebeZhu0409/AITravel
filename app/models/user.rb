@@ -34,7 +34,10 @@ class User < ApplicationRecord
 
   has_one_attached :avatar
 
+  ALLOWED_AVATAR_CONTENT_TYPES = %w[image/jpeg image/png image/webp image/gif].freeze
+
   validates :account_tier, inclusion: { in: ACCOUNT_TIERS }
+  validate :acceptable_avatar, if: -> { avatar.attached? }
 
   def display_name
     username.to_s.strip
@@ -70,5 +73,17 @@ class User < ApplicationRecord
     return if premium?
 
     trip_generation_events.create!(trip: trip)
+  end
+
+  private
+
+  def acceptable_avatar
+    type = avatar.blob.content_type.to_s
+    return if ALLOWED_AVATAR_CONTENT_TYPES.include?(type)
+
+    errors.add(
+      :avatar,
+      "must be JPEG, PNG, WebP, or GIF. iPhone HEIC photos often fail in desktop browsers — pick JPEG if offered."
+    )
   end
 end

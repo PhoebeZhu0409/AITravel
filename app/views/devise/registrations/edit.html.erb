@@ -21,7 +21,8 @@
     <%= f.input :avatar,
                 as: :file,
                 label: "Profile picture",
-                input_html: { accept: "image/*" } %>
+                hint: "JPEG, PNG, or WebP (avoid HEIC from iPhone if desktop shows a broken image).",
+                input_html: { accept: "image/jpeg,image/png,image/webp,image/gif" } %>
     <%= f.input :username,
                 label: "Name",
                 required: false,
