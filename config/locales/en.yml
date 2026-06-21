@@ -28,6 +28,13 @@
 #       enabled: "ON"
 
 en:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            current_password:
+              blank: "Enter your current password to make any changes."
   hints:
     randomness: This test deals with randomness. If you think your code is correct but the test failed anyway, you might have just gotten unlucky; try running the test a couple more times.
     copy_must_match: Make sure that the text exactly matches the target, including capitalization.

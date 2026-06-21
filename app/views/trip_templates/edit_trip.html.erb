@@ -31,8 +31,11 @@
     </h2>
   </header>
 
-  <form id="rebuild-agenda-form" action="/modify_trip/<%= @the_trip.id %>" method="post">
+  <form id="rebuild-agenda-form" action="/modify_trip/<%= @the_trip.id %>" method="post"
+    data-max-trip-days="<%= Trip::MAX_TRIP_DURATION_DAYS %>"
+    data-long-trip-warning-days="<%= Trip::LONG_TRIP_WARNING_DAYS %>">
     <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+    <div id="rebuild-agenda-form-errors" class="trip-form-errors" hidden role="alert"></div>
     <div>
       <label for="trip_name_box">
         Trip name
@@ -66,6 +69,8 @@
 
       <input type="date" id="trip_end_date_box" name="query_trip_end_date" value="<%= @the_trip.trip_end_date&.strftime("%Y-%m-%d") %>">
     </div>
+
+    <div id="rebuild-agenda-form-duration-warning" class="trip-duration-warning" hidden role="status"></div>
 
       <!-- Collapsible section -->
       <details class="collapsible"<%= " open".html_safe if optional_open %>>
@@ -160,7 +165,6 @@
 
   </form>
 
-  <%= render "trip_templates/agenda_loading_overlay" %>
 </article>
 
 <script>

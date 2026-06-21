@@ -43,8 +43,16 @@
             </li>
           </ul>
 
-           <% if current_user.present? %> 
+           <% if current_user.present? %>
             <ul>
+              <li>
+                <div class="app-header-profile-wrap">
+                  <% if current_user.username.present? %>
+                    <span class="app-header-profile__name"><%= current_user.username %></span>
+                  <% end %>
+                  <%= user_avatar_tag(current_user, class: "app-header-profile__avatar") %>
+                </div>
+              </li>
               <li>
                 <a href="/users/edit">Edit profile</a>
               </li>
@@ -76,6 +84,7 @@
       </div>
     </main>
 
+    <%= render "trip_templates/agenda_loading_overlay" %>
 
 <footer class="site-footer">
   <div class="footer-content">

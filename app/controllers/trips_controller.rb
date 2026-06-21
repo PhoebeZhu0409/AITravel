@@ -18,6 +18,10 @@ class TripsController < ApplicationController
     render({ :template => "trip_templates/index" })
   end
 
+  def plan_a_day
+    render({ :template => "trip_templates/plan_a_day" })
+  end
+
 
   def show
     render({ :template => "trip_templates/show" })
@@ -277,7 +281,14 @@ class TripsController < ApplicationController
     end
 
     trip.trip_start_date = start_date
-    trip.trip_duration_days = (end_date - start_date).to_i + 1
+    duration_days = (end_date - start_date).to_i + 1
+
+    if duration_days > Trip::MAX_TRIP_DURATION_DAYS
+      trip.errors.add(:trip_duration_days, "We can't build trips longer than #{Trip::MAX_TRIP_DURATION_DAYS} days")
+      return
+    end
+
+    trip.trip_duration_days = duration_days
   rescue Date::Error, TypeError
     trip.errors.add(:base, "Please enter valid trip start and end dates.")
   end

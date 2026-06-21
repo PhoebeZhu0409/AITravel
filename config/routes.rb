@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { registrations: "users/registrations" }
 
   # Public pages (no sign-in)
   get("/legal-notices", { :controller => "pages", :action => "legal_notices" })
@@ -16,6 +16,7 @@ Rails.application.routes.draw do
 
   # READ
   get("/trips", { :controller => "trips", :action => "index" })
+  get("/plan-a-day", { :controller => "trips", :action => "plan_a_day", :as => :plan_a_day })
   #get("/", { :controller => "trips", :action => "index" })
   root to: "trips#index"
 

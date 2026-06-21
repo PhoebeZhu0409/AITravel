@@ -19,6 +19,8 @@
 #
 class Trip < ApplicationRecord
   SHOWCASE_SLUGS = %w[madrid new_york].freeze
+  MAX_TRIP_DURATION_DAYS = 21
+  LONG_TRIP_WARNING_DAYS = 10
 
   has_many  :trip_plans, class_name: "TripPlan", foreign_key: "trip_id", dependent: :destroy
   has_many  :trip_generation_events, dependent: :nullify
@@ -27,7 +29,8 @@ class Trip < ApplicationRecord
   # Google Places photo for trip_location; cached so the home “Future trips” hero does not call APIs each visit.
   has_one_attached :location_hero
 
-  validates :trip_duration_days, presence: true, numericality: { only_integer: true, greater_than: 0 }
+  validates :trip_duration_days, presence: true,
+            numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: MAX_TRIP_DURATION_DAYS }
   validates :trip_location, presence: true
   validates :trip_name, presence: true
   validates :trip_start_date, presence: true, comparison: { greater_than: Date.today, message: "cannot be in the past"}

@@ -32,7 +32,13 @@ class User < ApplicationRecord
   has_many  :trips, class_name: "Trip", foreign_key: "user_id"
   has_many  :trip_generation_events, dependent: :destroy
 
+  has_one_attached :avatar
+
   validates :account_tier, inclusion: { in: ACCOUNT_TIERS }
+
+  def display_name
+    username.to_s.strip
+  end
 
   def premium?
     account_tier == "premium"

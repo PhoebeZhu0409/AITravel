@@ -155,7 +155,7 @@
   flex-direction: row;
   flex-wrap: nowrap;
   width: max-content;
-  animation: sign-in-featured-marquee-ltr 55s linear infinite;
+  animation: sign-in-featured-marquee-ltr 44s linear infinite;
 }
 
 .sign-in-landing__featured-set {
@@ -1012,8 +1012,54 @@ span.btn-rebuild--disabled:hover {
   color: #f87171;
 }
 
+.trip-form-errors {
+  margin: 0 0 1rem;
+  color: #b45309;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.trip-form-errors:not([hidden]) {
+  display: block;
+}
+
+.trip-duration-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0.35rem 0 1rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  color: #92400e;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.trip-duration-warning[hidden] {
+  display: none !important;
+}
+
+.trip-duration-warning::before {
+  content: "⚠";
+  flex-shrink: 0;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.trip-duration-warning--limit {
+  background: #fee2e2;
+  border-color: #f87171;
+  color: #991b1b;
+}
+
 /* Devise edit profile */
 .devise-registration-edit .account-status-readonly {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.35rem;
   margin: 0 0 1.25rem;
   padding: 0;
   border: none;
@@ -1021,12 +1067,12 @@ span.btn-rebuild--disabled:hover {
 }
 
 .devise-registration-edit .account-status-readonly dt {
-  font-size: 0.75rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: #64748b;
+  color: #0f172a;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin: 0 0 0.25rem;
+  letter-spacing: 0.02em;
+  margin: 0;
 }
 
 .devise-registration-edit .account-status-readonly dd {
@@ -1036,6 +1082,99 @@ span.btn-rebuild--disabled:hover {
   color: #0f172a;
 }
 
+.devise-registration-edit .account-status-readonly__value--premium {
+  color: #2563eb !important;
+}
+
+.devise-registration-edit .input.field_with_errors .hint {
+  display: none;
+}
+
+.devise-password-section {
+  margin: 1.75rem 0 0;
+  padding: 1.5rem 0;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.devise-password-section__title {
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.devise-current-password-field {
+  margin-top: 1.25rem;
+}
+
+.devise-current-password-field .devise-password-section__title {
+  margin-bottom: 1rem;
+}
+
+.profile-avatar-preview {
+  margin: 0 0 1.25rem;
+}
+
+.profile-avatar-preview__image {
+  width: 108px;
+  height: 108px;
+}
+
+.devise-registration-edit .profile-avatar-preview__image.user-avatar {
+  width: 108px;
+  height: 108px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: block;
+}
+
+.app-header-profile-wrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.app-header-profile {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none !important;
+  color: inherit !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.app-header-profile:hover {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+.app-header-profile__name {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: #0f172a;
+  max-width: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.app-header-profile__avatar {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
 
 .trips-list-wrap {
   margin-top: 0.5rem;
@@ -1282,6 +1421,74 @@ details.collapsible > .content hr {
   outline: none;
   border-color: #6bb8e6;
   box-shadow: 0 0 0 2px rgba(107, 184, 230, 0.25);
+}
+
+/* ----- Top toggle: Plan A Trip / Plan A Day ----- */
+.plan-mode-nav {
+  margin: 0.75rem 0 1rem;
+}
+
+.plan-mode-nav__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 1.75rem;
+}
+
+body.pico .plan-mode-nav__tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #64748b;
+  text-decoration: none !important;
+  padding: 0;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+body.pico .plan-mode-nav__tab:hover {
+  color: #475569;
+  text-decoration: none !important;
+}
+
+body.pico .plan-mode-nav__tab--active,
+body.pico .plan-mode-nav__tab[aria-current="page"] {
+  font-weight: 700;
+  color: #0f172a;
+  text-decoration: none !important;
+}
+
+body.pico .plan-mode-nav__tab--active:hover,
+body.pico .plan-mode-nav__tab[aria-current="page"]:hover {
+  color: #0f172a;
+}
+
+.plan-mode-nav__caret {
+  display: block;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 7px solid #0f172a;
+}
+
+.plan-day-coming-soon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+  margin-top: 1rem;
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: #6eb8e0;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 300;
+  letter-spacing: 0.04em;
 }
 
 /* ----- Home index: trip section tabs ----- */
@@ -2420,18 +2627,39 @@ a.place-card-link:hover .place-name {
 }
 
 /* ===== Agenda build loading overlay (Plan a trip → OpenAI) ===== */
+html.agenda-loading-active,
+body.agenda-loading-active {
+  overflow: hidden;
+  height: 100%;
+  touch-action: none;
+}
+
 .agenda-loading-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
   z-index: 100000;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
+  padding:
+    max(1rem, env(safe-area-inset-top, 0px))
+    max(1rem, env(safe-area-inset-right, 0px))
+    max(1rem, env(safe-area-inset-bottom, 0px))
+    max(1rem, env(safe-area-inset-left, 0px));
   box-sizing: border-box;
-  background: rgba(15, 23, 42, 0.45);
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: rgba(15, 23, 42, 0.55);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  touch-action: none;
 }
 
 .agenda-loading-overlay[hidden] {
@@ -2444,22 +2672,26 @@ a.place-card-link:hover .place-name {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1.625rem;
-  width: min(546px, 94vw);
+  gap: 1.25rem;
+  width: min(546px, 100%);
+  max-width: 94vw;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .agenda-wave-rail {
   position: relative;
   width: 100%;
+  max-width: 100%;
   height: 83px;
+  overflow: hidden;
 }
 
 .agenda-waves-svg {
   display: block;
   width: 100%;
   height: 100%;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .agenda-wave-line {
@@ -2505,11 +2737,11 @@ a.place-card-link:hover .place-name {
 
 .agenda-surfer-mover {
   position: absolute;
-  left: 0;
+  left: 6%;
   bottom: 38%;
   margin-left: 0;
-  animation: agenda-surf-cross 3.2s linear infinite;
   pointer-events: none;
+  will-change: left;
 }
 
 .agenda-surfer-bob {
@@ -2525,16 +2757,6 @@ a.place-card-link:hover .place-name {
   filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.4));
 }
 
-@keyframes agenda-surf-cross {
-  0% {
-    left: 6%;
-  }
-
-  100% {
-    left: 94%;
-  }
-}
-
 @keyframes agenda-surf-bob {
   0%,
   100% {
@@ -2542,46 +2764,56 @@ a.place-card-link:hover .place-name {
   }
 
   50% {
-    transform: translateX(-50%) translateY(-13px) rotate(6deg);
+    transform: translateX(-50%) translateY(-10px) rotate(6deg);
   }
 }
 
 .agenda-loading-message {
   margin: 0;
-  max-width: 36ch;
-  padding: 0;
+  max-width: 22rem;
+  padding: 0 0.25rem;
   border-radius: 0;
-  font-size: 1.2rem;
-  font-weight: 800;
+  font-size: clamp(1rem, 4.2vw, 1.2rem);
+  font-weight: 700;
   letter-spacing: 0.02em;
-  color: #0f172a;
+  color: #ffffff;
   line-height: 1.45;
   background: none;
   box-shadow: none;
-  /* Light halo so dark type stays readable on blurred / mixed backdrop */
   text-shadow:
-    0 0 10px rgba(255, 255, 255, 0.95),
-    0 0 3px rgba(255, 255, 255, 0.9),
-    0 1px 2px rgba(255, 255, 255, 0.85);
+    0 2px 10px rgba(0, 0, 0, 0.55),
+    0 0 20px rgba(0, 0, 0, 0.35);
 }
 
 .agenda-loading-percent {
-  margin: -0.5rem 0 0;
-  font-size: clamp(2rem, 6vw, 2.75rem);
+  margin: -0.25rem 0 0;
+  font-size: clamp(1.75rem, 8vw, 2.75rem);
   font-weight: 800;
   letter-spacing: 0.04em;
   font-variant-numeric: tabular-nums;
-  color: #0f172a;
+  color: #ffffff;
   line-height: 1;
   text-shadow:
-    0 0 12px rgba(255, 255, 255, 0.95),
-    0 0 4px rgba(255, 255, 255, 0.9),
-    0 1px 2px rgba(255, 255, 255, 0.85);
+    0 2px 12px rgba(0, 0, 0, 0.55),
+    0 0 24px rgba(0, 0, 0, 0.35);
 }
 
 .agenda-loading-overlay:not([hidden]) .agenda-surfer-mover {
-  animation: none;
   transition: left 0.35s ease-out;
+}
+
+@media (max-width: 640px) {
+  .agenda-wave-rail {
+    height: 68px;
+  }
+
+  .agenda-surfer-emoji {
+    font-size: clamp(1.5rem, 7vw, 1.85rem);
+  }
+
+  .agenda-loading-minimal {
+    gap: 1rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

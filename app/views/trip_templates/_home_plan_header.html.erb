@@ -1,0 +1,9 @@
+<%# locals: active (:trip or :day) %>
+<nav aria-label="breadcrumb">
+  <ul>
+    <li><a href="/">Home</a></li>
+  </ul>
+</nav>
+<hr>
+
+<%= render "trip_templates/plan_mode_nav", active: active %>

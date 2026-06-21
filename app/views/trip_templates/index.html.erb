@@ -1,9 +1,4 @@
-<nav aria-label="breadcrumb">
-  <ul>
-    <li><a href="/">Home</a></li>
-  </ul>
-</nav>
-<hr>
+<%= render "trip_templates/home_plan_header", active: :trip %>
 
 <div class="home-tabs" role="tablist" aria-label="Plan and browse trips">
   <button type="button" class="home-tab" role="tab" id="tab-plan" aria-selected="true" aria-controls="home-panel-plan" data-tab-target="plan">
@@ -43,8 +38,11 @@
       <% end %>
     <% end %>
 
-    <form id="plan-trip-form" action="/insert_trip" method="post">
+    <form id="plan-trip-form" action="/insert_trip" method="post"
+      data-max-trip-days="<%= Trip::MAX_TRIP_DURATION_DAYS %>"
+      data-long-trip-warning-days="<%= Trip::LONG_TRIP_WARNING_DAYS %>">
     <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+      <div id="plan-trip-form-errors" class="trip-form-errors" hidden role="alert"></div>
       <div>
         <label for="trip_name_box">
           Trip name
@@ -78,6 +76,8 @@
 
         <input type="date" id="trip_end_date_box" name="query_trip_end_date" value="<%= trip_end_value %>">
       </div>
+
+      <div id="plan-trip-form-duration-warning" class="trip-duration-warning" hidden role="status"></div>
 
       <!-- Collapsible section -->
       <details class="collapsible"<%= " open".html_safe if optional_open %>>
@@ -188,7 +188,6 @@
       <% end %>
     <% end %>
 
-    <%= render "trip_templates/agenda_loading_overlay" %>
   </article>
 </div>
 
@@ -275,14 +274,5 @@
       }
     }
 
-    var tripStart = document.getElementById("trip_start_date_box");
-    var tripEnd = document.getElementById("trip_end_date_box");
-    if (tripStart && tripEnd) {
-      function syncTripEndMin() {
-        if (tripStart.value) tripEnd.min = tripStart.value;
-      }
-      tripStart.addEventListener("change", syncTripEndMin);
-      syncTripEndMin();
-    }
   });
 </script>

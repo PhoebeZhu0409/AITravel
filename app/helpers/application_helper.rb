@@ -90,4 +90,15 @@ module ApplicationHelper
   def trips_tab_page_url(page_param, page)
     root_path({ page_param => page })
   end
+
+  def user_avatar_tag(user, **options)
+    classes = [options[:class], "user-avatar"].compact.join(" ")
+    alt = user.display_name.presence || "Profile"
+
+    if user.avatar.attached?
+      image_tag user.avatar, class: classes, alt: alt
+    else
+      image_tag "default_avatar.svg", class: classes, alt: alt
+    end
+  end
 end

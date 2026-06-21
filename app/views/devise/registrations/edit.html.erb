@@ -2,29 +2,55 @@
 <h2>Edit <%= resource_name.to_s.humanize %></h2>
 
 <dl class="account-status-readonly">
-  <dt>Account status</dt>
-  <dd><%= resource.premium? ? "Premium" : "Regular" %></dd>
+  <dt>ACCOUNT STATUS:</dt>
+  <dd class="<%= 'account-status-readonly__value--premium' if resource.premium? %>">
+    <%= resource.premium? ? "Premium" : "Regular" %>
+  </dd>
 </dl>
 
-<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, multipart: true }) do |f| %>
   <%= f.error_notification %>
 
+  <div class="profile-avatar-preview">
+    <%= user_avatar_tag(resource, class: "profile-avatar-preview__image") %>
+  </div>
+
   <div class="form-inputs">
+    <%= f.input :avatar,
+                as: :file,
+                label: "Profile picture",
+                input_html: { accept: "image/*" } %>
+    <%= f.input :username,
+                label: "Name",
+                required: false,
+                input_html: { autocomplete: "name" } %>
     <%= f.input :email, required: true, autofocus: true %>
 
     <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
       <p>Currently waiting confirmation for: <%= resource.unconfirmed_email %></p>
     <% end %>
+  </div>
 
-    <%= f.input :password,
-                hint: "leave it blank if you don't want to change it",
-                required: false,
-                input_html: { autocomplete: "new-password" } %>
-    <%= f.input :password_confirmation,
-                required: false,
-                input_html: { autocomplete: "new-password" } %>
+  <section class="devise-password-section" aria-labelledby="change-password-heading">
+    <h3 id="change-password-heading" class="devise-password-section__title">Change my password</h3>
+
+    <div class="form-inputs">
+      <%= f.input :password,
+                  label: "New password (Leave blank if you don't want to change it)",
+                  required: false,
+                  input_html: { autocomplete: "new-password" } %>
+      <%= f.input :password_confirmation,
+                  label: "Password confirmation",
+                  required: false,
+                  input_html: { autocomplete: "new-password" } %>
+    </div>
+  </section>
+
+  <div class="form-inputs devise-current-password-field">
+    <h3 class="devise-password-section__title">Confirm changes</h3>
     <%= f.input :current_password,
-                hint: "we need your current password to confirm your changes",
+                label: "Current password",
+                hint: "You need to enter your current password to make any changes.",
                 required: true,
                 input_html: { autocomplete: "current-password" } %>
   </div>
