@@ -178,10 +178,14 @@ class TripsController < ApplicationController
     [summary_a, summary_b, summary_c, summary_d, summary_e].compact.join(" ; ")
   end
 
+  
+  #===================== Calling AI API ===================
   def generate_ai_plan_for(the_trip)
     user_input = build_user_input(the_trip)
 
     i = AI::Chat.new
+    chat.model = "gpt-4.1-mini"
+
     i.system(ai_planning_prompt)
     i.user(user_input)
 
@@ -190,16 +194,31 @@ class TripsController < ApplicationController
 
     JSON.parse(raw, symbolize_names: true)
   end
+  #===================== Calling AI API ====================
 
+  # client = Anthropic::Client.new(api_key: ENV["ANTHROPIC_API_KEY"])
+  # response = client.messages.create(
+  #   model: ENV.fetch("ANTHROPIC_MODEL", "claude-sonnet-4-20250514"),
+  #   max_tokens: 16000,
+  #   system: ai_planning_prompt,
+  #   messages: [{ role: "user", content: user_input }]
+  # )
+  # raw = response.content.find { |c| c.type == "text" }.text
+  # JSON.parse(raw, symbolize_names: true)
+
+  #=============================================================
+ 
   def build_user_input(the_trip)
     <<~TEXT.squish
       Destination: #{the_trip.trip_location}.
       Start date: #{the_trip.trip_start_date}.
       Duration: #{the_trip.trip_duration_days} days.
-      Notes (from the trip form; free-form text and saved preferences): #{the_trip.trip_notes}
+      Notes: #{the_trip.trip_notes}
       Produce the itinerary JSON as specified. No prose outside JSON.
     TEXT
   end
+
+
 
   # Single compact system prompt: less input tokens, tighter output (faster / cheaper).
   def ai_planning_prompt
@@ -221,7 +240,9 @@ class TripsController < ApplicationController
       - commute: at most ONE short sentence (how to get from the previous stop or hotel). Mention tickets/reservations only if essential before arrival.
       - Omit timezone fields; times are local to the trip destination the user gave.
       - If unknown, assume reasonably; keep text short.
+      - Season: infer month/season at the destination from start_date (correct hemisphere). Choose weather-appropriate activities and indoor/outdoor mix; shift timing for daylight, heat, or rain; prefer seasonal highlights (festivals, markets, nature) when they fit; avoid activities that are unsafe, closed, or impractical that month.
     SYS
+
   end
 
   # Replaces trip_plans from parsed AI JSON; enriches each row once via Google Places after commit
