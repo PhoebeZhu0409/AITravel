@@ -168,23 +168,3 @@
   </form>
 
 </article>
-
-<script>
-  (function () {
-    function wireTripDateRange() {
-      var tripStart = document.getElementById("trip_start_date_box");
-      var tripEnd = document.getElementById("trip_end_date_box");
-      if (!tripStart || !tripEnd) return;
-
-      function syncTripEndMin() {
-        if (tripStart.value) tripEnd.min = tripStart.value;
-      }
-
-      tripStart.addEventListener("change", syncTripEndMin);
-      syncTripEndMin();
-    }
-
-    document.addEventListener("DOMContentLoaded", wireTripDateRange);
-    document.addEventListener("turbo:load", wireTripDateRange);
-  })();
-</script>

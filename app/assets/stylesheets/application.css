@@ -1375,14 +1375,24 @@ nav[aria-label="breadcrumb"] + hr {
 }
 
 .trips-list-header {
-  display: flex;
-  justify-content: flex-end;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) auto;
+  gap: 1rem;
+  align-items: center;
   padding: 0.35rem 0.75rem 0.5rem;
   font-size: 0.75rem;
   font-weight: 600;
   color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+.trips-list-header .trips-list-col-trip-dates {
+  text-align: left;
+}
+
+.trips-list-header .trips-list-col-created {
+  text-align: right;
 }
 
 .trips-list {
@@ -1410,7 +1420,7 @@ body.pico article .trips-list li::marker {
 
 .trips-list-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) auto;
   gap: 1rem;
   align-items: center;
   padding: 0.75rem;
@@ -1428,11 +1438,44 @@ body.pico article .trips-list li::marker {
   color: #0f172a;
 }
 
+.trips-list-col-trip-dates {
+  min-width: 0;
+  font-size: 0.875rem;
+  color: #64748b;
+  text-align: left;
+  line-height: 1.35;
+}
+
 .trips-list-col-created {
   flex-shrink: 0;
   font-size: 0.875rem;
   color: #64748b;
   white-space: nowrap;
+  text-align: right;
+}
+
+@media (max-width: 520px) {
+  .trips-list-header,
+  .trips-list-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem 0.75rem;
+  }
+
+  .trips-list-header .trips-list-col-trip-dates,
+  .trips-list-col-trip-dates {
+    grid-column: 1;
+    text-align: left;
+    font-size: 0.8125rem;
+  }
+
+  .trips-list-header .trips-list-col-created,
+  .trips-list-col-created {
+    grid-column: 2;
+  }
+
+  .trips-list-col-name {
+    grid-column: 1 / -1;
+  }
 }
 
 .trips-pagination {

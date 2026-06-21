@@ -61,17 +61,10 @@
     var warnEl = durationWarningEl(form);
     if (!startEl || !endEl) return;
 
-    var startStr = startEl.value;
-    if (startStr) {
-      endEl.min = startStr;
-      var startDate = parseYmd(startStr);
-      if (startDate) {
-        endEl.max = formatYmd(addDays(startDate, maxDays - 1));
-      }
-    } else {
-      endEl.removeAttribute("min");
-      endEl.removeAttribute("max");
-    }
+    // Do not set min/max on the end input — mobile browsers clear the field when
+    // the value falls outside the range (often while the user is still picking a date).
+    endEl.removeAttribute("min");
+    endEl.removeAttribute("max");
 
     if (!warnEl) return;
 
@@ -84,12 +77,19 @@
       return;
     }
 
+    var startStr = startEl.value;
     var start = parseYmd(startStr);
     var end = parseYmd(endEl.value);
 
     if (!start || !end || end < start) {
-      warnEl.setAttribute("hidden", "");
-      warnEl.textContent = "";
+      if (start && end && end < start) {
+        warnEl.textContent = "Trip end must be on or after trip start.";
+        warnEl.classList.add("trip-duration-warning--limit");
+        warnEl.removeAttribute("hidden");
+      } else {
+        warnEl.setAttribute("hidden", "");
+        warnEl.textContent = "";
+      }
       return;
     }
 
@@ -120,13 +120,18 @@
     var endEl = form.querySelector("[name='query_trip_end_date']");
     if (!startEl || !endEl) return;
 
-    function onChange() {
+    function onStartChange() {
       updateTripDateConstraints(form);
     }
 
-    startEl.addEventListener("change", onChange);
-    endEl.addEventListener("change", onChange);
-    onChange();
+    function onEndChange() {
+      updateTripDateConstraints(form);
+    }
+
+    startEl.addEventListener("change", onStartChange);
+    endEl.addEventListener("change", onEndChange);
+    endEl.addEventListener("input", onEndChange);
+    updateTripDateConstraints(form);
   }
 
   function parseYmd(str) {

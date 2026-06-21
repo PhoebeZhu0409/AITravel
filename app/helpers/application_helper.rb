@@ -105,9 +105,10 @@ module ApplicationHelper
     start_label = trip_display_date(trip.trip_start_date)
     end_date = trip.trip_end_date
     return start_label unless end_date
+    return start_label if end_date == trip.trip_start_date
 
     end_label = trip_display_date(end_date)
-    "From #{start_label} - #{end_label}"
+    "#{start_label} - #{end_label}"
   end
 
   def trip_display_date(date)

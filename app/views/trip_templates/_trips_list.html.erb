@@ -1,6 +1,8 @@
 <%# locals: trips, list_id %>
 <div class="trips-list-wrap">
   <div class="trips-list-header">
+    <span class="trips-list-col-name" aria-hidden="true"></span>
+    <span class="trips-list-col-trip-dates">Trip start</span>
     <span class="trips-list-col-created">Created on</span>
   </div>
 
@@ -9,6 +11,9 @@
       <li>
         <%= app_link_to "/trips/#{a_trip.id}", class: "trips-list-row" do %>
           <span class="trips-list-col-name">📍 <%= a_trip.trip_name %></span>
+          <span class="trips-list-col-trip-dates">
+            <%= trip_display_date(a_trip.trip_start_date) if a_trip.trip_start_date.present? %>
+          </span>
           <time class="trips-list-col-created" datetime="<%= a_trip.created_at.iso8601 %>">
             <%= trip_display_date(a_trip.created_at.to_date) %>
           </time>
