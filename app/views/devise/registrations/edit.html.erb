@@ -10,7 +10,7 @@
   </dd>
 </dl>
 
-<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, multipart: true }) do |f| %>
+<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, multipart: true, data: { turbo: false } }) do |f| %>
   <%= f.error_notification %>
 
   <div class="profile-avatar-preview">
@@ -21,8 +21,9 @@
     <%= f.input :avatar,
                 as: :file,
                 label: "Profile picture",
-                hint: "JPEG, PNG, or WebP (avoid HEIC from iPhone if desktop shows a broken image).",
-                input_html: { accept: "image/jpeg,image/png,image/webp,image/gif" } %>
+                hint: "Photos from your iPhone library are usually HEIC — we convert them to JPEG automatically when possible.",
+                input_html: { accept: "image/*" } %>
+    <p class="profile-avatar-convert-status" data-avatar-convert-status aria-live="polite"></p>
     <%= f.input :username,
                 label: "Name",
                 required: false,
@@ -67,5 +68,5 @@
 
 <div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
 
-<%= link_to "Back", :back %>
+<%= app_link_to "Back", root_path %>
 </div>

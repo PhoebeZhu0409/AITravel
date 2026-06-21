@@ -5,6 +5,10 @@ services:
     plan: free # make sure to set this to free or you'll get billed $$$
     buildCommand: "./bin/render-build.sh" # we already created these two files for you
     startCommand: "./bin/render-start.sh"
+    disk:
+      name: storage
+      mountPath: /var/data
+      sizeGB: 1
     envVars: # this section sets some ENV variables needed by Render for deployment
       - key: SECRET_KEY_BASE
         generateValue: true
@@ -12,6 +16,8 @@ services:
         sync: false
       - key: WEB_CONCURRENCY
         value: 1
+      - key: ACTIVE_STORAGE_ROOT
+        value: /var/data/storage
       - key: APP_HOST
         sync: false
       - key: POSTMARK_API_TOKEN

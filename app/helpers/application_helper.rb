@@ -119,6 +119,10 @@ module ApplicationHelper
   end
 
   # Full-window navigation — required inside Envoy / mobile WebViews (avoids document.txt downloads).
+  def app_link_to(name = nil, url = nil, **html_options, &block)
+    top_nav_link_to(name, url, **html_options, &block)
+  end
+
   def top_nav_link_to(name = nil, url = nil, **html_options, &block)
     opts = nav_link_html_options(html_options)
     if block
@@ -152,7 +156,8 @@ module ApplicationHelper
 
   def user_avatar_src(user)
     if user.avatar.attached? && active_storage_file_available?(user.avatar)
-      url_for(user.avatar)
+      blob = user.avatar.blob
+      absolute_asset_url(url_for(user.avatar)) + "?v=#{blob.id}"
     else
       user_avatar_default_path
     end

@@ -66,14 +66,10 @@
                 Rebuild My Agenda
               </span>
             <% else %>
-              <a class="btn-rebuild" href="/modify/<%= @the_trip.id %>">
-                Rebuild My Agenda
-              </a>
+              <%= app_link_to "Rebuild My Agenda", "/modify/#{@the_trip.id}", class: "btn-rebuild" %>
             <% end %>
 
-            <a class="btn-delete" href="/delete_trip/<%= @the_trip.id %>">
-              Delete This Trip
-            </a>
+            <%= app_link_to "Delete This Trip", "/delete_trip/#{@the_trip.id}", class: "btn-delete" %>
           </div>
         <% end %>
 

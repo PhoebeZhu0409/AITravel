@@ -81,9 +81,17 @@ class User < ApplicationRecord
     type = avatar.blob.content_type.to_s
     return if ALLOWED_AVATAR_CONTENT_TYPES.include?(type)
 
+    if type.in?(%w[image/heic image/heif])
+      errors.add(
+        :avatar,
+        "is HEIC (common for iPhone library photos). Pick the photo again and wait for “Photo ready (saved as JPEG)” before tapping Update, or set Camera → Formats → Most Compatible on your iPhone."
+      )
+      return
+    end
+
     errors.add(
       :avatar,
-      "must be JPEG, PNG, WebP, or GIF. iPhone HEIC photos often fail in desktop browsers — pick JPEG if offered."
+      "must be JPEG, PNG, WebP, or GIF."
     )
   end
 end

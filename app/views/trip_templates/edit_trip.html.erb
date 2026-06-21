@@ -2,7 +2,7 @@
   <nav aria-label="breadcrumb">
     <ul>
       <li><%= top_nav_link_to "Home", root_path %></li>
-      <li><a href="/trips/<%= @the_trip.id %>"><%= @the_trip.trip_name%></a></li>
+      <li><%= app_link_to @the_trip.trip_name, "/trips/#{@the_trip.id}" %></li>
       <li>Rebuild My Agenda</li>
     </ul>
   </nav>

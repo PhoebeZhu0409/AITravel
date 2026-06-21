@@ -2,9 +2,33 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "agenda_loading"
+import "avatar_upload"
 
 // Change to true to allow Turbo
 Turbo.session.drive = false
+
+// Envoy / mobile WebViews: break out of iframe so navigation is not saved as document.txt
+document.addEventListener("click", function (event) {
+  if (window.self === window.top) return
+
+  const link = event.target.closest("a[href]")
+  if (!link || link.target === "_blank" || link.hasAttribute("download")) return
+
+  const href = link.getAttribute("href")
+  if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return
+
+  let url
+  try {
+    url = new URL(link.href, window.location.href)
+  } catch {
+    return
+  }
+
+  if (url.origin !== window.location.origin) return
+
+  event.preventDefault()
+  window.top.location.assign(url.href)
+}, true)
 
 // Allow UJS alongside Turbo
 import jquery from "jquery";

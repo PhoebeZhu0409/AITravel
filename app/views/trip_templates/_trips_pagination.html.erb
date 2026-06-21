@@ -2,9 +2,7 @@
 <% if pagy.pages > 1 %>
   <nav class="trips-pagination" aria-label="<%= label %>">
     <% if pagy.prev %>
-      <a class="trips-page-btn" href="<%= trips_tab_page_url(page_param, pagy.prev) %>">
-        Previous page
-      </a>
+      <%= app_link_to "Previous page", trips_tab_page_url(page_param, pagy.prev), class: "trips-page-btn" %>
     <% end %>
 
     <span class="trips-page-status">
@@ -13,9 +11,7 @@
     </span>
 
     <% if pagy.next %>
-      <a class="trips-page-btn trips-page-btn--primary" href="<%= trips_tab_page_url(page_param, pagy.next) %>">
-        Next page
-      </a>
+      <%= app_link_to "Next page", trips_tab_page_url(page_param, pagy.next), class: "trips-page-btn trips-page-btn--primary" %>
     <% end %>
   </nav>
 <% end %>

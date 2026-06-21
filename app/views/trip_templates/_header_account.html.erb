@@ -3,11 +3,11 @@
     <span class="app-header-profile__name"><%= current_user.username %></span>
   <% end %>
 
-  <%= link_to "/users/edit", class: "app-header-profile app-header-profile-link", aria: { label: "Edit profile" } do %>
+  <%= app_link_to "/users/edit", class: "app-header-profile app-header-profile-link", aria: { label: "Edit profile" } do %>
     <span class="app-header-profile__avatar-wrap">
       <%= user_avatar_tag(current_user, class: "app-header-profile__avatar") %>
     </span>
   <% end %>
 
-  <%= link_to "Edit profile", "/users/edit", class: "app-header-account-edit" %>
+  <%= app_link_to "Edit profile", "/users/edit", class: "app-header-account-edit" %>
 </div>

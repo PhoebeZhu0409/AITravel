@@ -9,6 +9,7 @@
     <meta name="turbo-prefetch" content="false">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <base href="<%= root_url %>" target="_top">
     <%= favicon_link_tag 'favicon.png' %>
     <%= yield :head %>
 
@@ -53,10 +54,10 @@
           <% else %>
             <ul>
               <li>
-                <a href="/users/sign_up">Sign up</a>
+                <%= app_link_to "Sign up", "/users/sign_up" %>
               </li>
               <li>
-                <a href="/users/sign_in">Sign in</a>
+                <%= app_link_to "Sign in", "/users/sign_in" %>
               </li>
             </ul>
           <% end %>
@@ -82,9 +83,9 @@
   
     <div class="footer-col">
       <h4>LEGAL</h4>
-      <a href="/legal-notices">Legal notices</a>
-      <a href="/terms-of-use">Terms of use</a>
-      <%= link_to "Privacy policy", privacy_policy_path %>
+      <%= app_link_to "Legal notices", "/legal-notices" %>
+      <%= app_link_to "Terms of use", "/terms-of-use" %>
+      <%= app_link_to "Privacy policy", privacy_policy_path %>
     </div>
 
     <div class="footer-col">
