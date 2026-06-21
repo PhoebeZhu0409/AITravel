@@ -1025,6 +1025,48 @@ span.btn-rebuild--disabled:hover {
   color: #f87171;
 }
 
+.trip-generating-notice {
+  margin: 0.75rem 0 1rem;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: #0c4a6e;
+  background: #e0f2fe;
+  border-radius: 8px;
+  border: 1px solid #bae6fd;
+}
+
+.agenda-row-skeleton .skeleton-block {
+  display: block;
+  height: 0.85rem;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
+  background-size: 200% 100%;
+  animation: agenda-skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.agenda-row-skeleton .skeleton-block--time {
+  width: 4.5rem;
+}
+
+.agenda-row-skeleton .skeleton-block--plan {
+  width: 70%;
+}
+
+.agenda-row-skeleton .skeleton-block--place {
+  width: 100%;
+  height: 3.5rem;
+}
+
+.agenda-row-skeleton .skeleton-block--commute {
+  width: 85%;
+}
+
+@keyframes agenda-skeleton-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
 .trip-form-errors {
   margin: 0 0 1rem;
   color: #b45309;

@@ -11,9 +11,7 @@ services:
       - key: DATABASE_URL
         sync: false
       - key: WEB_CONCURRENCY
-        value: 2
-      - key: SOLID_QUEUE_IN_PUMA
-        value: "true"
+        value: 1
       - key: APP_HOST
         sync: false
       - key: POSTMARK_API_TOKEN

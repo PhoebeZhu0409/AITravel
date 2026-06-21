@@ -45,7 +45,14 @@ class GooglePlacesEnricher
         trip_plan.place_latitude = lat
         trip_plan.place_longitude = lng
         tz_id = fetch_time_zone_id(lat, lng, trip_plan.date, key)
-        trip_plan.place_time_zone_id = tz_id if tz_id.present?
+        if tz_id.present?
+          trip_plan.place_time_zone_id = tz_id
+          tz = Time.find_zone(tz_id)
+          if tz && trip_plan.date.present?
+            d = trip_plan.date
+            trip_plan.timezone = tz.local(d.year, d.month, d.day, 12, 0, 0).strftime("%Z").presence
+          end
+        end
       end
 
       photo_ref = cand.dig("photos", 0, "photo_reference")

@@ -34,7 +34,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="pico">
+  <body class="pico" data-agenda-generating="<%= @agenda_generating == true ? 'true' : 'false' %>"<%= " data-trip-id=\"#{@the_trip.id}\"".html_safe if defined?(@the_trip) && @the_trip.present? %>>
     <header>
       <div class="container-two-thirds">
         <nav>

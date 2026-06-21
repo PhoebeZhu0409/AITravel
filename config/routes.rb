@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   get("/trips/:path_id/agenda.pdf", { :controller => "trips", :action => "agenda_pdf" })
 
   get("/trips/:path_id", { :controller => "trips", :action => "show" })
+  get("/trips/:path_id/generation_status", { :controller => "trips", :action => "generation_status" })
 
   # UPDATE
   post("/trip_name_update/:path_id", { :controller => "trips", :action => "trip_name_update" })

@@ -89,6 +89,12 @@
     </article>
     <hr>
 
+    <% if @agenda_generating %>
+      <p class="trip-generating-notice" role="status">
+        Building your itinerary — usually takes 20–40 seconds. The table below will fill in automatically; photos and map details follow shortly.
+      </p>
+    <% end %>
+
     <h1>
       My Agenda
     </h1>
@@ -157,7 +163,7 @@
        <article class="agenda-day <%= 'active' if i == 0 %>" data-day-index="<%= i %>">
 
           <div class="overflow-auto agenda-day-body">
-            <% this_day = @the_trip.trip_plans.where(date: date.strftime("%Y-%m-%d")) %>
+            <% this_day = @the_trip.trip_plans.where(date: date) %>
 
             <table class="agenda-table">
               <thead>
@@ -170,6 +176,16 @@
               </thead>
 
               <tbody>
+                <% if @agenda_generating %>
+                  <% 4.times do %>
+                    <tr class="agenda-row-skeleton" aria-hidden="true">
+                      <td data-label="Time"><span class="skeleton-block skeleton-block--time"></span></td>
+                      <td data-label="Plan"><span class="skeleton-block skeleton-block--plan"></span></td>
+                      <td data-label="Location"><span class="skeleton-block skeleton-block--place"></span></td>
+                      <td data-label="Get around"><span class="skeleton-block skeleton-block--commute"></span></td>
+                    </tr>
+                  <% end %>
+                <% end %>
                 <% this_day.order(:start_time).each do |a_day| %>
                   <tr>
 

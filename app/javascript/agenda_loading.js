@@ -1,6 +1,7 @@
 // Loading overlay for AI agenda generation (estimated progress — server has no real %).
 (function () {
   var progressTimer = null;
+  var pollTimer = null;
   var ESTIMATED_MS = 45000;
   var DEFAULT_MAX_TRIP_DAYS = 21;
   var DEFAULT_LONG_TRIP_WARNING_DAYS = 10;
@@ -233,7 +234,56 @@
     document.body.classList.add("agenda-loading-active");
   }
 
+  function tripGenerationStatusUrl() {
+    var tripId = document.body.dataset.tripId;
+    if (!tripId) return null;
+    return "/trips/" + tripId + "/generation_status";
+  }
+
+  function stopAgendaReadyPolling() {
+    if (pollTimer) {
+      clearTimeout(pollTimer);
+      pollTimer = null;
+    }
+  }
+
+  function pollUntilAgendaReady() {
+    var url = tripGenerationStatusUrl();
+    if (!url) return;
+
+    stopAgendaReadyPolling();
+    var polls = 0;
+    var maxPolls = 45;
+    var pollMs = 4000;
+
+    function poll() {
+      polls += 1;
+      if (polls > maxPolls) return;
+
+      fetch(url, { credentials: "same-origin", headers: { Accept: "application/json" } })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (data) {
+          if (data && data.ready) {
+            window.location.reload();
+          } else {
+            pollTimer = setTimeout(poll, pollMs);
+          }
+        })
+        .catch(function () {
+          pollTimer = setTimeout(poll, pollMs);
+        });
+    }
+
+    pollTimer = setTimeout(poll, pollMs);
+  }
+
+  function beginAgendaGeneratingUi() {
+    showAgendaLoading();
+    pollUntilAgendaReady();
+  }
+
   function hideAgendaLoading() {
+    stopAgendaReadyPolling();
     var overlay = document.getElementById("agenda-loading-overlay");
     if (progressTimer) {
       clearInterval(progressTimer);
@@ -299,7 +349,7 @@
     }
 
     hideFormErrors(form);
-    showAgendaLoading();
+    beginAgendaGeneratingUi();
   }
 
   function wireAgendaLoadingForm(formId) {
@@ -310,11 +360,18 @@
     form.addEventListener("submit", handleAgendaFormSubmit);
   }
 
+  function initAgendaGeneratingPage() {
+    if (document.body.dataset.agendaGenerating === "true") {
+      beginAgendaGeneratingUi();
+    }
+  }
+
   function initAgendaLoading() {
     wireAgendaLoadingForm("plan-trip-form");
     wireAgendaLoadingForm("rebuild-agenda-form");
     wireTripDateFields("plan-trip-form");
     wireTripDateFields("rebuild-agenda-form");
+    initAgendaGeneratingPage();
 
     if (!window.__agendaLoadingTurboSubmit) {
       window.__agendaLoadingTurboSubmit = true;
@@ -331,7 +388,7 @@
         }
 
         hideFormErrors(el);
-        showAgendaLoading();
+        beginAgendaGeneratingUi();
       });
     }
   }
@@ -340,5 +397,11 @@
   document.addEventListener("turbo:load", initAgendaLoading);
   document.addEventListener("turbo:before-visit", hideAgendaLoading);
   window.addEventListener("pagehide", hideAgendaLoading);
-  window.addEventListener("pageshow", hideAgendaLoading);
+  window.addEventListener("pageshow", function () {
+    if (document.body.dataset.agendaGenerating === "true") {
+      beginAgendaGeneratingUi();
+    } else {
+      hideAgendaLoading();
+    }
+  });
 })();

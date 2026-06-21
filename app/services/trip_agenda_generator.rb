@@ -1,0 +1,117 @@
+# frozen_string_literal: true
+
+# AI itinerary + Google Places enrichment — runs in TripGenerationJob (not in the web request).
+class TripAgendaGenerator
+  def initialize(trip)
+    @trip = trip
+  end
+
+  def call!
+    generate_plans!
+    enrich!
+  end
+
+  def generate_plans!
+    plan_hash = generate_ai_plan_for(@trip)
+    replace_trip_plans_from_ai!(plan_hash)
+  end
+
+  def enrich!
+    enrich_destination_hero!
+    @trip.trip_plans.find_each { |tp| GooglePlacesEnricher.enrich_trip_plan(tp) }
+  end
+
+  private
+
+  attr_reader :trip
+
+  def generate_ai_plan_for(the_trip)
+    chat = AI::Chat.new
+    chat.model = ENV.fetch("OPENAI_PLANNING_MODEL", "gpt-4.1-mini")
+    chat.system(ai_planning_prompt)
+    chat.user(build_user_input(the_trip))
+
+    response = chat.generate!
+    raw = response[:content].to_s
+
+    JSON.parse(raw, symbolize_names: true)
+  end
+
+  def build_user_input(the_trip)
+    <<~TEXT.squish
+      Destination: #{the_trip.trip_location}.
+      Start date: #{the_trip.trip_start_date}.
+      Duration: #{the_trip.trip_duration_days} days.
+      Notes: #{the_trip.trip_notes}
+      Produce the itinerary JSON as specified. No prose outside JSON.
+    TEXT
+  end
+
+  def ai_planning_prompt
+    <<~SYS
+      You output ONLY valid JSON (no markdown, no code fences, no commentary).
+
+      Shape:
+      {"days":[{"date":"YYYY-MM-DD","items":[{"start_time":"HH:MM","end_time":"HH:MM","activity":"string","plan_brief":"string","location":"string","commute":"string"}]}]}
+
+      Rules:
+      - Cover every calendar day from the user's start date through the full trip duration; one object per day in "days".
+      - Each day: at most 5 items; choose 4–5 must-do highlights per day (not more).
+      - The user message includes a "Notes:" line (form + textarea; any wording). Ignore noise or off-topic text. Prioritize normal destination must-sees and a balanced trip; use Notes only as a light preference layer on top.
+      - If Notes mention a hobby, food preference, or similar, reflect it sparingly: a few fitting stops or occasional slots—not the same idea on most days, and never a single-topic trip unless the user explicitly demands it (only that, every day, whole trip about X).
+      - start_time / end_time: local time at destination, 24-hour HH:MM.
+      - activity: at most ONE sentence.
+      - plan_brief: max 4 words.
+      - location: venue or place name + neighborhood or area + city (enough to find on Google Maps; do not invent street numbers).
+      - commute: at most ONE short sentence (how to get from the previous stop or hotel). Mention tickets/reservations only if essential before arrival.
+      - Omit timezone fields; times are local to the trip destination the user gave.
+      - If unknown, assume reasonably; keep text short.
+      - Season: infer month/season at the destination from start_date (correct hemisphere). Choose weather-appropriate activities and indoor/outdoor mix; shift timing for daylight, heat, or rain; prefer seasonal highlights (festivals, markets, nature) when they fit; avoid activities that are unsafe, closed, or impractical that month.
+    SYS
+  end
+
+  def replace_trip_plans_from_ai!(plan_hash)
+    plan_attrs = build_trip_plan_attrs(plan_hash)
+    if plan_attrs.empty?
+      raise ArgumentError, "AI itinerary contained no plan items"
+    end
+
+    ActiveRecord::Base.transaction do
+      trip.trip_plans.destroy_all
+      plan_attrs.each { |attrs| TripPlan.create!(attrs) }
+    end
+  end
+
+  def build_trip_plan_attrs(plan_hash)
+    plan_hash.fetch(:days, []).flat_map do |day|
+      date = Date.parse(day[:date])
+
+      day.fetch(:items, []).first(5).map do |item|
+        location = item[:location].to_s.strip
+        {
+          trip: trip,
+          date: date,
+          start_time: Time.parse(item[:start_time].to_s),
+          end_time: Time.parse(item[:end_time].to_s),
+          timezone: nil,
+          trip_plan: item[:activity],
+          plan_brief: item[:plan_brief],
+          user_id: trip.user_id,
+          plan_location: location,
+          plan_details: item[:commute]
+        }
+      end
+    end
+  end
+
+  def enrich_destination_hero!
+    return if trip.trip_location.blank?
+
+    if trip.location_hero.attached?
+      blob = trip.location_hero.blob
+      return if blob.service.exist?(blob.key)
+    end
+
+    GooglePlacesEnricher.enrich_trip_destination!(trip)
+  end
+end
