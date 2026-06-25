@@ -5,7 +5,11 @@
   </h1>
   <p class="sign-in-lead">Plan trips. Or just today.</p>
 
-  <div class="sign-in-landing__featured-wrap" aria-label="Example trips">
+  <div class="sign-in-landing__featured-wrap" aria-label="Example trips — tap a sample to explore">
+    <span class="sign-in-landing__featured-cta">
+      <span>Start explore</span>
+      <span class="sign-in-landing__featured-cta-arrows" aria-hidden="true">&gt;&gt;&gt;</span>
+    </span>
     <div class="sign-in-landing__featured-marquee">
       <div class="sign-in-landing__featured-track">
         <div class="sign-in-landing__featured-set">
@@ -15,7 +19,7 @@
           <% end %>
           <%= link_to showcase_new_york_path, class: "sign-in-landing__featured-link" do %>
             <i class="bi bi-geo-alt-fill sign-in-landing__pin" aria-hidden="true"></i>
-            <span>Explore Classic New York</span>
+            <span>Classic New York</span>
           <% end %>
           <span class="sign-in-landing__featured-teaser">
             <i class="bi bi-geo-alt-fill sign-in-landing__pin" aria-hidden="true"></i>
@@ -29,7 +33,7 @@
           <% end %>
           <%= link_to showcase_new_york_path, class: "sign-in-landing__featured-link", tabindex: "-1" do %>
             <i class="bi bi-geo-alt-fill sign-in-landing__pin" aria-hidden="true"></i>
-            <span>Explore Classic New York</span>
+            <span>Classic New York</span>
           <% end %>
           <span class="sign-in-landing__featured-teaser">
             <i class="bi bi-geo-alt-fill sign-in-landing__pin" aria-hidden="true"></i>
