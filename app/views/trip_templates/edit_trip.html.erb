@@ -25,6 +25,15 @@
 <% pf = @rebuild_prefill || ::RebuildFormPrefill.from_trip_notes(nil) %>
 <% todos_saved = Array(pf[:todos]).map(&:to_s) %>
 <% optional_open = pf[:budget].present? || pf[:people].present? || todos_saved.any? %>
+<% primary_leg = TripLegNotes.primary_from_notes(@the_trip.trip_notes) %>
+<% rebuild_leg_tf = {
+  "query_trip_location" => @the_trip.trip_location,
+  "query_trip_start_date" => primary_leg&.start_date || @the_trip.trip_start_date&.strftime("%Y-%m-%d"),
+  "query_trip_end_date" => primary_leg&.end_date || @the_trip.trip_end_date&.strftime("%Y-%m-%d"),
+  "query_trip_location_2" => pf[:second_location],
+  "query_trip_start_date_2" => pf[:second_start_date],
+  "query_trip_end_date_2" => pf[:second_end_date]
+} %>
 
 <article>
   <header>
@@ -46,31 +55,7 @@
       <input type="text" id="trip_name_box" name="query_trip_name" value="<%= @the_trip.trip_name %>">
     </div>
 
-      <div>
-        <label for="trip_location_box">Location</label>
-        <input type="text"
-         id="trip_location_box"
-         name="query_trip_location"
-         value="<%= @the_trip.trip_location %>"
-         placeholder="Search a city..."
-         autocomplete="off">
-      </div>
-
-    <div>
-      <label for="trip_start_date_box">
-        Trip starts
-      </label>
-
-      <input type="date" id="trip_start_date_box" name="query_trip_start_date" value="<%= @the_trip.trip_start_date&.strftime("%Y-%m-%d") %>">
-    </div>
-
-    <div>
-      <label for="trip_end_date_box">
-        Trip ends
-      </label>
-
-      <input type="date" id="trip_end_date_box" name="query_trip_end_date" value="<%= @the_trip.trip_end_date&.strftime("%Y-%m-%d") %>">
-    </div>
+      <%= render "trip_templates/trip_location_legs", tf: rebuild_leg_tf, show_second_leg: pf[:second_location].present? %>
 
     <div id="rebuild-agenda-form-duration-warning" class="trip-duration-warning" hidden role="status"></div>
 

@@ -34,12 +34,31 @@ class RebuildFormPrefill
   PREFIX_REQUIREMENTS = "Specifically, I have these requirements: "
 
   def self.from_trip_notes(notes)
-    empty = { budget: nil, people: nil, todos: [], live_area: "", trip_notes: "" }
+    empty = {
+      budget: nil,
+      people: nil,
+      todos: [],
+      live_area: "",
+      trip_notes: "",
+      second_location: nil,
+      second_start_date: nil,
+      second_end_date: nil
+    }
     text = notes.to_s.strip
     return empty if text.blank?
 
     result = empty.dup
+    second_leg = TripLegNotes.second_from_notes(text)
+    if second_leg
+      result[:second_location] = second_leg.location
+      result[:second_start_date] = second_leg.start_date
+      result[:second_end_date] = second_leg.end_date
+    end
+
     text.split(" ; ").map(&:strip).each do |part|
+      next if part.start_with?(TripLegNotes::PRIMARY_PREFIX)
+      next if part.start_with?(TripLegNotes::SECOND_PREFIX)
+
       if part.start_with?(PREFIX_BUDGET)
         val = part.delete_prefix(PREFIX_BUDGET)
         result[:budget] = val if BUDGET_VALUES.include?(val)

@@ -2,6 +2,7 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "agenda_loading"
+import "trip_multi_location"
 import "avatar_upload"
 
 // Change to true to allow Turbo

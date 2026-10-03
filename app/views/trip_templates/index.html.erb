@@ -53,31 +53,7 @@
         <input type="text" id="trip_name_box" name="query_trip_name" value="<%= tf["query_trip_name"] %>">
       </div>
 
-      <div>
-        <label for="trip_location_box">Location</label>
-        <input type="text"
-         id="trip_location_box"
-         name="query_trip_location"
-         placeholder="Search a city..."
-         autocomplete="off"
-         value="<%= tf["query_trip_location"] %>">
-      </div>
-
-      <div>
-        <label for="trip_start_date_box">
-          Trip starts
-        </label>
-
-        <input type="date" id="trip_start_date_box" name="query_trip_start_date" value="<%= tf["query_trip_start_date"] %>">
-      </div>
-
-      <div>
-        <label for="trip_end_date_box">
-          Trip ends
-        </label>
-
-        <input type="date" id="trip_end_date_box" name="query_trip_end_date" value="<%= trip_end_value %>">
-      </div>
+      <%= render "trip_templates/trip_location_legs", tf: tf, trip_end_value: trip_end_value %>
 
       <div id="plan-trip-form-duration-warning" class="trip-duration-warning" hidden role="status"></div>
 

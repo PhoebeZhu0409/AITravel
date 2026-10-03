@@ -38,13 +38,43 @@ class TripAgendaGenerator
   end
 
   def build_user_input(the_trip)
+    segments = itinerary_segments_for(the_trip)
+    notes = freeform_trip_notes(the_trip.trip_notes)
+
     <<~TEXT.squish
-      Destination: #{the_trip.trip_location}.
-      Start date: #{the_trip.trip_start_date}.
-      Duration: #{the_trip.trip_duration_days} days.
-      Notes: #{the_trip.trip_notes}
+      #{segments}
+      Overall trip window: #{the_trip.trip_start_date} through #{the_trip.trip_end_date} (#{the_trip.trip_duration_days} days).
+      Notes: #{notes}
       Produce the itinerary JSON as specified. No prose outside JSON.
     TEXT
+  end
+
+  def itinerary_segments_for(the_trip)
+    primary = TripLegNotes.primary_from_notes(the_trip.trip_notes)
+    second = TripLegNotes.second_from_notes(the_trip.trip_notes)
+
+    if primary && second
+      <<~SEG.squish
+        Multi-city trip. Leg 1: #{primary.location} from #{primary.start_date} through #{primary.end_date}.
+        Leg 2: #{second.location} from #{second.start_date} through #{second.end_date}.
+        Plan each day in the correct city for its date range.
+      SEG
+    elsif second
+      <<~SEG.squish
+        Primary destination: #{the_trip.trip_location} from #{the_trip.trip_start_date} through #{the_trip.trip_end_date}.
+        Second destination: #{second.location} from #{second.start_date} through #{second.end_date}.
+        Plan each day in the correct city for its date range.
+      SEG
+    else
+      "Destination: #{the_trip.trip_location}. Start date: #{the_trip.trip_start_date}. Duration: #{the_trip.trip_duration_days} days."
+    end
+  end
+
+  def freeform_trip_notes(notes)
+    notes.to_s.split(" ; ").map(&:strip).reject do |part|
+      part.start_with?(TripLegNotes::PRIMARY_PREFIX) ||
+        part.start_with?(TripLegNotes::SECOND_PREFIX)
+    end.join(" ; ")
   end
 
   def ai_planning_prompt
@@ -56,16 +86,17 @@ class TripAgendaGenerator
 
       Rules:
       - Cover every calendar day from the user's start date through the full trip duration; one object per day in "days".
-      - Each day: choose 4–5 must-do highlights per day (not more).
+      - Each day: choose a varied mix of the destination’s most worthwhile things to do and experience, prioritizing must-dos and standout local experiences rather than any particular type of activity.
       - The user message includes a "Notes:" line (form + textarea; any wording). Ignore noise or off-topic text. Prioritize normal destination must-sees and a balanced trip; use Notes only as a light preference layer on top.
       - If Notes mention a hobby, food preference, or similar, reflect it sparingly: a few fitting stops or occasional slots—not the same idea on most days, and never a single-topic trip unless the user explicitly demands it (only that, every day, whole trip about X).
       - start_time / end_time: local time at destination, 24-hour HH:MM.
-      - activity: Write one short factual sentence giving the most interesting historical, cultural, or unique significance of the place; never repeat the activity or tell the user what to do, never begin with an action verb (e.g. Visit, Explore, See, View, Admire, Enjoy, Ascend, Stroll), and prioritize specific history, dates, origins, events, or facts over generic descriptions, scenery, or amenities.
+      - activity: Write one short factual sentence explaining what makes the specific place or experience distinctive or worth including; never repeat the activity or tell the user what to do, and never begin with an action verb. Use historical/cultural significance when relevant; otherwise give the most specific interesting fact about what makes it special. Avoid generic descriptions.
       - plan_brief: max 4 words.
       - location: venue or place name + neighborhood or area + city (enough to find on Google Maps; do not invent street numbers).
       - commute: at most ONE short sentence (how to get from the previous stop or hotel). Mention tickets/reservations only if essential before arrival.
       - Omit timezone fields; times are local to the trip destination the user gave.
       - If unknown, assume reasonably; keep text short.
+      - Meals: Unless indicated otherwise, include highly recommended, must-try meal spots that fit naturally with the route and timing of the day for lunch and dinner, plus breakfast or café stops when especially worthwhile.
       - Season: infer month/season at the destination from start_date (correct hemisphere). Choose weather-appropriate activities and indoor/outdoor mix; shift timing for daylight, heat, or rain; prefer seasonal highlights (festivals, markets, nature) when they fit; avoid activities that are unsafe, closed, or impractical that month.
     SYS
   end
@@ -86,7 +117,7 @@ class TripAgendaGenerator
     plan_hash.fetch(:days, []).flat_map do |day|
       date = Date.parse(day[:date])
 
-      day.fetch(:items, []).first(5).map do |item|
+      day.fetch(:items, []).map do |item|
         location = item[:location].to_s.strip
         {
           trip: trip,

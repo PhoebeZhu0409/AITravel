@@ -1154,6 +1154,119 @@ span.btn-rebuild--disabled:hover {
   line-height: 1.45;
 }
 
+.trip-date-row--flat {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1rem;
+  row-gap: 0.35rem;
+  margin-top: 0.25rem;
+}
+
+.trip-date-row--flat .trip-date-field-label {
+  display: block;
+  margin: 0;
+}
+
+.trip-date-row--flat .trip-date-row__control {
+  align-self: stretch;
+}
+
+.trip-date-row__control,
+.trip-date-row--flat input[type="date"] {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 2.75rem;
+  margin: 0;
+}
+
+.trip-leg-from-display.trip-date-row__control {
+  padding: 0 0.75rem;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: #475569;
+  font-weight: 500;
+}
+
+body.pico .trip-leg-from-display.trip-date-row__control {
+  margin: 0;
+}
+
+.trip-add-location-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1rem;
+  margin: 0.5rem 0 0.85rem;
+}
+
+.trip-add-location-wrap .trip-add-location-btn {
+  grid-column: 2;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.trip-add-location-btn,
+.trip-remove-second-location-btn {
+  font-size: 0.875rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.trip-add-location-btn {
+  border: 1px dashed #94a3b8;
+  background: #f8fafc;
+  color: #334155;
+}
+
+body.pico .trip-add-location-wrap .trip-add-location-btn[type="button"] {
+  width: 100%;
+  margin: 0;
+}
+
+.trip-leg--second {
+  margin-bottom: 0.5rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.trip-leg-second-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.trip-leg-second-label {
+  font-weight: 600;
+  color: #334155;
+}
+
+.trip-remove-second-location-btn {
+  border: none;
+  background: transparent;
+  color: #64748b;
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .trip-date-row--flat {
+    grid-template-columns: 1fr;
+  }
+
+  .trip-add-location-wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .trip-add-location-wrap .trip-add-location-btn {
+    grid-column: 1;
+  }
+}
+
 .trip-duration-warning--limit {
   background: #fee2e2;
   border-color: #f87171;

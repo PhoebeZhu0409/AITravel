@@ -99,6 +99,10 @@ module ApplicationHelper
     "#{request.base_url}#{url.start_with?('/') ? '' : '/'}#{url}"
   end
 
+  def trip_locations_label(trip)
+    TripLocationDisplay.label_for(trip)
+  end
+
   def trip_date_range_label(trip)
     return unless trip.trip_start_date.present?
 

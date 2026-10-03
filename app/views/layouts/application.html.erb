@@ -159,13 +159,19 @@
     }
   }
 
-  function initAutocomplete() {
-    const input = document.getElementById('trip_location_box');
-    if (!input) return;
+  function initTripLocationAutocomplete() {
+    if (!window.google || !google.maps || !google.maps.places) return;
 
-    new google.maps.places.Autocomplete(input, {
-      types: ['(cities)'],
+    ["trip_location_box", "trip_location_box_2"].forEach(function (id) {
+      const input = document.getElementById(id);
+      if (!input || input.dataset.placesWired === "1") return;
+      input.dataset.placesWired = "1";
+      new google.maps.places.Autocomplete(input, { types: ["(cities)"] });
     });
+  }
+
+  function initAutocomplete() {
+    initTripLocationAutocomplete();
   }
 
 function initSingleItineraryMap(el) {

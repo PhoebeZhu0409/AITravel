@@ -1,0 +1,56 @@
+<%# locals: tf (hash), show_second_leg: boolean %>
+<% tf = (local_assigns[:tf] || {}).stringify_keys %>
+<% show_second = local_assigns.fetch(:show_second_leg, tf["query_trip_location_2"].present?) %>
+
+<div class="trip-leg" data-trip-leg="1">
+  <div>
+    <label for="trip_location_box">Location</label>
+    <input type="text"
+      id="trip_location_box"
+      name="query_trip_location"
+      placeholder="Search a city..."
+      autocomplete="off"
+      value="<%= tf["query_trip_location"] %>">
+  </div>
+
+  <div class="trip-date-row trip-date-row--flat">
+    <label class="trip-date-field-label" for="trip_start_date_box">From</label>
+    <label class="trip-date-field-label" for="trip_end_date_box">To</label>
+    <input type="date" class="trip-date-row__control" id="trip_start_date_box" name="query_trip_start_date" value="<%= tf["query_trip_start_date"] %>">
+    <input type="date" class="trip-date-row__control" id="trip_end_date_box" name="query_trip_end_date" value="<%= local_assigns[:trip_end_value] || tf["query_trip_end_date"] %>">
+  </div>
+
+  <div class="trip-add-location-wrap">
+    <button type="button" class="trip-add-location-btn" id="trip-add-second-location-btn" data-nopico<%= " hidden".html_safe if show_second %>>
+      + Add another location
+    </button>
+  </div>
+</div>
+
+<div class="trip-leg trip-leg--second" id="trip-leg-second" data-trip-leg="2"<%= " hidden".html_safe unless show_second %>>
+  <div class="trip-leg-second-header">
+    <span class="trip-leg-second-label">Second location</span>
+    <button type="button" class="trip-remove-second-location-btn" id="trip-remove-second-location-btn" data-nopico aria-label="Remove second location">
+      Remove
+    </button>
+  </div>
+  <div>
+    <label for="trip_location_box_2">Location</label>
+    <input type="text"
+      id="trip_location_box_2"
+      name="query_trip_location_2"
+      placeholder="Search a city..."
+      autocomplete="off"
+      value="<%= tf["query_trip_location_2"] %>">
+  </div>
+
+  <input type="hidden" id="trip_start_date_box_2" name="query_trip_start_date_2" value="<%= tf["query_trip_start_date_2"] %>">
+  <div class="trip-date-row trip-date-row--flat">
+    <label class="trip-date-field-label" id="trip_from_label_2" for="trip_start_date_display_2">From</label>
+    <label class="trip-date-field-label" for="trip_end_date_box_2">To</label>
+    <div class="trip-leg-from-display trip-date-row__control" id="trip_start_date_display_2" role="text" aria-labelledby="trip_from_label_2" title="Starts the day after the first location ends">
+      <%= tf["query_trip_start_date_2"].presence || "—" %>
+    </div>
+    <input type="date" class="trip-date-row__control" id="trip_end_date_box_2" name="query_trip_end_date_2" value="<%= tf["query_trip_end_date_2"] %>">
+  </div>
+</div>

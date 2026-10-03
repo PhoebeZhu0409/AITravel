@@ -40,6 +40,7 @@ class TripsController < ApplicationController
     render({ :template => "trip_templates/show" })
   end
 
+   #===================================================================================
   def generation_status
     render json: { ready: @the_trip.trip_plans.any?, count: @the_trip.trip_plans.count }
   end
@@ -59,6 +60,7 @@ class TripsController < ApplicationController
     redirect_to("/trips/#{@the_trip.id}", alert: "Could not generate the PDF. Please try again.")
   end
 
+
   def trip_name_update
     @the_trip.trip_name = params.fetch("query_trip_name")
     if @the_trip.save
@@ -67,6 +69,7 @@ class TripsController < ApplicationController
       redirect_to "/trips/#{@the_trip.id}", alert: @the_trip.errors.full_messages.to_sentence
     end
   end
+
 
   def rebuild_form
     unless current_user.can_generate_trip?
@@ -78,10 +81,12 @@ class TripsController < ApplicationController
     render({ :template => "trip_templates/edit_trip" })
   end
 
+
   def destroy
     @the_trip.destroy
     redirect_to("/trips", { :notice => "Trip deleted successfully." })
   end
+   #===================================================================================
 
   # =============================== Update Trip =================================
   def update
@@ -140,6 +145,7 @@ class TripsController < ApplicationController
     end
   end
 
+  
   private
 
   def trip_generation_limit_message
@@ -158,33 +164,66 @@ class TripsController < ApplicationController
   end
 
   def build_trip_summary
+    parts = []
+    parts << primary_leg_note if primary_leg_note.present?
+    parts << second_leg_note if second_leg_note.present?
+
     query_budget = params[:query_budget]
-    summary_a = "Budget wise, I want my trip to be #{query_budget}" if query_budget.present?
+    parts << "Budget wise, I want my trip to be #{query_budget}" if query_budget.present?
 
     query_people = params[:query_people]
-    summary_b = "I am #{query_people}" if query_people.present?
+    parts << "I am #{query_people}" if query_people.present?
 
     query_todo = params[:query_todo]
     todo_text = query_todo.is_a?(Array) ? query_todo.join(", ") : query_todo
-    summary_c = "My trip should include a mix of these: #{todo_text}" if todo_text.present?
+    parts << "My trip should include a mix of these: #{todo_text}" if todo_text.present?
 
     trip_notes = params[:query_trip_notes]
-    summary_e = "Specifically, I have these requirements: #{trip_notes}" if trip_notes.present?
+    parts << "Specifically, I have these requirements: #{trip_notes}" if trip_notes.present?
 
-    [summary_a, summary_b, summary_c, summary_e].compact.join(" ; ")
+    parts.compact.join(" ; ")
   end
 
   def apply_trip_date_range!(trip)
-    start_date = Date.parse(params.fetch("query_trip_start_date"))
-    end_date = Date.parse(params.fetch("query_trip_end_date"))
+    leg1_start, leg1_end = parse_leg_dates("query_trip_start_date", "query_trip_end_date")
+    return if leg1_start.nil? || leg1_end.nil?
 
-    if end_date < start_date
+    if leg1_end < leg1_start
       trip.errors.add(:base, "Trip end must be on or after trip start.")
       return
     end
 
-    trip.trip_start_date = start_date
-    duration_days = (end_date - start_date).to_i + 1
+    leg2_loc = params[:query_trip_location_2].to_s.strip
+    leg2_start, leg2_end = parse_leg_dates("query_trip_start_date_2", "query_trip_end_date_2")
+
+    if leg2_loc.present?
+      if leg2_start.nil? || leg2_end.nil?
+        trip.errors.add(:base, "Please enter start and end dates for the second location.")
+        return
+      end
+      if leg2_end < leg2_start
+        trip.errors.add(:base, "Second location end must be on or after its start date.")
+        return
+      end
+
+      required_leg2_start = leg1_end + 1.day
+      if leg2_start != required_leg2_start
+        trip.errors.add(
+          :base,
+          "Second location must start on #{required_leg2_start.iso8601} (the day after the first location ends)."
+        )
+        return
+      end
+    elsif params[:query_trip_start_date_2].present? || params[:query_trip_end_date_2].present?
+      trip.errors.add(:base, "Please enter a second location or clear its dates.")
+      return
+    end
+
+    overall_start = leg1_start
+    overall_end = leg2_loc.present? ? leg2_end : leg1_end
+
+    trip.trip_start_date = overall_start
+    duration_days = (overall_end - overall_start).to_i + 1
 
     if duration_days > Trip::MAX_TRIP_DURATION_DAYS
       trip.errors.add(:trip_duration_days, "We can't build trips longer than #{Trip::MAX_TRIP_DURATION_DAYS} days")
@@ -196,12 +235,41 @@ class TripsController < ApplicationController
     trip.errors.add(:base, "Please enter valid trip start and end dates.")
   end
 
+  def primary_leg_note
+    loc = params[:query_trip_location].to_s.strip
+    start_s = params[:query_trip_start_date].to_s.strip
+    end_s = params[:query_trip_end_date].to_s.strip
+    return if loc.blank? || start_s.blank? || end_s.blank?
+
+    ::TripLegNotes.format_leg(::TripLegNotes::PRIMARY_PREFIX, loc, start_s, end_s)
+  end
+
+  def second_leg_note
+    loc = params[:query_trip_location_2].to_s.strip
+    start_s = params[:query_trip_start_date_2].to_s.strip
+    end_s = params[:query_trip_end_date_2].to_s.strip
+    return if loc.blank?
+
+    ::TripLegNotes.format_leg(::TripLegNotes::SECOND_PREFIX, loc, start_s, end_s)
+  end
+
+  def parse_leg_dates(start_param, end_param)
+    start_date = Date.parse(params.fetch(start_param))
+    end_date = Date.parse(params.fetch(end_param))
+    [start_date, end_date]
+  rescue Date::Error, TypeError, KeyError
+    [nil, nil]
+  end
+
   def trip_form_draft_params
     params.permit(
       :query_trip_name,
       :query_trip_location,
       :query_trip_start_date,
       :query_trip_end_date,
+      :query_trip_location_2,
+      :query_trip_start_date_2,
+      :query_trip_end_date_2,
       :query_budget,
       :query_people,
       :query_trip_notes,

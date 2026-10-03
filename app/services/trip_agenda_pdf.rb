@@ -119,7 +119,7 @@ class TripAgendaPdf
     end
     pdf.move_down 4
     pdf.font_size(11) do
-      pdf.text pdf_plain(@trip.trip_location.to_s), color: "525252"
+      pdf.text pdf_plain(trip_locations_label(@trip)), color: "525252"
       pdf.move_down 2
       pdf.text pdf_plain(trip_date_range_label(@trip)), color: "525252"
     end

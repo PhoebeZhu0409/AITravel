@@ -12,7 +12,7 @@
 
 <article>
   <div class="trip-hero">
-    <% location = @the_trip.trip_location %>
+    <% location = trip_locations_label(@the_trip) %>
 
     <div class="trip-hero-image-wrap">
       <img
@@ -53,7 +53,7 @@
       </div>
 
       <div>
-        <div><%= @the_trip.trip_location %></div>
+        <div><%= trip_locations_label(@the_trip) %></div>
         <div><%= trip_date_range_label(@the_trip) %></div>
       </div>
 

@@ -53,6 +53,88 @@
     return "We can't build trips longer than " + maxDays + " days.";
   }
 
+  function legDateRange(form, startName, endName) {
+    var startEl = form.querySelector("[name='" + startName + "']");
+    var endEl = form.querySelector("[name='" + endName + "']");
+    if (!startEl || !endEl) return null;
+    var start = parseYmd(startEl.value);
+    var end = parseYmd(endEl.value);
+    if (!start || !end) return null;
+    return { start: start, end: end };
+  }
+
+  function requiredLeg2StartDate(form) {
+    var leg1 = legDateRange(form, "query_trip_start_date", "query_trip_end_date");
+    if (!leg1) return null;
+    return addDays(leg1.end, 1);
+  }
+
+  function leg2StartDateError(form) {
+    var leg2Block = form.querySelector("#trip-leg-second");
+    var leg2Visible = leg2Block && !leg2Block.hasAttribute("hidden");
+    var loc2 = form.querySelector("[name='query_trip_location_2']");
+    if (!leg2Visible || !loc2 || !loc2.value.trim()) return null;
+
+    var required = requiredLeg2StartDate(form);
+    var leg2StartEl = form.querySelector("[name='query_trip_start_date_2']");
+    if (!required || !leg2StartEl || !leg2StartEl.value.trim()) return null;
+
+    var leg2Start = parseYmd(leg2StartEl.value);
+    if (!leg2Start) return null;
+
+    if (formatYmd(leg2Start) !== formatYmd(required)) {
+      return (
+        "Second location must start on " + formatYmd(required) +
+        " (the day after the first location ends)."
+      );
+    }
+    return null;
+  }
+
+  function formatDateDisplayFromYmd(ymd) {
+    var d = parseYmd(ymd);
+    if (!d) return "—";
+    var m = String(d.getMonth() + 1).padStart(2, "0");
+    var day = String(d.getDate()).padStart(2, "0");
+    return m + "/" + day + "/" + d.getFullYear();
+  }
+
+  function syncSecondLegStartDate(form) {
+    var leg2Block = form.querySelector("#trip-leg-second");
+    if (!leg2Block || leg2Block.hasAttribute("hidden")) return;
+
+    var required = requiredLeg2StartDate(form);
+    var leg2StartEl = form.querySelector("[name='query_trip_start_date_2']");
+    var leg2Display = form.querySelector("#trip_start_date_display_2");
+    if (!leg2StartEl) return;
+
+    if (!required) {
+      leg2StartEl.value = "";
+      if (leg2Display) leg2Display.textContent = "—";
+      return;
+    }
+
+    var ymd = formatYmd(required);
+    leg2StartEl.value = ymd;
+    if (leg2Display) leg2Display.textContent = formatDateDisplayFromYmd(ymd);
+  }
+
+  function overallTripRange(form) {
+    var leg1 = legDateRange(form, "query_trip_start_date", "query_trip_end_date");
+    if (!leg1) return null;
+
+    var loc2 = form.querySelector("[name='query_trip_location_2']");
+    var leg2Block = form.querySelector("#trip-leg-second");
+    var leg2Visible = leg2Block && !leg2Block.hasAttribute("hidden");
+    var leg2Loc = loc2 && loc2.value.trim();
+    if (!leg2Visible || !leg2Loc) return leg1;
+
+    var leg2 = legDateRange(form, "query_trip_start_date_2", "query_trip_end_date_2");
+    if (!leg2) return leg1;
+
+    return { start: leg1.start, end: leg2.end };
+  }
+
   function updateTripDateConstraints(form) {
     var maxDays = maxTripDaysFor(form);
     var warnDays = longTripWarningDaysFor(form);
@@ -77,23 +159,45 @@
       return;
     }
 
-    var startStr = startEl.value;
-    var start = parseYmd(startStr);
+    var start = parseYmd(startEl.value);
     var end = parseYmd(endEl.value);
 
-    if (!start || !end || end < start) {
-      if (start && end && end < start) {
-        warnEl.textContent = "Trip end must be on or after trip start.";
-        warnEl.classList.add("trip-duration-warning--limit");
-        warnEl.removeAttribute("hidden");
-      } else {
-        warnEl.setAttribute("hidden", "");
-        warnEl.textContent = "";
-      }
+    if (start && end && end < start) {
+      warnEl.textContent = "Trip end must be on or after trip start.";
+      warnEl.classList.add("trip-duration-warning--limit");
+      warnEl.removeAttribute("hidden");
       return;
     }
 
-    var days = tripDurationDays(start, end);
+    var leg2StartEl = form.querySelector("[name='query_trip_start_date_2']");
+    var leg2EndEl = form.querySelector("[name='query_trip_end_date_2']");
+    if (leg2StartEl && leg2EndEl) {
+      var leg2Start = parseYmd(leg2StartEl.value);
+      var leg2End = parseYmd(leg2EndEl.value);
+      if (leg2Start && leg2End && leg2End < leg2Start) {
+        warnEl.textContent = "Second location end must be on or after its start date.";
+        warnEl.classList.add("trip-duration-warning--limit");
+        warnEl.removeAttribute("hidden");
+        return;
+      }
+    }
+
+    var leg2StartErr = leg2StartDateError(form);
+    if (leg2StartErr) {
+      warnEl.textContent = leg2StartErr;
+      warnEl.classList.add("trip-duration-warning--limit");
+      warnEl.removeAttribute("hidden");
+      return;
+    }
+
+    var overall = overallTripRange(form);
+    if (!overall) {
+      warnEl.setAttribute("hidden", "");
+      warnEl.textContent = "";
+      return;
+    }
+
+    var days = tripDurationDays(overall.start, overall.end);
     if (days > maxDays) {
       warnEl.textContent = maxTripLimitMessage(days, maxDays);
       warnEl.classList.add("trip-duration-warning--limit");
@@ -116,21 +220,25 @@
     if (!form || form.dataset.tripDatesWired === "true") return;
 
     form.dataset.tripDatesWired = "true";
-    var startEl = form.querySelector("[name='query_trip_start_date']");
-    var endEl = form.querySelector("[name='query_trip_end_date']");
-    if (!startEl || !endEl) return;
+    var dateInputs = form.querySelectorAll(
+      "[name='query_trip_start_date'], [name='query_trip_end_date'], " +
+        "[name='query_trip_end_date_2']"
+    );
+    if (dateInputs.length === 0) return;
 
-    function onStartChange() {
+    function onDateChange(ev) {
+      var name = ev.target && ev.target.name;
+      if (name === "query_trip_end_date" || name === "query_trip_start_date") {
+        syncSecondLegStartDate(form);
+      }
       updateTripDateConstraints(form);
     }
 
-    function onEndChange() {
-      updateTripDateConstraints(form);
-    }
-
-    startEl.addEventListener("change", onStartChange);
-    endEl.addEventListener("change", onEndChange);
-    endEl.addEventListener("input", onEndChange);
+    dateInputs.forEach(function (el) {
+      el.addEventListener("change", onDateChange);
+      el.addEventListener("input", onDateChange);
+    });
+    syncSecondLegStartDate(form);
     updateTripDateConstraints(form);
   }
 
@@ -201,9 +309,29 @@
       errors.push("Trip end must be on or after trip start.");
     }
 
-    if (start && end && end >= start) {
+    var loc2El = form.querySelector("[name='query_trip_location_2']");
+    var leg2Block = form.querySelector("#trip-leg-second");
+    var leg2Visible = leg2Block && !leg2Block.hasAttribute("hidden");
+    var leg2Loc = (loc2El && loc2El.value.trim()) || "";
+    if (leg2Visible && leg2Loc) {
+      var leg2StartStr = (form.querySelector("[name='query_trip_start_date_2']") || {}).value || "";
+      var leg2EndStr = (form.querySelector("[name='query_trip_end_date_2']") || {}).value || "";
+      if (!leg2StartStr.trim() || !leg2EndStr.trim()) {
+        errors.push("Please enter start and end dates for the second location.");
+      }
+      var leg2Start = parseYmd(leg2StartStr);
+      var leg2End = parseYmd(leg2EndStr);
+      if (leg2Start && leg2End && leg2End < leg2Start) {
+        errors.push("Second location end must be on or after its start date.");
+      }
+      var leg2StartErr = leg2StartDateError(form);
+      if (leg2StartErr) errors.push(leg2StartErr);
+    }
+
+    var overall = overallTripRange(form);
+    if (overall && overall.end >= overall.start) {
       var maxDays = maxTripDaysFor(form);
-      var days = tripDurationDays(start, end);
+      var days = tripDurationDays(overall.start, overall.end);
       if (days <= 0) {
         errors.push("Trip duration days is not a number");
       } else if (days > maxDays) {
@@ -397,6 +525,8 @@
       });
     }
   }
+
+  window.syncSecondLegStartDate = syncSecondLegStartDate;
 
   document.addEventListener("DOMContentLoaded", initAgendaLoading);
   document.addEventListener("turbo:load", initAgendaLoading);
