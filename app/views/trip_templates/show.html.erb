@@ -74,7 +74,7 @@
         <% end %>
 
         <%# Full navigation in a new tab: avoids Turbo + broken “download” fetches; filename comes from Content-Disposition. %>
-        <%= link_to "Share",
+        <%= link_to "Export",
             @trip_show_public_demo ? @showcase_agenda_pdf_path : trip_agenda_pdf_path(path_id: @the_trip.id),
             class: "btn-share",
             target: "_blank",
