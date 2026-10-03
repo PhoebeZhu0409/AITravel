@@ -49,11 +49,11 @@ module ApplicationHelper
   end
 
   def trip_hero_default_path
-    image_path("trip_hero_default.png")
+    image_path("trip_hero_default.jpg")
   end
 
   def trip_hero_default_url
-    absolute_asset_url(image_path("trip_hero_default.png"))
+    absolute_asset_url(image_path("trip_hero_default.jpg"))
   end
 
   # Primary src for trip show hero: showcase asset, Google Places photo, or default PNG.

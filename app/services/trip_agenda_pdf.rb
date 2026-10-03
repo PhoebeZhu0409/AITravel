@@ -131,7 +131,7 @@ class TripAgendaPdf
   end
 
   def default_hero_bytes
-    path = Rails.root.join("app/assets/images/trip_hero_default.png")
+    path = Rails.root.join("app/assets/images/trip_hero_default.jpg")
     return "".b unless path.file?
 
     File.binread(path)

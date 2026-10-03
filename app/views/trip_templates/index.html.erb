@@ -8,13 +8,16 @@
     My Future Trips
   </button>
   <button type="button" class="home-tab" role="tab" id="tab-past" aria-selected="false" aria-controls="home-panel-past" data-tab-target="past">
-    Past Trips
+    My Past Trips
   </button>
 </div>
 
-<% index_hero_fallback = image_path("trip_hero_default.png") %>
+
+<% index_hero_fallback = image_path("trip_hero_default.jpg") %>
 <%# Same decorative hero on Plan, My Future Trips, Past Trips; trip show uses Google-stored photo. %>
 <% index_lorem_hero_src = "https://loremflickr.com/1200/400/sunrise" %>
+
+<!--=============================== Plan A New Trip =============================== -->
 <div id="home-panel-plan" class="home-tab-panel" role="tabpanel" aria-labelledby="tab-plan">
   <%= render "trip_templates/home_index_hero", src: index_lorem_hero_src, fallback: index_hero_fallback %>
   <article>
@@ -23,7 +26,6 @@
         Plan A New Trip
       </h2>
     </header>
-
 
 
     <% tf = (@trip_form || {}).stringify_keys %>
@@ -140,10 +142,11 @@
             Anything else you want to tell me about? ✨ 
           </label>
           <% placeholder_text = <<~TEXT
-            I would prefer...
-            My goal is...
-            I have to...
-            I arrive/leave at...
+            Enter anything you want to tell me about your trip, such as: 
+
+            * I prefer starting my day late and sleeping in...
+            * I would like to go art shopping...
+       
             TEXT
           %>
           <textarea id="trip_notes_box" name="query_trip_notes" rows="4" placeholder="<%= placeholder_text %>"><%= tf["query_trip_notes"] %></textarea>
@@ -180,6 +183,7 @@
   </article>
 </div>
 
+<!--=============================== My Future Trips =============================== -->
 <div id="home-panel-future" class="home-tab-panel" role="tabpanel" aria-labelledby="tab-future" hidden>
   <%= render "trip_templates/home_index_hero", src: index_lorem_hero_src, fallback: index_hero_fallback %>
   <article>
@@ -198,11 +202,13 @@
   </article>
 </div>
 
+
+<!--=============================== My Past Trips =============================== -->
 <div id="home-panel-past" class="home-tab-panel" role="tabpanel" aria-labelledby="tab-past" hidden>
   <%= render "trip_templates/home_index_hero", src: index_lorem_hero_src, fallback: index_hero_fallback %>
   <article>
     <header>
-      <h2>Past Trips</h2>
+      <h2>My Past Trips</h2>
     </header>
 
     <%= render "trip_templates/trips_list",
@@ -215,6 +221,9 @@
         label: "Past trips pages" %>
   </article>
 </div>
+
+
+
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {

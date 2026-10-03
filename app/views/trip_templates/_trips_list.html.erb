@@ -4,20 +4,27 @@
     <span class="trips-list-col-name" aria-hidden="true"></span>
     <span class="trips-list-col-trip-dates">Trip start</span>
     <span class="trips-list-col-created">Created on</span>
+    <span class="trips-list-col-delete" aria-hidden="true"></span>
   </div>
 
   <ul id="<%= list_id %>" class="trips-list">
     <% trips.each do |a_trip| %>
       <li>
-        <%= app_link_to "/trips/#{a_trip.id}", class: "trips-list-row" do %>
-          <span class="trips-list-col-name">📍 <%= a_trip.trip_name %></span>
+        <div class="trips-list-row">
+          <%= app_link_to "/trips/#{a_trip.id}", class: "trips-list-col-name" do %>
+            📍 <%= a_trip.trip_name %>
+          <% end %>
           <span class="trips-list-col-trip-dates">
             <%= trip_display_date(a_trip.trip_start_date) if a_trip.trip_start_date.present? %>
           </span>
           <time class="trips-list-col-created" datetime="<%= a_trip.created_at.iso8601 %>">
             <%= trip_display_date(a_trip.created_at.to_date) %>
           </time>
-        <% end %>
+          <%= app_link_to "Delete",
+              "/delete_trip/#{a_trip.id}",
+              class: "trips-list-delete",
+              data: { confirm: "Delete “#{a_trip.trip_name}”? This cannot be undone." } %>
+        </div>
       </li>
     <% end %>
   </ul>
