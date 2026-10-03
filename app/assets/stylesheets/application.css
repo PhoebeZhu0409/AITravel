@@ -1202,9 +1202,10 @@ body.pico .trip-leg-from-display.trip-date-row__control {
 
 .trip-add-location-wrap .trip-add-location-btn {
   grid-column: 2;
-  width: 100%;
+  justify-self: end;
+  width: auto;
+  max-width: 100%;
   box-sizing: border-box;
-  text-align: center;
 }
 
 .trip-add-location-btn,
@@ -1216,14 +1217,37 @@ body.pico .trip-leg-from-display.trip-date-row__control {
 }
 
 .trip-add-location-btn {
-  border: 1px dashed #94a3b8;
-  background: #f8fafc;
-  color: #334155;
+  border: 1px solid #cbd5e1;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.2rem 0.45rem;
+  line-height: 1.35;
 }
 
-body.pico .trip-add-location-wrap .trip-add-location-btn[type="button"] {
-  width: 100%;
+.trip-add-location-btn:hover {
+  color: #475569;
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+
+body.pico .trip-add-location-wrap button.trip-add-location-btn[type="button"] {
+  width: auto;
   margin: 0;
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+  box-shadow: none;
+}
+
+body.pico .trip-add-location-wrap button.trip-add-location-btn[type="button"]:hover,
+body.pico .trip-add-location-wrap button.trip-add-location-btn[type="button"]:active,
+body.pico .trip-add-location-wrap button.trip-add-location-btn[type="button"]:focus {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #475569;
+  box-shadow: none;
 }
 
 .trip-leg--second {
@@ -1264,6 +1288,7 @@ body.pico .trip-add-location-wrap .trip-add-location-btn[type="button"] {
 
   .trip-add-location-wrap .trip-add-location-btn {
     grid-column: 1;
+    justify-self: start;
   }
 }
 
