@@ -1186,6 +1186,22 @@ span.btn-rebuild--disabled:hover {
   display: none;
 }
 
+body.pico .devise-registration-edit p.devise-registration-edit__error,
+body.pico .devise-registration-edit p.devise-registration-edit__error.text-danger {
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: #dc2626;
+}
+
+.devise-registration-edit span.error {
+  display: block;
+  margin-top: 0.35rem;
+  color: #b91c1c;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
 .devise-password-section {
   margin: 1.75rem 0 0;
   padding: 1.5rem 0;
@@ -1679,8 +1695,10 @@ details.collapsible > .content hr {
   margin-top: 0.5rem;
 }
 
-.trip-notes-section label {
+.trip-notes-section label,
+body.pico .trip-notes-section label {
   color: #1a4a66;
+  font-weight: 700;
 }
 
 #trip_notes_box {

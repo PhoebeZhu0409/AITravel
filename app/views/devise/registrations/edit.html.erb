@@ -11,7 +11,14 @@
 </dl>
 
 <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, multipart: true, data: { turbo: false } }) do |f| %>
-  <%= f.error_notification %>
+  <% if resource.errors.any? %>
+    <p class="devise-registration-edit__error text-danger" role="alert">
+      Error:
+      <%= resource.errors.map { |error|
+        "#{resource.class.human_attribute_name(error.attribute)} - #{error.message}"
+      }.join(" ") %>
+    </p>
+  <% end %>
 
   <div class="profile-avatar-preview">
     <%= user_avatar_tag(resource, class: "profile-avatar-preview__image") %>
@@ -56,6 +63,7 @@
                 label: "Current password",
                 hint: "You need to enter your current password to make any changes.",
                 required: true,
+                error: true,
                 input_html: { autocomplete: "current-password" } %>
   </div>
 

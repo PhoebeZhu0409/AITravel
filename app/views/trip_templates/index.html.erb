@@ -28,7 +28,7 @@
 
     <% tf = (@trip_form || {}).stringify_keys %>
     <% todos = Array(tf["query_todo"]).flatten.compact.map(&:to_s) %>
-    <% optional_open = tf["query_budget"].present? || tf["query_people"].present? || tf["query_live_area"].present? || todos.any? %>
+    <% optional_open = tf["query_budget"].present? || tf["query_people"].present? || todos.any? %>
 
     <% trip_end_value = tf["query_trip_end_date"].presence %>
     <% if trip_end_value.blank? && tf["query_trip_start_date"].present? && tf["query_trip_duration_days"].present? %>
@@ -130,17 +130,6 @@
             </div>
           </article>
 
-          <article>
-            <div>
-              <label for="live_area">
-                Which area do you live? 
-              </label>
-
-              <input type="text" id="live_area" name="query_live_area" value="<%= tf["query_live_area"] %>">
-            </div>
-
-          </article>
-
         </div>
       </details>
       <!-- Collapsible section -->
@@ -148,7 +137,7 @@
       <article class="trip-notes-section">
         <div>
           <label for="trip_notes_box">
-            Anything else you want to tell me about?✨ 
+            Anything else you want to tell me about? ✨ 
           </label>
           <% placeholder_text = <<~TEXT
             I would prefer...

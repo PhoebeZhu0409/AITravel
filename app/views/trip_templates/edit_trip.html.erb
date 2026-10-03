@@ -24,7 +24,7 @@
 
 <% pf = @rebuild_prefill || ::RebuildFormPrefill.from_trip_notes(nil) %>
 <% todos_saved = Array(pf[:todos]).map(&:to_s) %>
-<% optional_open = pf[:budget].present? || pf[:people].present? || pf[:live_area].present? || todos_saved.any? %>
+<% optional_open = pf[:budget].present? || pf[:people].present? || todos_saved.any? %>
 
 <article>
   <header>
@@ -123,17 +123,6 @@
                 <label><input type="checkbox" name="query_todo[]" value="<%= v %>"<%= " checked".html_safe if todos_saved.include?(v) %>>High-end restaurants and luxury experience </label>
               </div>
             </div>
-          </article>
-
-          <article>
-            <div>
-              <label for="live_area">
-                Which area do you live? 
-              </label>
-
-              <input type="text" id="live_area" name="query_live_area" value="<%= pf[:live_area] %>">
-            </div>
-
           </article>
 
         </div>

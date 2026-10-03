@@ -161,13 +161,10 @@ class TripsController < ApplicationController
     todo_text = query_todo.is_a?(Array) ? query_todo.join(", ") : query_todo
     summary_c = "My trip should include a mix of these: #{todo_text}" if todo_text.present?
 
-    live_area = params[:query_live_area]
-    summary_d = "I stay near #{live_area}; and I can also go any other places you recommend" if live_area.present?
-
     trip_notes = params[:query_trip_notes]
     summary_e = "Specifically, I have these requirements: #{trip_notes}" if trip_notes.present?
 
-    [summary_a, summary_b, summary_c, summary_d, summary_e].compact.join(" ; ")
+    [summary_a, summary_b, summary_c, summary_e].compact.join(" ; ")
   end
 
   def apply_trip_date_range!(trip)
@@ -200,7 +197,6 @@ class TripsController < ApplicationController
       :query_trip_end_date,
       :query_budget,
       :query_people,
-      :query_live_area,
       :query_trip_notes,
       query_todo: []
     )
