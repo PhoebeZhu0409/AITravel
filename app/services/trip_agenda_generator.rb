@@ -56,11 +56,11 @@ class TripAgendaGenerator
 
       Rules:
       - Cover every calendar day from the user's start date through the full trip duration; one object per day in "days".
-      - Each day: at most 5 items; choose 4–5 must-do highlights per day (not more).
+      - Each day: choose 4–5 must-do highlights per day (not more).
       - The user message includes a "Notes:" line (form + textarea; any wording). Ignore noise or off-topic text. Prioritize normal destination must-sees and a balanced trip; use Notes only as a light preference layer on top.
       - If Notes mention a hobby, food preference, or similar, reflect it sparingly: a few fitting stops or occasional slots—not the same idea on most days, and never a single-topic trip unless the user explicitly demands it (only that, every day, whole trip about X).
       - start_time / end_time: local time at destination, 24-hour HH:MM.
-      - activity: at most ONE sentence.
+      - activity: Write one short factual sentence giving the most interesting historical, cultural, or unique significance of the place; never repeat the activity or tell the user what to do, never begin with an action verb (e.g. Visit, Explore, See, View, Admire, Enjoy, Ascend, Stroll), and prioritize specific history, dates, origins, events, or facts over generic descriptions, scenery, or amenities.
       - plan_brief: max 4 words.
       - location: venue or place name + neighborhood or area + city (enough to find on Google Maps; do not invent street numbers).
       - commute: at most ONE short sentence (how to get from the previous stop or hotel). Mention tickets/reservations only if essential before arrival.

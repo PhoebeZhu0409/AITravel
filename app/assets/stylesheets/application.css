@@ -1908,16 +1908,23 @@ body.pico main .home-tabs .home-tab.home-tab--active:hover {
 .plan-brief {
   cursor: pointer;
   position: relative;
-  display: inline-block;
-  /* text-decoration: underline dotted;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px; */
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.5rem;
 }
 
-.plan-brief::after {
-  content: "  ⓘ";            /* info symbol */
-  font-size: 0.85em;
-  opacity: 0.6;
+.plan-brief-more {
+  font-size: 0.82em;
+  font-weight: 600;
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+}
+
+.plan-brief:hover .plan-brief-more {
+  color: #1d4ed8;
 }
 
 .plan-full {
@@ -1936,10 +1943,6 @@ body.pico main .home-tabs .home-tab.home-tab--active:hover {
 
 .plan-brief:hover .plan-full {
   display: block;
-}
-
-.plan-brief:hover::after {
-  opacity: 1;
 }
 
 
@@ -2007,6 +2010,13 @@ article.agenda-day.active {
   max-width: 12.5rem;
   min-width: 0;
   padding-right: 2px;
+}
+
+.agenda-integrated-toolbar--before-map {
+  margin-top: 1rem;
+  border-bottom: none;
+  border-top: 1px solid #e5e7eb;
+  border-radius: 0;
 }
 
 .agenda-day-panel .agenda-table thead th {

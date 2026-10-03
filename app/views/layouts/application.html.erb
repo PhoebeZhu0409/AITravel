@@ -490,10 +490,6 @@ function initItineraryMaps() {
 
       carousel.dataset.agendaWired = "1";
 
-      const jump = document.getElementById("agenda-jump-select");
-      const prevWin = document.getElementById("agenda-window-prev");
-      const nextWin = document.getElementById("agenda-window-next");
-
       const totalDays = days.length;
       let currentIndex = 0;
       let windowStart = 0;
@@ -516,30 +512,34 @@ function initItineraryMaps() {
       }
 
       function updateTabs() {
-        tabs.forEach((tab, i) => {
+        tabs.forEach((tab) => {
+          const i = parseInt(tab.getAttribute("data-day-index"), 10);
+          if (Number.isNaN(i)) return;
           const inWindow = totalDays <= 3 || (i >= windowStart && i <= windowStart + 2);
           tab.hidden = !inWindow;
           tab.classList.toggle("is-active", i === currentIndex);
           tab.setAttribute("aria-selected", i === currentIndex ? "true" : "false");
           tab.tabIndex = i === currentIndex ? 0 : -1;
         });
-        if (jump) jump.value = String(currentIndex);
-        if (prevWin) {
+        carousel.querySelectorAll(".agenda-jump-select").forEach((sel) => {
+          sel.value = String(currentIndex);
+        });
+        carousel.querySelectorAll(".agenda-tab-arrow--prev").forEach((prevWin) => {
           prevWin.hidden = totalDays <= 1;
           if (totalDays <= 3) {
             prevWin.disabled = currentIndex <= 0;
           } else {
             prevWin.disabled = windowStart <= 0;
           }
-        }
-        if (nextWin) {
+        });
+        carousel.querySelectorAll(".agenda-tab-arrow--next").forEach((nextWin) => {
           nextWin.hidden = totalDays <= 1;
           if (totalDays <= 3) {
             nextWin.disabled = currentIndex >= totalDays - 1;
           } else {
             nextWin.disabled = windowStart >= maxWindowStart;
           }
-        }
+        });
       }
 
       function goToDay(index) {
@@ -560,40 +560,37 @@ function initItineraryMaps() {
       ensureWindowContains(0);
       updateTabs();
 
-      tabs.forEach((tab) => {
-        tab.addEventListener("click", () => {
+      carousel.addEventListener("click", (e) => {
+        const tab = e.target.closest(".agenda-day-tab");
+        if (tab && carousel.contains(tab)) {
           const i = parseInt(tab.getAttribute("data-day-index"), 10);
           if (!Number.isNaN(i)) goToDay(i);
-        });
-      });
-
-      if (prevWin) {
-        prevWin.addEventListener("click", () => {
+          return;
+        }
+        if (e.target.closest(".agenda-tab-arrow--prev")) {
           if (totalDays <= 3) {
             if (currentIndex > 0) goToDay(currentIndex - 1);
           } else if (windowStart > 0) {
             windowStart -= 1;
             updateTabs();
           }
-        });
-      }
-      if (nextWin) {
-        nextWin.addEventListener("click", () => {
+          return;
+        }
+        if (e.target.closest(".agenda-tab-arrow--next")) {
           if (totalDays <= 3) {
             if (currentIndex < totalDays - 1) goToDay(currentIndex + 1);
           } else if (windowStart < maxWindowStart) {
             windowStart += 1;
             updateTabs();
           }
-        });
-      }
+        }
+      });
 
-      if (jump) {
-        jump.addEventListener("change", () => {
-          const i = parseInt(jump.value, 10);
-          if (!Number.isNaN(i)) goToDay(i);
-        });
-      }
+      carousel.addEventListener("change", (e) => {
+        if (!e.target.matches(".agenda-jump-select")) return;
+        const i = parseInt(e.target.value, 10);
+        if (!Number.isNaN(i)) goToDay(i);
+      });
     }
 
     document.addEventListener("DOMContentLoaded", initAgendaCarousel);

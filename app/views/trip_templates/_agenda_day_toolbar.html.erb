@@ -1,0 +1,50 @@
+<%# locals: agenda_dates, agenda_day_count, id_suffix: "", before_map: false %>
+<% suffix = local_assigns.fetch(:id_suffix, "") %>
+<div class="agenda-integrated-toolbar<%= " agenda-integrated-toolbar--before-map" if local_assigns[:before_map] %>">
+  <div class="agenda-integrated-toolbar__days">
+    <div class="agenda-day-picker agenda-day-picker--compact"<%= " id=\"agenda-day-picker\"".html_safe if suffix.blank? %>>
+      <button
+        type="button"
+        <%= "id=\"agenda-window-prev\"".html_safe if suffix.blank? %>
+        class="agenda-tab-arrow agenda-tab-arrow--prev"
+        aria-label="<%= agenda_day_count > 3 ? 'Show earlier days in list' : 'Previous day' %>"
+        <% if agenda_day_count <= 1 %>hidden<% end %>>
+        ‹
+      </button>
+      <div class="agenda-day-tabs" role="tablist" aria-label="Agenda days">
+        <% agenda_dates.each_with_index do |date, i| %>
+          <button
+            type="button"
+            role="tab"
+            <% if suffix.blank? %>id="agenda-tab-<%= i %>"<% end %>
+            class="agenda-day-tab agenda-day-tab--compact <%= 'is-active' if i == 0 %>"
+            data-day-index="<%= i %>"
+            aria-selected="<%= i == 0 ? 'true' : 'false' %>"
+            tabindex="<%= i == 0 ? 0 : -1 %>"
+          >
+            <span class="agenda-day-tab__num">Day <%= i + 1 %></span>
+            <span class="agenda-day-tab__date"><%= agenda_brief_date(date) %></span>
+          </button>
+        <% end %>
+      </div>
+      <button
+        type="button"
+        <%= "id=\"agenda-window-next\"".html_safe if suffix.blank? %>
+        class="agenda-tab-arrow agenda-tab-arrow--next"
+        aria-label="<%= agenda_day_count > 3 ? 'Show later days in list' : 'Next day' %>"
+        <% if agenda_day_count <= 1 %>hidden<% end %>>
+        ›
+      </button>
+    </div>
+  </div>
+  <div class="agenda-integrated-toolbar__jump">
+    <label class="agenda-jump-label" for="agenda-jump-select<%= suffix %>">Go to day</label>
+    <select id="agenda-jump-select<%= suffix %>" class="agenda-jump-select agenda-jump-select--compact" data-nopico aria-label="Jump to a specific day">
+      <% agenda_dates.each_with_index do |date, i| %>
+        <option value="<%= i %>" <%= "selected" if i == 0 %>>
+          Day <%= i + 1 %> — <%= agenda_brief_date(date) %>
+        </option>
+      <% end %>
+    </select>
+  </div>
+</div>

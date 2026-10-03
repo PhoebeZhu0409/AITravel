@@ -1,12 +1,15 @@
 class TripsController < ApplicationController
   before_action :set_owned_trip, only: %i[show generation_status trip_name_update rebuild_form destroy update agenda_pdf]
 
+
+  #====================   Plan A Trip: Plan Page, Future Trips, Past Trips ================= 
   def index
     matching_trips = current_user.trips
 
     future_scope = matching_trips
       .where(trip_start_date: (Date.today...))
       .order(created_at: :desc)
+
     past_scope = matching_trips
       .where(trip_start_date: (...Date.today))
       .order(created_at: :desc)
@@ -18,10 +21,14 @@ class TripsController < ApplicationController
     render({ :template => "trip_templates/index" })
   end
 
+
+    #=============================== Plan A Day (TBD) =============================== 
+
   def plan_a_day
     render({ :template => "trip_templates/plan_a_day" })
   end
 
+    #===============================  Show Trip  =============================== 
 
   def show
     unless @trip_show_public_demo
@@ -76,7 +83,7 @@ class TripsController < ApplicationController
     redirect_to("/trips", { :notice => "Trip deleted successfully." })
   end
 
-  # =============================== Update =================================
+  # =============================== Update Trip =================================
   def update
     unless current_user.can_generate_trip?
       redirect_to("/trips/#{@the_trip.id}", { alert: trip_generation_limit_message })
