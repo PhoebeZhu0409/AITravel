@@ -783,9 +783,19 @@ a.map-marker-popup__card:hover .map-marker-popup__name {
   inset: 0;
   width: 100%;
   height: 100%;
+  max-width: none;
   object-fit: cover;
-  object-position: center;
+  /* Center vertical crop (3:1 banner), not the top strip — Pico’s img { height: auto } fights cover. */
+  object-position: center center;
   display: block;
+}
+
+body.pico .trip-hero-image-wrap img.trip-hero-image {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center center;
 }
 
 /* If default PNG is missing or fails to load — gradient (onerror adds this class + removes src) */
@@ -1961,6 +1971,22 @@ article.agenda-day {
 
 article.agenda-day.active {
   display: block;
+}
+
+.agenda-ai-disclaimer {
+  margin: 0.65rem 0.85rem 1rem;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+body.pico .agenda-day-panel p.agenda-ai-disclaimer {
+  margin: 0.65rem 0.85rem 1rem;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: #94a3b8;
+  line-height: 1.4;
 }
 
 /* Agenda: one card — toolbar (days + jump) sits above the table body */
