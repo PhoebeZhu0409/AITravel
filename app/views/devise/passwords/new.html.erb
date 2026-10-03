@@ -1,5 +1,13 @@
 <h2>Forgot your password?</h2>
 
+<% if Rails.env.development? %>
+  <p class="dev-mail-hint" role="note">
+    On localhost, reset emails are <strong>not</strong> sent to your inbox. After you submit, open
+    <%= link_to "Letter Opener", "/letter_opener", target: "_blank", rel: "noopener" %>
+    to read the message and use the reset link.
+  </p>
+<% end %>
+
 <%= simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
   <%= f.error_notification %>
 

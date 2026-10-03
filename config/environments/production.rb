@@ -73,10 +73,13 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = true
 
-  if ENV["POSTMARK_API_TOKEN"].present?
+  # Postmark Server API token — set POSTMARK_API_TOKEN and/or SMTP_PASSWORD on Render (same value).
+  postmark_server_token = ENV["POSTMARK_API_TOKEN"].presence || ENV["SMTP_PASSWORD"].presence
+
+  if postmark_server_token
     config.action_mailer.delivery_method = :postmark
     config.action_mailer.postmark_settings = {
-      api_token: ENV["POSTMARK_API_TOKEN"]
+      api_token: postmark_server_token
     }
   else
     config.action_mailer.delivery_method = :smtp
@@ -84,7 +87,7 @@ Rails.application.configure do
       address: ENV.fetch("SMTP_ADDRESS", "smtp.postmarkapp.com"),
       port: ENV.fetch("SMTP_PORT", 587).to_i,
       user_name: ENV.fetch("SMTP_USERNAME", "postmark"),
-      password: ENV.fetch("SMTP_PASSWORD", ENV["POSTMARK_API_TOKEN"]),
+      password: ENV.fetch("SMTP_PASSWORD", ""),
       authentication: :plain,
       enable_starttls_auto: true
     }
