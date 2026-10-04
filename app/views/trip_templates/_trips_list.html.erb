@@ -20,9 +20,11 @@
           <time class="trips-list-col-created" datetime="<%= a_trip.created_at.iso8601 %>">
             <%= trip_display_date(a_trip.created_at.to_date) %>
           </time>
-          <%= app_link_to "Delete",
+          <%= app_link_to "×",
               "/delete_trip/#{a_trip.id}",
               class: "trips-list-delete",
+              title: "Delete trip",
+              aria: { label: "Delete #{a_trip.trip_name}" },
               data: { confirm: "Delete “#{a_trip.trip_name}”? This cannot be undone." } %>
         </div>
       </li>

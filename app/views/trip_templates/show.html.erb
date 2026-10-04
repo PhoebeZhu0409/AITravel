@@ -73,11 +73,10 @@
           </div>
         <% end %>
 
-        <%# Full navigation in a new tab: avoids Turbo + broken “download” fetches; filename comes from Content-Disposition. %>
+        <%# Same window so iOS WKWebView keeps the login cookie (Safari has a different cookie jar). %>
         <%= link_to "Export",
             @trip_show_public_demo ? @showcase_agenda_pdf_path : trip_agenda_pdf_path(path_id: @the_trip.id),
             class: "btn-share",
-            target: "_blank",
             rel: "noopener noreferrer",
             data: { turbo: false } %>
       </div>
@@ -196,9 +195,8 @@
                             <%= link_to "Uber there",
                                 uber_href,
                                 target: "_blank",
-                                rel: "noopener",
-                                class: "agenda-uber-link",
-                                data: { uber_mobile: a_day.uber_dropoff_mobile_url } %>
+                                rel: "noopener noreferrer",
+                                class: "agenda-uber-link" %>
                           <% end %>
                         </div>
                       <% end %>
@@ -320,22 +318,10 @@
       })();
     </script>
 
-<script>
-  (function () {
-    function wireUberLinks() {
-      var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      if (!isMobile) return;
 
-      document.querySelectorAll("a.agenda-uber-link[data-uber-mobile]").forEach(function (link) {
-        var mobileHref = link.getAttribute("data-uber-mobile");
-        if (mobileHref) link.href = mobileHref;
-      });
-    }
 
-    document.addEventListener("DOMContentLoaded", wireUberLinks);
-    document.addEventListener("turbo:load", wireUberLinks);
-  })();
-</script>
+
+
 
 
 

@@ -184,6 +184,10 @@ module ApplicationHelper
     path == "/" || path == "/trips" || path.start_with?("/modify/")
   end
 
+  def web_back_link(label = "← Back")
+    link_to label, root_path, class: "web-back-link", data: { turbo: false }
+  end
+
   def nalu_contact_mailto
     "mailto:phoebezhu1611@gmail.com?subject=#{ERB::Util.url_encode("Nalu — more trip generations")}"
   end

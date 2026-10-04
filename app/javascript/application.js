@@ -8,6 +8,14 @@ import "avatar_upload"
 // Change to true to allow Turbo
 Turbo.session.drive = false
 
+document.addEventListener("click", function (event) {
+  const back = event.target.closest("a.web-back-link")
+  if (back && window.history.length > 1) {
+    event.preventDefault()
+    window.history.back()
+  }
+}, true)
+
 // Envoy / mobile WebViews: break out of iframe so navigation is not saved as document.txt
 document.addEventListener("click", function (event) {
   if (window.self === window.top) return

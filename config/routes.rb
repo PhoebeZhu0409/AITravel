@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get("/terms-of-use", { :controller => "pages", :action => "terms_of_use" })
   get("/privacy-policy", { :controller => "pages", :action => "privacy_policy", :as => :privacy_policy })
   get("/who-am-i", { :controller => "pages", :action => "who_am_i", :as => :who_am_i })
+  get("/go/uber", { :controller => "uber_redirects", :action => "show", :as => :go_uber })
   get("/showcase/madrid", { :controller => "pages", :action => "showcase_madrid", :as => :showcase_madrid })
   get("/showcase/new-york", { :controller => "pages", :action => "showcase_new_york", :as => :showcase_new_york })
   get("/showcase/madrid/download_agenda", { :controller => "pages", :action => "showcase_madrid_pdf", :as => :showcase_madrid_pdf })

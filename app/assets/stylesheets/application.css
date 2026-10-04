@@ -1635,23 +1635,22 @@ nav[aria-label="breadcrumb"] + hr {
 
 .trips-list-header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) auto auto;
-  gap: 1rem;
-  align-items: center;
-  padding: 0.35rem 0.75rem 0.5rem;
-  font-size: 0.75rem;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) 2.1rem;
+  gap: 0.5rem 0.65rem;
+  align-items: end;
+  padding: 0.35rem 0.5rem 0.5rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
-.trips-list-header .trips-list-col-trip-dates {
-  text-align: left;
-}
-
+.trips-list-header .trips-list-col-trip-dates,
 .trips-list-header .trips-list-col-created {
-  text-align: right;
+  text-align: center;
+  line-height: 1.25;
+  white-space: normal;
 }
 
 .trips-list {
@@ -1679,10 +1678,10 @@ body.pico article .trips-list li::marker {
 
 .trips-list-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) auto auto;
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) 2.1rem;
+  gap: 0.5rem 0.65rem;
   align-items: center;
-  padding: 0.75rem;
+  padding: 0.75rem 0.5rem;
   color: inherit;
 }
 
@@ -1695,26 +1694,28 @@ a.trips-list-col-name:hover {
   font-weight: 500;
   color: #0f172a;
   text-decoration: none;
+  overflow-wrap: break-word;
 }
 
 .trips-list-col-trip-dates {
   min-width: 0;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: #64748b;
-  text-align: left;
-  line-height: 1.35;
+  text-align: center;
+  line-height: 1.3;
 }
 
 .trips-list-col-created {
-  flex-shrink: 0;
-  font-size: 0.875rem;
+  min-width: 0;
+  font-size: 0.8125rem;
   color: #64748b;
-  white-space: nowrap;
-  text-align: right;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.3;
 }
 
 .trips-list-col-delete {
-  width: 4.5rem;
+  width: 2.1rem;
 }
 
 body.pico a.trips-list-delete,
@@ -1722,13 +1723,15 @@ a.trips-list-delete {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.28rem 0.7rem;
+  width: 1.85rem;
+  height: 1.85rem;
+  padding: 0;
   border-radius: 8px;
   background-color: #ff4d4f;
   color: #fff;
-  font-size: 0.8rem;
-  font-weight: 500;
-  line-height: 1.2;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1;
   text-decoration: none;
   white-space: nowrap;
   justify-self: end;
@@ -1744,31 +1747,25 @@ a.trips-list-delete:hover {
 @media (max-width: 520px) {
   .trips-list-header,
   .trips-list-row {
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    gap: 0.5rem 0.75rem;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr) 1.85rem;
+    gap: 0.35rem 0.4rem;
   }
 
-  .trips-list-header .trips-list-col-trip-dates,
-  .trips-list-col-trip-dates {
-    grid-column: 1;
-    text-align: left;
-    font-size: 0.8125rem;
+  .trips-list-header {
+    font-size: 0.62rem;
+    letter-spacing: 0.03em;
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
   }
 
-  .trips-list-header .trips-list-col-created,
+  .trips-list-row {
+    padding: 0.65rem 0.35rem;
+  }
+
+  .trips-list-col-name,
+  .trips-list-col-trip-dates,
   .trips-list-col-created {
-    grid-column: 2;
-  }
-
-  .trips-list-col-name {
-    grid-column: 1 / 3;
-  }
-
-  .trips-list-header .trips-list-col-delete,
-  .trips-list-delete {
-    grid-column: 3;
-    grid-row: 1 / span 2;
-    align-self: center;
+    font-size: 0.75rem;
   }
 }
 
@@ -2027,10 +2024,10 @@ body.pico .plan-mode-nav__tab[aria-current="page"]:hover {
 /* ----- Home index: trip section tabs ----- */
 .home-tabs {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.45rem;
   margin: 1.1rem 0 1.25rem;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   width: 100%;
 }
@@ -2040,19 +2037,22 @@ body.pico main .home-tabs .home-tab {
   appearance: none;
   margin: 0;
   box-sizing: border-box;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: auto !important;
-  max-width: 100%;
-  flex: 0 1 auto;
+  max-width: none;
+  flex: 1 1 0;
+  min-width: 0;
+  white-space: normal;
+  text-align: center;
   border: 1px solid #d1d5db !important;
   background: #eceef2 !important;
   color: #374151 !important;
   font-weight: 600;
   font-size: 0.8125rem;
-  padding: 0.3rem 1rem !important;
-  min-height: 0;
+  padding: 0.35rem 0.45rem !important;
+  min-height: 2.55rem;
   border-radius: 9999px !important;
   cursor: pointer;
   font-family: inherit;
@@ -2064,6 +2064,14 @@ body.pico main .home-tabs .home-tab:hover {
   border-color: #b8bcc4 !important;
   background: #e2e5eb !important;
   color: #1f2937 !important;
+}
+
+.home-tab-label {
+  display: block;
+  width: 100%;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.2;
 }
 
 body.pico main .home-tabs .home-tab:focus-visible {
@@ -3084,6 +3092,28 @@ a.place-card-link:hover .place-name {
 }
 
 /* ------------------------- Who am I --------------------------- */
+.who-am-i-page__back {
+  text-align: left;
+  margin: 0 0 1.25rem;
+}
+
+a.web-back-link {
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: #2563eb;
+}
+
+a.web-back-link:hover {
+  text-decoration: underline;
+}
+
+.legal-page .page-profile-bar__left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
 .who-am-i-page {
   max-width: 36rem;
   margin: 1.5rem auto 3rem;
@@ -3241,8 +3271,10 @@ body.pico footer.site-footer .footer-col a:hover {
   }
 
   body.pico main .home-tabs .home-tab {
-    font-size: 0.75rem;
-    padding: 0.28rem 0.85rem !important;
+    font-size: 0.68rem;
+    padding: 0.28rem 0.28rem !important;
+    min-height: 2.4rem;
+    line-height: 1.2;
   }
 
   body.pico > footer.site-footer {

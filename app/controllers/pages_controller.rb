@@ -71,9 +71,10 @@ class PagesController < ApplicationController
     pdf_bytes = ::TripAgendaPdf.new(trip).render
     base = trip.trip_name.to_s.parameterize.presence || "trip"
     filename = "#{base}-agenda.pdf"
+    ios = request.user_agent.to_s.match?(/iPhone|iPad|iPod/i)
     headers["Cache-Control"] = "no-store, private"
     headers["Content-Disposition"] = ActionDispatch::Http::ContentDisposition.format(
-      disposition: "attachment",
+      disposition: ios ? "inline" : "attachment",
       filename: filename
     )
     send_data pdf_bytes, type: "application/pdf", disposition: nil

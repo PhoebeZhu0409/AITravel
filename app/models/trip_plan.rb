@@ -38,29 +38,25 @@ class TripPlan < ApplicationRecord
 
   # Opens Uber with drop-off prefilled — mobile app, mobile web, or desktop browser.
   def uber_dropoff_url
-    uber_dropoff_web_url
+    uber_go_url
   end
 
-  # Prefer in native Uber app on phones (pickup = current location).
+  def uber_go_url
+    return if plan_location.blank?
+
+    "/go/uber?#{uber_go_params.to_query}"
+  end
+
+  def uber_dropoff_app_url
+    return if plan_location.blank?
+
+    UberDropoffUrl.app(**uber_dropoff_kwargs)
+  end
+
   def uber_dropoff_mobile_url
     return if plan_location.blank?
 
-    nickname = place_display_name.presence || plan_location.split(",").first.to_s.strip
-    query = {
-      "action" => "setPickup",
-      "pickup" => "my_location",
-      "dropoff[formatted_address]" => plan_location.to_s
-    }
-
-    if place_latitude.present? && place_longitude.present?
-      query["dropoff[latitude]"] = place_latitude.to_f
-      query["dropoff[longitude]"] = place_longitude.to_f
-    end
-
-    query["dropoff[nickname]"] = nickname if nickname.present?
-
-    params = query.map { |key, value| "#{ERB::Util.url_encode(key)}=#{ERB::Util.url_encode(value.to_s)}" }.join("&")
-    "https://m.uber.com/ul/?#{params}"
+    UberDropoffUrl.universal(**uber_dropoff_kwargs)
   end
 
   # Populated once at agenda generation; show page skips client-side Places if true.
@@ -73,29 +69,26 @@ class TripPlan < ApplicationRecord
 
   private
 
-  def uber_dropoff_web_url
-    return if plan_location.blank?
-
-    nickname = place_display_name.presence || plan_location.split(",").first.to_s.strip
-
+  def uber_go_params
+    h = { address: plan_location }
+    h[:name] = uber_nickname if uber_nickname.present?
     if place_latitude.present? && place_longitude.present?
-      drop = {
-        "latitude" => place_latitude.to_f,
-        "longitude" => place_longitude.to_f,
-        "addressLine1" => nickname.presence || plan_location.to_s,
-        "addressLine2" => plan_location.to_s
-      }
-      drop_param = ERB::Util.url_encode(drop.to_json)
-      return "https://m.uber.com/looking?drop[0]=#{drop_param}"
+      h[:lat] = format("%.7f", place_latitude.to_f)
+      h[:lng] = format("%.7f", place_longitude.to_f)
     end
+    h
+  end
 
-    query = {
-      "action" => "setPickup",
-      "dropoff[formatted_address]" => plan_location.to_s
+  def uber_dropoff_kwargs
+    {
+      address: plan_location,
+      name: uber_nickname,
+      lat: place_latitude,
+      lng: place_longitude
     }
-    query["dropoff[nickname]"] = nickname if nickname.present?
+  end
 
-    params = query.map { |key, value| "#{ERB::Util.url_encode(key)}=#{ERB::Util.url_encode(value.to_s)}" }.join("&")
-    "https://m.uber.com/ul/?#{params}"
+  def uber_nickname
+    place_display_name.presence || plan_location.to_s.split(",").first.to_s.strip
   end
 end

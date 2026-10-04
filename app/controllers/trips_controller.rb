@@ -49,9 +49,11 @@ class TripsController < ApplicationController
     pdf_bytes = ::TripAgendaPdf.new(@the_trip).render
     base = @the_trip.trip_name.to_s.parameterize.presence || "trip"
     filename = "#{base}-agenda.pdf"
+    # iOS WKWebView often fails Content-Disposition: attachment; inline keeps the session and shows the PDF.
+    ios = request.user_agent.to_s.match?(/iPhone|iPad|iPod/i)
     headers["Cache-Control"] = "no-store, private"
     headers["Content-Disposition"] = ActionDispatch::Http::ContentDisposition.format(
-      disposition: "attachment",
+      disposition: ios ? "inline" : "attachment",
       filename: filename
     )
     send_data pdf_bytes, type: "application/pdf", disposition: nil
