@@ -37,6 +37,10 @@ class TripsController < ApplicationController
 
     @agenda_generating = !@trip_show_public_demo && @the_trip.trip_plans.none?
 
+    unless @trip_show_public_demo
+      GooglePlacesEnricher.ensure_trip_destination_time_zones!(@the_trip)
+    end
+
     render({ :template => "trip_templates/show" })
   end
 

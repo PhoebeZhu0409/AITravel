@@ -19,6 +19,7 @@ class TripAgendaGenerator
   def enrich!
     enrich_destination_hero!
     @trip.trip_plans.find_each { |tp| GooglePlacesEnricher.enrich_trip_plan(tp) }
+    apply_destination_time_zone_to_plans!
   end
 
   private
@@ -122,8 +123,8 @@ class TripAgendaGenerator
         {
           trip: trip,
           date: date,
-          start_time: Time.parse(item[:start_time].to_s),
-          end_time: Time.parse(item[:end_time].to_s),
+          start_time: parse_wall_clock_time(item[:start_time]),
+          end_time: parse_wall_clock_time(item[:end_time]),
           timezone: nil,
           trip_plan: item[:activity],
           plan_brief: item[:plan_brief],
@@ -132,6 +133,40 @@ class TripAgendaGenerator
           plan_details: item[:commute]
         }
       end
+    end
+  end
+
+  def parse_wall_clock_time(value)
+    md = value.to_s.strip.match(/\A(\d{1,2}):(\d{2})(?::(\d{2}))?\z/)
+    return nil unless md
+
+    hour = md[1].to_i
+    min = md[2].to_i
+    sec = (md[3] || "0").to_i
+    Time.utc(2000, 1, 1, hour, min, sec)
+  end
+
+  def apply_destination_time_zone_to_plans!
+    location = trip.trip_location.to_s.strip
+    return if location.blank?
+
+    missing = trip.trip_plans.select { |tp| tp.place_time_zone_id.blank? }
+    return if missing.empty?
+
+    ref_date = trip.trip_start_date || missing.filter_map(&:date).min
+    return unless ref_date
+
+    tz_id = GooglePlacesEnricher.timezone_id_for_location(location, ref_date)
+    return if tz_id.blank?
+
+    zone = Time.find_zone(tz_id)
+    missing.each do |tp|
+      tp.place_time_zone_id = tz_id
+      if zone && tp.date.present?
+        d = tp.date
+        tp.timezone = zone.local(d.year, d.month, d.day, 12, 0, 0).strftime("%Z").presence
+      end
+      tp.save!
     end
   end
 

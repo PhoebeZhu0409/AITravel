@@ -94,6 +94,32 @@ class GooglePlacesEnricher
 
     # IANA id (e.g. "America/New_York") for the user's trip destination string from the form.
     # Uses Find Place + Time Zone API (same key as enrich). reference_date is used for the timezone request.
+    def ensure_trip_destination_time_zones!(trip)
+      location = trip.trip_location.to_s.strip
+      return if location.blank?
+
+      missing = trip.trip_plans.where(place_time_zone_id: [nil, ""])
+      return unless missing.exists?
+
+      ref_date = trip.trip_start_date || missing.minimum(:date)
+      return unless ref_date
+
+      tz_id = timezone_id_for_location(location, ref_date)
+      return if tz_id.blank?
+
+      zone = Time.find_zone(tz_id)
+      missing.find_each do |tp|
+        attrs = { place_time_zone_id: tz_id }
+        if zone && tp.date.present?
+          d = tp.date
+          attrs[:timezone] = zone.local(d.year, d.month, d.day, 12, 0, 0).strftime("%Z").presence
+        end
+        tp.update!(attrs)
+      end
+    rescue StandardError => e
+      Rails.logger.warn("[GooglePlacesEnricher] ensure_trip_destination_time_zones!: #{e.message}")
+    end
+
     def timezone_id_for_location(location_query, reference_date)
       key = ENV.fetch("GOOGLE_MAPS_API_KEY", "").to_s.strip
       return nil if key.blank?

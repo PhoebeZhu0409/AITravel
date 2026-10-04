@@ -3312,6 +3312,14 @@ body.pico .who-am-i-page__name {
   border-radius: 12px;
 }
 
+.who-am-i-page__adventures + .who-am-i-page__bio {
+  margin-top: 1.5rem;
+}
+
+.who-am-i-page__adventures--last {
+  margin-top: 1.5rem;
+}
+
 /* ------------------------- footer css --------------------------- */
 body.pico > footer.site-footer {
   background-color: var(--bs-gray-300, #dee2e6);

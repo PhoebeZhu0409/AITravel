@@ -5,27 +5,24 @@ module ApplicationHelper
     request.user_agent.to_s.match?(/Android|iPhone|iPad|iPod/i)
   end
 
-  # Agenda "Time" column: start time only + zone abbreviation (e.g. "08:00 AM EST").
-  # Clock uses IANA zone from Google (place_time_zone_id) when present; else Rails Time.zone.
-  # Label prefers AI-stored trip_plan.timezone when set, else Ruby's %Z for that instant.
+  # Agenda "Time" column: local wall clock at the destination (AI times are local, not UTC).
+  # Uses Google IANA zone (place_time_zone_id) when set; otherwise shows time without a UTC label.
   def agenda_start_time_with_zone(trip_plan)
     return "" if trip_plan.start_time.blank? || trip_plan.date.blank?
 
     st = trip_plan.start_time
     d = trip_plan.date
+    hour, min, sec = st.hour, st.min, st.sec
     tz = Time.find_zone(trip_plan.place_time_zone_id) if trip_plan.place_time_zone_id.present?
-    tz ||= Time.zone
 
-    time_part, computed_zone =
-      if tz.present?
-        local = tz.local(d.year, d.month, d.day, st.hour, st.min, st.sec)
-        [local.strftime("%I:%M %p"), local.strftime("%Z").to_s.strip]
-      else
-        [st.strftime("%I:%M %p"), nil]
-      end
-
-    zone_label = trip_plan.timezone.to_s.strip.presence || computed_zone
-    zone_label.present? ? "#{time_part} #{zone_label}" : time_part
+    if tz.present?
+      local = tz.local(d.year, d.month, d.day, hour, min, sec)
+      time_part = local.strftime("%I:%M %p")
+      zone_label = trip_plan.timezone.to_s.strip.presence || local.strftime("%Z").to_s.strip
+      zone_label.present? ? "#{time_part} #{zone_label}" : time_part
+    else
+      Time.utc(2000, 1, 1, hour, min, sec).strftime("%I:%M %p")
+    end
   end
 
   # Short month + day (no year) for agenda day tabs — e.g. "Sept. 29"
