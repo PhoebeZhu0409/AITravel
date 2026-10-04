@@ -18,6 +18,7 @@
 #  trip_plan                :string
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
+#  place_google_id          :string
 #  place_time_zone_id       :string
 #  trip_id                  :integer
 #  user_id                  :integer
@@ -36,11 +37,11 @@ class TripPlan < ApplicationRecord
     "https://www.google.com/maps/search/?api=1&query=#{q}"
   end
 
-  # Opens Uber's website in a new tab with drop-off prefilled.
+  # Opens Uber via /go/uber so we can attach a Google Place id, then 303 to /go/pickup.
   def uber_dropoff_url
     return if plan_location.blank?
 
-    UberDropoffUrl.universal(**uber_dropoff_kwargs)
+    "/go/uber?#{uber_go_params.to_query}"
   end
 
   def uber_go_url
@@ -74,8 +75,21 @@ class TripPlan < ApplicationRecord
       address: plan_location,
       name: uber_nickname,
       lat: place_latitude,
-      lng: place_longitude
+      lng: place_longitude,
+      place_id: place_google_id
     }
+  end
+
+  def uber_go_params
+    h = { address: plan_location }
+    h[:name] = uber_nickname if uber_nickname.present?
+    if place_latitude.present? && place_longitude.present?
+      h[:lat] = format("%.7f", place_latitude.to_f)
+      h[:lng] = format("%.7f", place_longitude.to_f)
+    end
+    h[:place_id] = place_google_id if place_google_id.present?
+    h[:plan_id] = id
+    h
   end
 
   def uber_nickname

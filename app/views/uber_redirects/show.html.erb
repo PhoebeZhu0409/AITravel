@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Opening Uber</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem 1.25rem; color: #0f172a; text-align: center; }
+    a { color: #1d4ed8; }
+    p { line-height: 1.45; }
+  </style>
+</head>
+<body>
+  <p>Opening Uber…</p>
+  <p><a id="uber-app-link" href="<%= @app_url %>">Open in the Uber app</a></p>
+  <p><a id="uber-web-link" href="<%= @web_url %>">Continue on the Uber website</a></p>
+  <script>
+    (function () {
+      var appUrl = <%= raw @app_url.to_json %>;
+      var ulUrl = <%= raw @ul_url.to_json %>;
+      var webUrl = <%= raw @web_url.to_json %>;
+      var intentUrl = <%= raw @android_intent_url.to_json %>;
+      var android = /Android/i.test(navigator.userAgent);
+      var handedOff = false;
+
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden) handedOff = true;
+      });
+      window.addEventListener("pagehide", function () { handedOff = true; });
+      window.addEventListener("blur", function () { handedOff = true; });
+
+      if (android && intentUrl) {
+        window.location.replace(intentUrl);
+        setTimeout(function () {
+          if (!handedOff) window.location.replace(webUrl);
+        }, 1600);
+        return;
+      }
+
+      window.location.href = appUrl;
+      setTimeout(function () {
+        if (handedOff) return;
+        window.location.href = ulUrl;
+      }, 450);
+      setTimeout(function () {
+        if (handedOff) return;
+        window.location.replace(webUrl);
+      }, 1400);
+    })();
+  </script>
+</body>
+</html>

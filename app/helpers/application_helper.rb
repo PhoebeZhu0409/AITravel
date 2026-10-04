@@ -1,5 +1,10 @@
 module ApplicationHelper
   include Pagy::Frontend
+
+  def mobile_browser?
+    request.user_agent.to_s.match?(/Android|iPhone|iPad|iPod/i)
+  end
+
   # Agenda "Time" column: start time only + zone abbreviation (e.g. "08:00 AM EST").
   # Clock uses IANA zone from Google (place_time_zone_id) when present; else Rails Time.zone.
   # Label prefers AI-stored trip_plan.timezone when set, else Ruby's %Z for that instant.

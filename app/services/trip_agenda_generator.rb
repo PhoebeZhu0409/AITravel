@@ -90,7 +90,7 @@ class TripAgendaGenerator
       - The user message includes a "Notes:" line (form + textarea; any wording). Ignore noise or off-topic text. Prioritize normal destination must-sees and a balanced trip; use Notes only as a light preference layer on top.
       - If Notes mention a hobby, food preference, or similar, reflect it sparingly: a few fitting stops or occasional slots—not the same idea on most days, and never a single-topic trip unless the user explicitly demands it (only that, every day, whole trip about X).
       - start_time / end_time: local time at destination, 24-hour HH:MM.
-      - activity: Write one short factual sentence explaining what makes the specific place or experience distinctive or worth including; never repeat the activity or tell the user what to do, and never begin with an action verb. Use historical/cultural significance when relevant; otherwise give the most specific interesting fact about what makes it special. Avoid generic descriptions.
+      - activity: Explaining what makes the specific place or experience distinctive or worth including; never repeat the activity or begin with an action verb. Give the most specific interesting fact about what makes it special and use historical/cultural significance when relevant. Avoid generic descriptions.
       - plan_brief: max 4 words.
       - location: venue or place name + neighborhood or area + city (enough to find on Google Maps; do not invent street numbers).
       - commute: at most ONE short sentence (how to get from the previous stop or hotel). Mention tickets/reservations only if essential before arrival.

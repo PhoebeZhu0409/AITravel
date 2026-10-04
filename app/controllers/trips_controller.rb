@@ -86,7 +86,12 @@ class TripsController < ApplicationController
 
   def destroy
     @the_trip.destroy
-    redirect_to("/trips", { :notice => "Trip deleted successfully." })
+
+    if request.xhr? || request.format.json? || request.headers["Accept"].to_s.include?("application/json")
+      render json: { ok: true }
+    else
+      redirect_to("/", notice: "Trip deleted successfully.", status: :see_other)
+    end
   end
    #===================================================================================
 

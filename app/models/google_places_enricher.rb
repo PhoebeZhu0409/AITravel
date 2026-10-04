@@ -36,6 +36,7 @@ class GooglePlacesEnricher
       return unless cand
 
       trip_plan.place_display_name = cand["name"] if cand["name"].present?
+      trip_plan.place_google_id = cand["place_id"] if cand["place_id"].present?
       trip_plan.place_rating = cand["rating"] if cand.key?("rating")
       trip_plan.place_user_ratings_total = cand["user_ratings_total"] if cand.key?("user_ratings_total")
 
@@ -113,6 +114,32 @@ class GooglePlacesEnricher
       fetch_time_zone_id(lat, lng, reference_date, key)
     end
 
+    # Look up Google Place id + geometry for Uber dropoff links.
+    def find_place_details(query, location_bias: nil)
+      key = ENV.fetch("GOOGLE_MAPS_API_KEY", "").to_s.strip
+      return nil if key.blank?
+
+      q = query.to_s.strip
+      return nil if q.blank?
+
+      data = find_place_json(q, key, location_bias: location_bias)
+      return nil unless data && data["status"] == "OK"
+
+      cand = pick_best_candidate(q, data["candidates"])
+      return nil unless cand
+
+      {
+        place_id: cand["place_id"].presence,
+        name: cand["name"].presence,
+        formatted_address: cand["formatted_address"].presence,
+        lat: cand.dig("geometry", "location", "lat"),
+        lng: cand.dig("geometry", "location", "lng")
+      }.compact
+    rescue StandardError => e
+      Rails.logger.warn("[GooglePlacesEnricher] find_place_details: #{e.class}: #{e.message}")
+      nil
+    end
+
     private
 
     # IANA zone id, e.g. "America/New_York" — used for agenda start-time abbreviations (EST, etc.).
@@ -142,7 +169,7 @@ class GooglePlacesEnricher
       params = {
         input: query,
         inputtype: "textquery",
-        fields: "name,rating,user_ratings_total,photos,geometry",
+        fields: "place_id,name,formatted_address,rating,user_ratings_total,photos,geometry",
         key: key
       }
       if location_bias

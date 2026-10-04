@@ -69,7 +69,13 @@
               <%= app_link_to "Rebuild My Agenda", "/modify/#{@the_trip.id}", class: "btn-rebuild" %>
             <% end %>
 
-            <%= app_link_to "Delete This Trip", "/delete_trip/#{@the_trip.id}", class: "btn-delete" %>
+            <%= link_to "Delete This Trip",
+                "/delete_trip/#{@the_trip.id}",
+                class: "btn-delete",
+                data: {
+                  turbo: false,
+                  delete_confirm: "Delete “#{@the_trip.trip_name}”? This cannot be undone."
+                } %>
           </div>
         <% end %>
 
@@ -194,7 +200,7 @@
                           <% if (uber_href = a_day.uber_dropoff_url.presence) %>
                             <%= link_to "Uber there",
                                 uber_href,
-                                target: "_blank",
+                                target: (mobile_browser? ? "_self" : "_blank"),
                                 rel: "noopener noreferrer",
                                 class: "agenda-uber-link" %>
                           <% end %>

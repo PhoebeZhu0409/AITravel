@@ -12,7 +12,7 @@
       <li>
         <div class="trips-list-row">
           <%= app_link_to "/trips/#{a_trip.id}", class: "trips-list-col-name" do %>
-            📍 <%= a_trip.trip_name %>
+            <%= a_trip.trip_name %>
           <% end %>
           <span class="trips-list-col-trip-dates">
             <%= trip_display_date(a_trip.trip_start_date) if a_trip.trip_start_date.present? %>
@@ -20,12 +20,16 @@
           <time class="trips-list-col-created" datetime="<%= a_trip.created_at.iso8601 %>">
             <%= trip_display_date(a_trip.created_at.to_date) %>
           </time>
-          <%= app_link_to "×",
+          <%= link_to "×",
               "/delete_trip/#{a_trip.id}",
               class: "trips-list-delete",
               title: "Delete trip",
               aria: { label: "Delete #{a_trip.trip_name}" },
-              data: { confirm: "Delete “#{a_trip.trip_name}”? This cannot be undone." } %>
+              data: {
+                turbo: false,
+                delete_confirm: "Delete “#{a_trip.trip_name}”? This cannot be undone.",
+                delete_inplace: true
+              } %>
         </div>
       </li>
     <% end %>
