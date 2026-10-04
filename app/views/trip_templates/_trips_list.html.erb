@@ -1,5 +1,10 @@
-<%# locals: trips, list_id %>
-<div class="trips-list-wrap">
+<% empty_state = local_assigns[:empty_state] %>
+<div class="trips-list-wrap<%= " trips-list-wrap--empty" if trips.empty? %>">
+  <% if trips.empty? && empty_state == :future %>
+    <%= render "trip_templates/trips_empty_welcome" %>
+  <% elsif trips.empty? %>
+    <p class="trips-list-empty">No trips yet.</p>
+  <% else %>
   <ul id="<%= list_id %>" class="trips-list">
     <% trips.each do |a_trip| %>
       <li>
@@ -37,4 +42,5 @@
       </li>
     <% end %>
   </ul>
+  <% end %>
 </div>

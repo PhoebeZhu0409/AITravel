@@ -177,7 +177,12 @@
 
     <%= render "trip_templates/trips_list",
         trips: @future_trips,
-        list_id: "future-trips-list" %>
+        list_id: "future-trips-list",
+        empty_state: :future %>
+
+    <template id="future-trips-empty-template">
+      <%= render "trip_templates/trips_empty_welcome" %>
+    </template>
 
     <%= render "trip_templates/trips_pagination",
         pagy: @pagy_future,

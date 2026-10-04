@@ -9,6 +9,21 @@ import "avatar_upload"
 Turbo.session.drive = false
 
 document.addEventListener("click", function (event) {
+  const openPlan = event.target.closest("[data-nalu-open-plan]")
+  if (openPlan) {
+    event.preventDefault()
+    const planTab = document.getElementById("tab-plan")
+    if (planTab) {
+      planTab.click()
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    } else {
+      window.location.assign("/#plan")
+    }
+    return
+  }
+}, true)
+
+document.addEventListener("click", function (event) {
   const back = event.target.closest("a.web-back-link")
   if (back && window.history.length > 1) {
     event.preventDefault()
@@ -63,11 +78,13 @@ document.addEventListener("click", function (event) {
     dialog.id = "app-confirm-dialog"
     dialog.className = "app-confirm-dialog"
     dialog.innerHTML =
+      "<article>" +
       '<p class="app-confirm-dialog__msg"></p>' +
-      '<div class="app-confirm-dialog__actions">' +
-      '<button type="button" class="app-confirm-dialog__cancel">Cancel</button>' +
+      "<footer>" +
+      '<button type="button" class="secondary app-confirm-dialog__cancel">Cancel</button>' +
       '<button type="button" class="app-confirm-dialog__ok">Delete</button>' +
-      "</div>"
+      "</footer>" +
+      "</article>"
     document.body.appendChild(dialog)
   }
 
@@ -115,10 +132,16 @@ function deleteTripInPlace(link, href) {
     if (list && !list.querySelector("li")) {
       const wrap = list.closest(".trips-list-wrap")
       if (wrap) {
-        const empty = document.createElement("p")
-        empty.className = "trips-list-empty"
-        empty.textContent = "No trips yet."
-        wrap.replaceWith(empty)
+        const template = document.getElementById("future-trips-empty-template")
+        if (list.id === "future-trips-list" && template) {
+          wrap.classList.add("trips-list-wrap--empty")
+          wrap.replaceChildren(template.content.cloneNode(true))
+        } else {
+          const empty = document.createElement("p")
+          empty.className = "trips-list-empty"
+          empty.textContent = "No trips yet."
+          wrap.replaceChildren(empty)
+        }
       }
     }
   }).catch(function () {

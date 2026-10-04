@@ -1009,51 +1009,29 @@ body.pico article .trip-name-actions button.trip-name-cancel-btn {
   color: white;
 }
 
-.app-confirm-dialog {
-  border: none;
+/* Pico: <dialog> is the full-screen overlay; <article> is the centered card. */
+dialog.app-confirm-dialog > article {
+  max-width: min(20rem, calc(100vw - 2rem));
   border-radius: 12px;
-  padding: 1.1rem 1.15rem 0.95rem;
-  max-width: 18rem;
-  width: calc(100% - 2rem);
   box-shadow: 0 12px 40px rgba(15, 23, 42, 0.22);
+}
+
+dialog.app-confirm-dialog .app-confirm-dialog__msg {
+  margin: 0 0 0.85rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
   color: #0f172a;
 }
 
-.app-confirm-dialog::backdrop {
-  background: rgba(15, 23, 42, 0.45);
-}
-
-.app-confirm-dialog__msg {
-  margin: 0 0 1rem;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-.app-confirm-dialog__actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-}
-
-.app-confirm-dialog__cancel,
-.app-confirm-dialog__ok {
-  appearance: none;
-  border-radius: 8px;
-  padding: 0.35rem 0.75rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.app-confirm-dialog__cancel {
-  border: 1px solid #cbd5e1;
-  background: #fff;
-  color: #475569;
-}
-
-.app-confirm-dialog__ok {
-  border: none;
+body.pico dialog.app-confirm-dialog > article > footer button.app-confirm-dialog__ok {
   background: #ff4d4f;
+  border-color: #ff4d4f;
+  color: #fff;
+}
+
+body.pico dialog.app-confirm-dialog > article > footer button.app-confirm-dialog__ok:hover {
+  background: #e64547;
+  border-color: #e64547;
   color: #fff;
 }
 
@@ -1719,6 +1697,67 @@ nav[aria-label="breadcrumb"] + hr {
   margin: 0.75rem 0 0;
   color: #64748b;
   font-size: 0.95rem;
+}
+
+#home-panel-future:has(.trips-empty-welcome) .home-tab-hero,
+#home-panel-future:has(.trips-empty-welcome) article > header {
+  display: none;
+}
+
+.trips-empty-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.5rem 1.25rem 2rem;
+  color: #0f172a;
+}
+
+.trips-empty-welcome__title {
+  margin: 0 0 0.85rem;
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.trips-empty-welcome__text {
+  margin: 0 0 1.25rem;
+  max-width: 22rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: #334155;
+}
+
+.trips-empty-welcome__art {
+  width: min(12rem, 70vw);
+  margin: 0 0 1.75rem;
+  color: #007aff;
+}
+
+.trips-empty-welcome__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+body.pico button.trips-empty-welcome__cta {
+  width: min(100%, 20rem);
+  margin: 0;
+  padding: 0.85rem 1.25rem;
+  border: none;
+  border-radius: 999px;
+  background: #007aff;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+body.pico button.trips-empty-welcome__cta:hover,
+body.pico button.trips-empty-welcome__cta:active {
+  background: #0066d6;
+  color: #fff;
 }
 
 body.pico article .trips-list li {
