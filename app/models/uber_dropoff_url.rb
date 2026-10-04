@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# Ride-request links that actually prefill dropoff on phones.
-# Nested drop[0] JSON on /looking is ignored in the Uber mobile webview.
+# Uber website ride page with destination in the query string.
+# /looking and /ul/ are app universal links and often drop the destination.
 class UberDropoffUrl
   def self.universal(address:, name: nil, lat: nil, lng: nil)
     new(address: address, name: name, lat: lat, lng: lng).universal
@@ -19,11 +19,22 @@ class UberDropoffUrl
   end
 
   def universal
-    "https://m.uber.com/ul/?#{query_string(universal_query)}"
+    "https://m.uber.com/go/product-selection?#{web_query}"
   end
 
   def app
     "uber://riderequest?#{query_string(app_query)}"
+  end
+
+  def location_payload
+    loc = {}
+    if has_coords?
+      loc["latitude"] = @lat.to_f
+      loc["longitude"] = @lng.to_f
+    end
+    loc["addressLine1"] = @name.presence || @address
+    loc["addressLine2"] = @address
+    loc
   end
 
   private
@@ -32,36 +43,28 @@ class UberDropoffUrl
     @lat.present? && @lng.present?
   end
 
-  def universal_query
+  def web_query
+    parts = []
+    drop = location_payload
+    drop.each do |key, value|
+      parts << "drop%5B0%5D%5B#{ERB::Util.url_encode(key)}%5D=#{ERB::Util.url_encode(value.to_s)}"
+    end
+    parts << "drop%5B0%5D=#{ERB::Util.url_encode(JSON.generate(drop))}"
+    parts.join("&")
+  end
+
+  def app_query
     q = {
       "action" => "setPickup",
       "pickup" => "my_location",
       "dropoff[formatted_address]" => @address
     }
-    q["client_id"] = ENV["UBER_CLIENT_ID"].to_s.strip if ENV["UBER_CLIENT_ID"].to_s.strip.present?
-    add_coords_and_name!(q)
-    q
-  end
-
-  def app_query
-    q = {
-      "pickup" => "my_location",
-      "dropoff[formatted_address]" => @address
-    }
-    add_coords_and_name!(q)
-    q
-  end
-
-  def add_coords_and_name!(q)
-    if has_coords?
-      q["dropoff[latitude]"] = format_coord(@lat)
-      q["dropoff[longitude]"] = format_coord(@lng)
-    end
     q["dropoff[nickname]"] = @name if @name.present?
-  end
-
-  def format_coord(value)
-    format("%.7f", value.to_f)
+    if has_coords?
+      q["dropoff[latitude]"] = format("%.7f", @lat.to_f)
+      q["dropoff[longitude]"] = format("%.7f", @lng.to_f)
+    end
+    q
   end
 
   def query_string(query)

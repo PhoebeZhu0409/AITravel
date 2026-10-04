@@ -36,15 +36,15 @@ class TripPlan < ApplicationRecord
     "https://www.google.com/maps/search/?api=1&query=#{q}"
   end
 
-  # Opens Uber with drop-off prefilled — mobile app, mobile web, or desktop browser.
+  # Opens Uber's website in a new tab with drop-off prefilled.
   def uber_dropoff_url
-    uber_go_url
+    return if plan_location.blank?
+
+    UberDropoffUrl.universal(**uber_dropoff_kwargs)
   end
 
   def uber_go_url
-    return if plan_location.blank?
-
-    "/go/uber?#{uber_go_params.to_query}"
+    uber_dropoff_url
   end
 
   def uber_dropoff_app_url
@@ -68,16 +68,6 @@ class TripPlan < ApplicationRecord
   end
 
   private
-
-  def uber_go_params
-    h = { address: plan_location }
-    h[:name] = uber_nickname if uber_nickname.present?
-    if place_latitude.present? && place_longitude.present?
-      h[:lat] = format("%.7f", place_latitude.to_f)
-      h[:lng] = format("%.7f", place_longitude.to_f)
-    end
-    h
-  end
 
   def uber_dropoff_kwargs
     {

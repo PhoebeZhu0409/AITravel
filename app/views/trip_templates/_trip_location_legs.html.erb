@@ -14,10 +14,14 @@
   </div>
 
   <div class="trip-date-row trip-date-row--flat">
-    <label class="trip-date-field-label" for="trip_start_date_box">From</label>
-    <label class="trip-date-field-label" for="trip_end_date_box">To</label>
-    <input type="date" class="trip-date-row__control" id="trip_start_date_box" name="query_trip_start_date" value="<%= tf["query_trip_start_date"] %>">
-    <input type="date" class="trip-date-row__control" id="trip_end_date_box" name="query_trip_end_date" value="<%= local_assigns[:trip_end_value] || tf["query_trip_end_date"] %>">
+    <div class="trip-date-field">
+      <label class="trip-date-field-label" for="trip_start_date_box">From</label>
+      <input type="date" class="trip-date-row__control" id="trip_start_date_box" name="query_trip_start_date" value="<%= tf["query_trip_start_date"] %>">
+    </div>
+    <div class="trip-date-field">
+      <label class="trip-date-field-label" for="trip_end_date_box">To</label>
+      <input type="date" class="trip-date-row__control" id="trip_end_date_box" name="query_trip_end_date" value="<%= local_assigns[:trip_end_value] || tf["query_trip_end_date"] %>">
+    </div>
   </div>
 
   <div class="trip-add-location-wrap">
@@ -46,11 +50,15 @@
 
   <input type="hidden" id="trip_start_date_box_2" name="query_trip_start_date_2" value="<%= tf["query_trip_start_date_2"] %>">
   <div class="trip-date-row trip-date-row--flat">
-    <label class="trip-date-field-label" id="trip_from_label_2" for="trip_start_date_display_2">From</label>
-    <label class="trip-date-field-label" for="trip_end_date_box_2">To</label>
-    <div class="trip-leg-from-display trip-date-row__control" id="trip_start_date_display_2" role="text" aria-labelledby="trip_from_label_2" title="Starts the day after the first location ends">
-      <%= tf["query_trip_start_date_2"].presence || "—" %>
+    <div class="trip-date-field">
+      <label class="trip-date-field-label" id="trip_from_label_2" for="trip_start_date_display_2">From</label>
+      <div class="trip-leg-from-display trip-date-row__control" id="trip_start_date_display_2" role="text" aria-labelledby="trip_from_label_2" title="Starts the day after the first location ends">
+        <%= tf["query_trip_start_date_2"].presence || "—" %>
+      </div>
     </div>
-    <input type="date" class="trip-date-row__control" id="trip_end_date_box_2" name="query_trip_end_date_2" value="<%= tf["query_trip_end_date_2"] %>">
+    <div class="trip-date-field">
+      <label class="trip-date-field-label" for="trip_end_date_box_2">To</label>
+      <input type="date" class="trip-date-row__control" id="trip_end_date_box_2" name="query_trip_end_date_2" value="<%= tf["query_trip_end_date_2"] %>">
+    </div>
   </div>
 </div>

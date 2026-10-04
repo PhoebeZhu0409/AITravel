@@ -17,6 +17,7 @@ class UberRedirectsController < ApplicationController
       lat: params[:lat],
       lng: params[:lng]
     )
-    redirect_to(url, allow_other_host: true, status: :see_other)
+    response.set_header("Location", url)
+    head :see_other
   end
 end
