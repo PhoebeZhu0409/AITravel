@@ -19,7 +19,8 @@
           <% end %>
           <div class="trips-card-aside">
             <time class="trips-card-created" datetime="<%= a_trip.created_at.iso8601 %>">
-              Created on <%= trip_display_date(a_trip.created_at.to_date) %>
+              <span class="trips-card-created-label">Created on</span>
+              <span class="trips-card-created-date"><%= trip_display_date(a_trip.created_at.to_date) %></span>
             </time>
           </div>
           <%= link_to "×",

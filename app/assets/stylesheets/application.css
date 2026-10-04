@@ -1788,6 +1788,7 @@ body.pico img.trips-card-thumb {
   flex-direction: column;
   gap: 0.2rem;
   min-width: 0;
+  flex: 1;
 }
 
 .trips-card-name {
@@ -1817,6 +1818,39 @@ body.pico img.trips-card-thumb {
   white-space: nowrap;
   line-height: 1.2;
   text-align: right;
+}
+
+.trips-card-created-label,
+.trips-card-created-date {
+  display: inline;
+}
+
+@media (max-width: 640px) {
+  .trips-card-name {
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: normal;
+  }
+
+  .trips-card-aside {
+    min-width: 0;
+    flex-shrink: 1;
+  }
+
+  .trips-card-created {
+    white-space: normal;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.1rem;
+  }
+
+  .trips-card-created-label,
+  .trips-card-created-date {
+    display: block;
+  }
 }
 
 body.pico a.trips-list-delete,
