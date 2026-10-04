@@ -301,7 +301,7 @@
       errors.push("Please enter a valid trip end date.");
     }
 
-    if (start && start <= today) {
+    if (start && start < today) {
       errors.push("Trip start date cannot be in the past");
     }
 

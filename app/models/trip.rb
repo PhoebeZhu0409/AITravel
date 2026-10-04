@@ -33,7 +33,7 @@ class Trip < ApplicationRecord
             numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: MAX_TRIP_DURATION_DAYS }
   validates :trip_location, presence: true
   validates :trip_name, presence: true
-  validates :trip_start_date, presence: true, comparison: { greater_than: Date.today, message: "cannot be in the past"}
+  validates :trip_start_date, presence: true, comparison: { greater_than_or_equal_to: -> { Date.current }, message: "cannot be in the past" }
   validates :showcase_slug, inclusion: { in: SHOWCASE_SLUGS }, allow_nil: true
   validates :showcase_slug, uniqueness: true, allow_nil: true
 
