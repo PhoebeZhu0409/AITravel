@@ -35,7 +35,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="pico" data-agenda-generating="<%= @agenda_generating == true ? 'true' : 'false' %>"<%= " data-trip-id=\"#{@the_trip.id}\"".html_safe if defined?(@the_trip) && @the_trip.present? %>>
+  <body class="pico" data-agenda-generating="<%= @agenda_generating == true ? 'true' : 'false' %>"<%= " data-trip-id=\"#{@the_trip.id}\"".html_safe if defined?(@the_trip) && @the_trip.present? %><% if generation_quota_exhausted? %> data-controller="modal"<% if generation_limit_auto_open? %> data-modal-auto-open-value="true"<% end %><% end %>>
     <header>
       <div class="container-two-thirds">
         <nav>
@@ -90,7 +90,7 @@
 
     <div class="footer-col">
       <h4>ABOUT ME</h4>
-      <a href="https://link-in-bio-ye19.onrender.com/">Who am I</a>
+      <%= app_link_to "Who am I", who_am_i_path %>
       <a href="https://link-in-bio-ye19.onrender.com/">Contact me</a>
     </div>
 
@@ -611,5 +611,6 @@ function initItineraryMaps() {
   async defer>
 </script>
 
+    <%= render "shared/generation_limit_modal" if generation_quota_exhausted? %>
   </body>
 </html>

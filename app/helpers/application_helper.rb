@@ -173,6 +173,21 @@ module ApplicationHelper
     "this.onerror=null;this.src='#{safe_fallback}';"
   end
 
+  def generation_quota_exhausted?
+    user_signed_in? && !current_user.premium? && !current_user.can_generate_trip?
+  end
+
+  def generation_limit_auto_open?
+    return false unless generation_quota_exhausted?
+
+    path = request.path
+    path == "/" || path == "/trips" || path.start_with?("/modify/")
+  end
+
+  def nalu_contact_mailto
+    "mailto:phoebezhu1611@gmail.com?subject=#{ERB::Util.url_encode("Nalu — more trip generations")}"
+  end
+
   # DB may say attached after a deploy when the disk file was wiped (Render local storage).
   def active_storage_file_available?(attachment)
     return false unless attachment.attached?

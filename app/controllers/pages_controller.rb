@@ -16,6 +16,10 @@ class PagesController < ApplicationController
     render({ :template => "trip_templates/privacy_policy" })
   end
 
+  def who_am_i
+    render({ :template => "pages/who_am_i" })
+  end
+
   def showcase_madrid
     render_showcase_trip("madrid", showcase_madrid_pdf_path)
   end

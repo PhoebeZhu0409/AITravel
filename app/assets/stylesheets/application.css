@@ -1012,6 +1012,9 @@ body.pico article .trip-name-actions button.trip-name-cancel-btn {
 .btn-rebuild {
   background-color: #007bff;
   color: white;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
 }
 .btn-rebuild:hover {
   background-color: #0063cc;
@@ -1037,16 +1040,29 @@ body.pico article .trip-name-actions button.trip-name-cancel-btn {
   color: #0f172a;
 }
 
-/* Rebuild disabled when regular user hits 6-month generation cap */
-span.btn-rebuild--disabled {
+/* Rebuild as <button> when generation cap is hit — beat Pico's default button chrome */
+body.pico .trip-actions button.btn-rebuild[type="button"] {
   display: inline-block;
-  cursor: not-allowed;
-  opacity: 0.55;
-  background-color: #94a3b8;
-  color: #f8fafc;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0.3rem 0.8rem;
+  border: 0;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: #fff;
+  font-weight: 300;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  box-shadow: none;
 }
-span.btn-rebuild--disabled:hover {
-  background-color: #94a3b8;
+
+body.pico .trip-actions button.btn-rebuild[type="button"]:hover,
+body.pico .trip-actions button.btn-rebuild[type="button"]:active,
+body.pico .trip-actions button.btn-rebuild[type="button"]:focus {
+  background-color: #0063cc;
+  color: #fff;
+  box-shadow: none;
 }
 
 /* Trip generation quota (optional boxed default — most UI uses --plain) */
@@ -1074,6 +1090,33 @@ span.btn-rebuild--disabled:hover {
 
 .trip-generation-quota.trip-generation-quota--plain.trip-generation-quota--plain-warn {
   color: #f87171;
+}
+
+button.generation-quota-open {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: inherit;
+  color: inherit;
+  text-align: left;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+dialog.generation-limit-dialog article {
+  max-width: 28rem;
+}
+
+dialog.generation-limit-dialog p {
+  margin: 0 0 0.85rem;
+  line-height: 1.5;
+}
+
+a.generation-limit-contact {
+  display: inline-block;
 }
 
 .trip-generating-notice {
@@ -3038,6 +3081,51 @@ a.place-card-link:hover .place-name {
     height: 220px;
     margin-top: 0.75rem;
   }
+}
+
+/* ------------------------- Who am I --------------------------- */
+.who-am-i-page {
+  max-width: 36rem;
+  margin: 1.5rem auto 3rem;
+  text-align: center;
+}
+
+.who-am-i-page__portrait {
+  display: block;
+  width: 7.5rem;
+  height: 7.5rem;
+  margin: 0 auto 1.25rem;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+body.pico .who-am-i-page__name {
+  margin: 0 0 0.35rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+}
+
+.who-am-i-page__place {
+  margin: 0 0 1.25rem;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.who-am-i-page__bio {
+  margin: 0 auto 1.75rem;
+  max-width: 32rem;
+  line-height: 1.65;
+  color: #334155;
+  text-align: center;
+}
+
+.who-am-i-page__adventures {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
 }
 
 /* ------------------------- footer css --------------------------- */

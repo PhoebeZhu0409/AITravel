@@ -1,0 +1,14 @@
+<dialog class="generation-limit-dialog" data-modal-target="dialog" aria-labelledby="generation-limit-title">
+  <article>
+    <header>
+      <button type="button" aria-label="Close" rel="prev" data-action="click->modal#close"></button>
+      <h3 id="generation-limit-title">Uh oh 🥲</h3>
+    </header>
+    <p>You’ve used all your free generations (<%= User::REGULAR_GENERATION_LIMIT %> every 6 months).</p>
+    <p>If you’d like to keep planning with Nalu, email Phoebe — tap Contact Phoebe.</p>
+    <footer>
+      <button type="button" class="secondary" data-action="click->modal#close">Close</button>
+      <%= link_to "Contact Phoebe", nalu_contact_mailto, class: "generation-limit-contact" %>
+    </footer>
+  </article>
+</dialog>

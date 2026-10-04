@@ -25,7 +25,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   ACCOUNT_TIERS = %w[regular premium].freeze
-  REGULAR_GENERATION_LIMIT = 10
+  REGULAR_GENERATION_LIMIT = 15
   GENERATION_WINDOW = 6.months
 
   has_many  :trip_plans, class_name: "TripPlan", foreign_key: "user_id"

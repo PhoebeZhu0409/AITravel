@@ -60,11 +60,11 @@
       <div class="trip-actions">
         <% unless @trip_show_public_demo %>
           <div class="trip-actions__primary">
-            <% rebuild_blocked = !current_user.premium? && !current_user.can_generate_trip? %>
+            <% rebuild_blocked = generation_quota_exhausted? %>
             <% if rebuild_blocked %>
-              <span class="btn-rebuild btn-rebuild--disabled" aria-disabled="true" title="Generation limit reached for regular accounts">
+              <button type="button" class="btn-rebuild" data-action="click->modal#open">
                 Rebuild My Agenda
-              </span>
+              </button>
             <% else %>
               <%= app_link_to "Rebuild My Agenda", "/modify/#{@the_trip.id}", class: "btn-rebuild" %>
             <% end %>

@@ -149,8 +149,8 @@ class TripsController < ApplicationController
   private
 
   def trip_generation_limit_message
-    "Regular accounts can generate or rebuild up to #{User::REGULAR_GENERATION_LIMIT} trips every " \
-      "6 months. You have reached that limit. Contact support or upgrade to premium for unlimited generations."
+    "Uh oh 🥲 — you’ve used all your free generations (#{User::REGULAR_GENERATION_LIMIT} every 6 months). " \
+      "If you’d like to keep planning with Nalu, email Phoebe — tap Contact Phoebe."
   end
 
   def set_owned_trip

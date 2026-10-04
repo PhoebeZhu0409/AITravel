@@ -130,10 +130,16 @@
 
       </article>
 
-      <% plan_quota_full = user_signed_in? && !current_user.premium? && !current_user.can_generate_trip? %>
-      <button type="submit"<%= " disabled aria-disabled=\"true\"".html_safe if plan_quota_full %>>
-        Build agenda for my trip!
-      </button>
+      <% plan_quota_full = generation_quota_exhausted? %>
+      <% if plan_quota_full %>
+        <button type="button" data-action="click->modal#open">
+          Build agenda for my trip!
+        </button>
+      <% else %>
+        <button type="submit">
+          Build agenda for my trip!
+        </button>
+      <% end %>
     </form>
 
 
@@ -150,7 +156,9 @@
           </p>
         <% else %>
           <p class="trip-generation-quota trip-generation-quota--plain trip-generation-quota--plain-warn" role="status">
-            You have run out of <%= User::REGULAR_GENERATION_LIMIT %> free trip generations within the last 6 months.
+            <button type="button" class="generation-quota-open" data-action="click->modal#open">
+              You’ve used all your free generations (<%= User::REGULAR_GENERATION_LIMIT %> every 6 months).
+            </button>
           </p>
         <% end %>
       <% end %>

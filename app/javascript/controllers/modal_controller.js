@@ -40,7 +40,10 @@ export default class extends Controller {
   // Stimulus values - configurable options for the controller
   // closeOnBackdrop: whether clicking outside the modal closes it (default: true)
   // Can be set in HTML with data-modal-close-on-backdrop-value="false"
-  static values = { closeOnBackdrop: { type: Boolean, default: true } }
+  static values = {
+    closeOnBackdrop: { type: Boolean, default: true },
+    autoOpen: { type: Boolean, default: false }
+  }
   
   // Called when the controller is connected to the DOM
   connect() {
@@ -48,6 +51,10 @@ export default class extends Controller {
     // This ensures we can properly remove these exact listeners later
     this._boundHandleBackdrop = this._handleBackdrop.bind(this)
     this._boundHandleCancel = this._handleCancel.bind(this)
+
+    if (this.autoOpenValue) {
+      requestAnimationFrame(() => this.open())
+    }
   }
 
   // Opens the modal - triggered by data-action="click->modal#open"
