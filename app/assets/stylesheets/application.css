@@ -1306,7 +1306,7 @@ body.pico .trip-leg-from-display.trip-date-row__control {
 .trip-add-location-wrap {
   display: flex;
   justify-content: flex-start;
-  margin: 0.25rem 0 0.85rem;
+  margin: 1.15rem 0 1rem;
 }
 
 .trip-add-location-btn,
@@ -1318,8 +1318,8 @@ body.pico .trip-leg-from-display.trip-date-row__control {
 }
 
 .trip-add-location-btn {
-  border: 1px solid #cbd5e1;
-  background: transparent;
+  border: 1px solid #d1d5db;
+  background: #e5e7eb;
   color: #64748b;
   font-size: 0.75rem;
   font-weight: 500;
@@ -1331,8 +1331,8 @@ body.pico .trip-leg-from-display.trip-date-row__control {
 
 .trip-add-location-btn:hover {
   color: #475569;
-  border-color: #94a3b8;
-  background: #f8fafc;
+  border-color: #cbd5e1;
+  background: #d1d5db;
 }
 
 body.pico .trip-add-location-wrap button.trip-add-location-btn[type="button"] {
@@ -1350,8 +1350,8 @@ body.pico .trip-add-location-wrap button.trip-add-location-btn[type="button"] {
   font-weight: 500 !important;
   line-height: 1.2 !important;
   white-space: nowrap !important;
-  background: transparent !important;
-  border: 1px solid #cbd5e1 !important;
+  background: #e5e7eb !important;
+  border: 1px solid #d1d5db !important;
   border-radius: 999px !important;
   color: #64748b !important;
   box-shadow: none !important;
@@ -1360,8 +1360,8 @@ body.pico .trip-add-location-wrap button.trip-add-location-btn[type="button"] {
 body.pico .trip-add-location-wrap button.trip-add-location-btn[type="button"]:hover,
 body.pico .trip-add-location-wrap button.trip-add-location-btn[type="button"]:active,
 body.pico .trip-add-location-wrap button.trip-add-location-btn[type="button"]:focus {
-  background: #f8fafc !important;
-  border-color: #94a3b8 !important;
+  background: #d1d5db !important;
+  border-color: #cbd5e1 !important;
   color: #475569 !important;
   box-shadow: none !important;
 }
@@ -1706,30 +1706,13 @@ nav[aria-label="breadcrumb"] + hr {
   margin-top: 0.5rem;
 }
 
-.trips-list-header {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) 1.4rem;
-  gap: 0.5rem 0.65rem;
-  align-items: end;
-  padding: 0.35rem 0.5rem 0.5rem;
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.trips-list-header .trips-list-col-trip-dates,
-.trips-list-header .trips-list-col-created {
-  text-align: center;
-  line-height: 1.25;
-  white-space: normal;
-}
-
 .trips-list {
   list-style: none;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .trips-list-empty {
@@ -1748,104 +1731,123 @@ body.pico article .trips-list li::marker {
 }
 
 .trips-list li {
-  border-top: 1px solid #e5e7eb;
+  border: none;
 }
 
-.trips-list li:last-child {
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.trips-list-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) 1.4rem;
-  gap: 0.5rem 0.65rem;
+.trips-card {
+  position: relative;
+  display: flex;
   align-items: center;
-  padding: 0.75rem 0.5rem;
+  gap: 0.65rem;
+  padding: 0.85rem 1.85rem 0.65rem 0.65rem;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.trips-card-main {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  flex: 1;
+  text-decoration: none;
   color: inherit;
 }
 
-a.trips-list-col-name:hover {
-  color: #1d4ed8;
+a.trips-card-main:hover {
+  text-decoration: none;
+  color: inherit;
 }
 
-.trips-list-col-name {
+.trips-card-thumb {
+  width: 4.5rem;
+  height: 4.5rem;
+  min-width: 4.5rem;
+  min-height: 4.5rem;
+  max-width: 4.5rem;
+  max-height: 4.5rem;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 14px;
+  flex-shrink: 0;
+  background: #e2e8f0;
+}
+
+body.pico img.trips-card-thumb {
+  width: 4.5rem !important;
+  height: 4.5rem !important;
+  max-width: 4.5rem !important;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.trips-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
   min-width: 0;
-  font-weight: 500;
+}
+
+.trips-card-name {
+  font-weight: 700;
+  font-size: 1rem;
   color: #0f172a;
-  text-decoration: none;
+  line-height: 1.25;
   overflow-wrap: break-word;
 }
 
-.trips-list-col-trip-dates {
-  min-width: 0;
+.trips-card-date {
   font-size: 0.8125rem;
-  color: #64748b;
-  text-align: center;
+  color: #94a3b8;
   line-height: 1.3;
 }
 
-.trips-list-col-created {
-  min-width: 0;
-  font-size: 0.8125rem;
-  color: #64748b;
-  white-space: normal;
-  text-align: center;
-  line-height: 1.3;
+.trips-card-aside {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
 }
 
-.trips-list-col-delete {
-  width: 1.4rem;
+.trips-card-created {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  line-height: 1.2;
+  text-align: right;
 }
 
 body.pico a.trips-list-delete,
 a.trips-list-delete {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.5rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.2rem;
-  height: 1.2rem;
+  width: auto;
+  height: auto;
   padding: 0;
-  border-radius: 5px;
-  background-color: #ff4d4f;
-  color: #fff;
-  font-size: 0.8rem;
-  font-weight: 600;
+  border: none;
+  border-radius: 0;
+  background: none;
+  background-color: transparent;
+  color: #94a3b8;
+  font-size: 1.05rem;
+  font-weight: 400;
   line-height: 1;
   text-decoration: none;
   white-space: nowrap;
-  justify-self: end;
 }
 
 body.pico a.trips-list-delete:hover,
 a.trips-list-delete:hover {
-  background-color: #d9363e;
-  color: #fff;
+  background: none;
+  background-color: transparent;
+  color: #64748b;
   text-decoration: none;
-}
-
-@media (max-width: 520px) {
-  .trips-list-header,
-  .trips-list-row {
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr) 1.35rem;
-    gap: 0.35rem 0.4rem;
-  }
-
-  .trips-list-header {
-    font-size: 0.62rem;
-    letter-spacing: 0.03em;
-    padding-left: 0.35rem;
-    padding-right: 0.35rem;
-  }
-
-  .trips-list-row {
-    padding: 0.65rem 0.35rem;
-  }
-
-  .trips-list-col-name,
-  .trips-list-col-trip-dates,
-  .trips-list-col-created {
-    font-size: 0.75rem;
-  }
 }
 
 .trips-pagination {

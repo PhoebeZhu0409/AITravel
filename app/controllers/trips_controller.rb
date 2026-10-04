@@ -4,7 +4,7 @@ class TripsController < ApplicationController
 
   #====================   Plan A Trip: Plan Page, Future Trips, Past Trips ================= 
   def index
-    matching_trips = current_user.trips
+    matching_trips = current_user.trips.with_attached_location_hero
 
     future_scope = matching_trips
       .where(trip_start_date: (Date.today...))

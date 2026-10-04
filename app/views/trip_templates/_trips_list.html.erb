@@ -1,25 +1,27 @@
 <%# locals: trips, list_id %>
 <div class="trips-list-wrap">
-  <div class="trips-list-header">
-    <span class="trips-list-col-name" aria-hidden="true"></span>
-    <span class="trips-list-col-trip-dates">Trip start</span>
-    <span class="trips-list-col-created">Created on</span>
-    <span class="trips-list-col-delete" aria-hidden="true"></span>
-  </div>
-
   <ul id="<%= list_id %>" class="trips-list">
     <% trips.each do |a_trip| %>
       <li>
-        <div class="trips-list-row">
-          <%= app_link_to "/trips/#{a_trip.id}", class: "trips-list-col-name" do %>
-            <%= a_trip.trip_name %>
+        <div class="trips-card">
+          <%= app_link_to "/trips/#{a_trip.id}", class: "trips-card-main" do %>
+            <img
+              class="trips-card-thumb"
+              src="<%= trip_show_hero_src(a_trip) %>"
+              alt=""
+              onerror="<%= trip_hero_image_onerror %>">
+            <span class="trips-card-body">
+              <span class="trips-card-name"><%= a_trip.trip_name %></span>
+              <% if a_trip.trip_start_date.present? %>
+                <span class="trips-card-date"><%= trip_display_date(a_trip.trip_start_date) %></span>
+              <% end %>
+            </span>
           <% end %>
-          <span class="trips-list-col-trip-dates">
-            <%= trip_display_date(a_trip.trip_start_date) if a_trip.trip_start_date.present? %>
-          </span>
-          <time class="trips-list-col-created" datetime="<%= a_trip.created_at.iso8601 %>">
-            <%= trip_display_date(a_trip.created_at.to_date) %>
-          </time>
+          <div class="trips-card-aside">
+            <time class="trips-card-created" datetime="<%= a_trip.created_at.iso8601 %>">
+              Created on <%= trip_display_date(a_trip.created_at.to_date) %>
+            </time>
+          </div>
           <%= link_to "×",
               "/delete_trip/#{a_trip.id}",
               class: "trips-list-delete",
