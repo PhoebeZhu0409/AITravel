@@ -2282,6 +2282,25 @@ body.pico main .home-tabs .home-tab.home-tab--active:hover {
   display: none !important;
 }
 
+/* First paint: match URL hash before home-tab JS runs (native app tab loads). */
+html[data-home-tab="future"] #home-panel-plan,
+html[data-home-tab="past"] #home-panel-plan,
+html[data-home-tab="saved"] #home-panel-plan {
+  display: none !important;
+}
+
+html[data-home-tab="future"] #home-panel-future,
+html[data-home-tab="past"] #home-panel-past,
+html[data-home-tab="saved"] #home-panel-saved {
+  display: block !important;
+}
+
+html[data-home-tab="future"] #home-panel-future[hidden],
+html[data-home-tab="past"] #home-panel-past[hidden],
+html[data-home-tab="saved"] #home-panel-saved[hidden] {
+  display: block !important;
+}
+
 .home-tab-panel {
   margin-bottom: 0.5rem;
 }
