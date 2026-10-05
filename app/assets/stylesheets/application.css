@@ -1742,10 +1742,21 @@ nav[aria-label="breadcrumb"] + hr {
 
 .home-panel-heading h2 {
   margin: 0;
+  font-size: 1.3125rem;
 }
 
 body.pico article .home-panel-heading h2 {
   margin: 0;
+  --pico-font-size: 1.3125rem;
+  font-size: 1.3125rem;
+}
+
+.agenda-section-heading,
+body.pico .agenda-section-heading {
+  --pico-font-size: 1.3125rem;
+  font-size: 1.3125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 body.pico article button.saved-spots-jump {
@@ -2193,54 +2204,6 @@ body.pico .trip-notes-section label {
   outline: none;
   border-color: #6bb8e6;
   box-shadow: 0 0 0 2px rgba(107, 184, 230, 0.25);
-}
-
-/* ----- Plan A Trip heading ----- */
-.plan-mode-nav {
-  margin: 0.75rem 0 1.25rem;
-}
-
-.plan-mode-nav__tabs {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 1.75rem;
-}
-
-body.pico .plan-mode-nav__tab {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 1rem;
-  font-weight: 400;
-  color: #64748b;
-  text-decoration: none !important;
-  padding: 0;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-body.pico span.plan-mode-nav__tab {
-  cursor: default;
-}
-
-body.pico .plan-mode-nav__tab--active,
-body.pico .plan-mode-nav__tab[aria-current="page"] {
-  font-weight: 700;
-  color: #0f172a;
-  text-decoration: none !important;
-}
-
-.plan-mode-nav__caret {
-  display: block;
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 7px solid #0f172a;
 }
 
 /* ----- Home index: trip section tabs ----- */
@@ -3156,7 +3119,7 @@ body.pico article select.saved-spots-city-filter {
 .saved-spots-city-heading {
   margin: 1.15rem 0 0.1rem;
   padding: 0 0.15rem;
-  font-size: 0.95rem;
+  font-size: 1.3125rem;
   font-weight: 700;
   color: #0f172a;
   letter-spacing: 0.01em;
@@ -3164,6 +3127,8 @@ body.pico article select.saved-spots-city-filter {
 
 body.pico article .saved-spots-city-heading {
   margin: 1.15rem 0 0.1rem;
+  --pico-font-size: 1.3125rem;
+  font-size: 1.3125rem;
 }
 
 .saved-spots-city-group:first-of-type .saved-spots-city-heading,
@@ -3184,7 +3149,7 @@ body.pico article .saved-spots-city-group:first-of-type .saved-spots-city-headin
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 0.75rem;
 }
 
 body.pico article .saved-spots-list li {
@@ -3200,20 +3165,18 @@ body.pico article .saved-spots-list li::marker {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.65rem;
+  padding: 0.85rem 1.85rem 0.65rem 0.65rem;
   background: #fff;
-  border-bottom: 1px solid #ececec;
-  border-radius: 0;
-  box-shadow: none;
-  padding: 0.85rem 0.35rem 0.85rem 0.15rem;
-}
-
-.saved-spots-list li:last-child .saved-spot-card {
-  border-bottom: none;
+  border: none;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
 }
 
 .saved-spot-card .agenda-save-spot {
-  position: static;
+  position: absolute;
+  top: 0.35rem;
+  right: 0.5rem;
   flex-shrink: 0;
   transform: none;
 }
@@ -3244,9 +3207,10 @@ body.pico article .saved-spot-card button.agenda-save-spot:focus {
 }
 
 .saved-spot-card__main {
-  display: block;
-  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
   min-width: 0;
+  flex: 1 1 0;
   padding: 0;
   text-decoration: none;
   color: inherit;
@@ -3254,11 +3218,12 @@ body.pico article .saved-spot-card button.agenda-save-spot:focus {
 
 .saved-spot-note__input {
   display: block;
-  flex: 0 0 13.5rem;
-  width: 13.5rem;
-  height: 4.35rem;
-  min-height: 4.35rem;
-  max-height: 4.35rem;
+  flex: 1 1 0;
+  width: auto;
+  min-width: 8rem;
+  height: 4.5rem;
+  min-height: 4.5rem;
+  max-height: 4.5rem;
   margin: 0;
   padding: 0.45rem 0.55rem;
   font-size: 0.8125rem;
@@ -3279,10 +3244,10 @@ body.pico article .saved-spot-card button.agenda-save-spot:focus {
 
 body.pico article .saved-spot-note__input {
   margin: 0;
-  width: 13.5rem;
-  height: 4.35rem;
-  min-height: 4.35rem;
-  max-height: 4.35rem;
+  width: auto;
+  height: 4.5rem;
+  min-height: 4.5rem;
+  max-height: 4.5rem;
 }
 
 .saved-spot-note__input:focus {
@@ -3305,6 +3270,7 @@ body.pico article .saved-spot-note__input {
   body.pico article .saved-spot-note__input {
     flex: 1 1 100%;
     width: 100%;
+    min-width: 0;
     order: 3;
   }
 }
@@ -3319,17 +3285,21 @@ a.saved-spot-card__main:hover {
   align-items: center;
   justify-content: flex-start;
   text-align: left;
-  gap: 0.9rem;
+  gap: 0.75rem;
   margin: 0;
+  width: auto;
   max-width: none;
 }
 
 .saved-spot-card__place .place-photo {
-  width: 4.35rem;
-  min-width: 4.35rem;
-  height: 4.35rem;
-  border-radius: 10px;
-  background: #e5e7eb;
+  width: 4.5rem;
+  min-width: 4.5rem;
+  min-height: 4.5rem;
+  height: 4.5rem;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #e2e8f0;
+  flex-shrink: 0;
 }
 
 .saved-spot-card__place .place-photo img {
@@ -3339,27 +3309,28 @@ a.saved-spot-card__main:hover {
 }
 
 body.pico .saved-spot-card__place .place-photo img {
-  width: 100% !important;
-  height: 100% !important;
-  max-width: none !important;
+  width: 4.5rem !important;
+  height: 4.5rem !important;
+  max-width: 4.5rem !important;
   aspect-ratio: 1 / 1;
   object-fit: cover;
 }
 
 .saved-spot-card__place .place-info {
   min-width: 0;
+  flex: 1;
 }
 
 .saved-spot-card__place .place-name {
-  font-size: 1.05rem;
-  font-weight: 600;
-  line-height: 1.3;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.25;
 }
 
 .saved-spot-card__place .place-rating {
   margin-top: 0.2rem;
-  font-size: 0.95rem;
-  color: #6b7280;
+  font-size: 0.8125rem;
+  color: #94a3b8;
 }
 
 /* --------------- table column witdth --------------- */
@@ -3811,14 +3782,6 @@ body.pico footer.site-footer .footer-col a:hover {
 
 /* Mobile: match main column padding + stacked footer links */
 @media (max-width: 640px) {
-  .plan-mode-nav {
-    margin-bottom: 1.5rem;
-  }
-
-  .plan-mode-nav__tabs {
-    gap: 1.25rem;
-  }
-
   .page-profile-bar__account .app-header-profile__name {
     max-width: 4.5rem;
   }
