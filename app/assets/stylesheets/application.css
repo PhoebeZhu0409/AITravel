@@ -3164,6 +3164,7 @@ body.pico article .saved-spots-list li::marker {
 .saved-spot-card {
   position: relative;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 0.65rem;
   padding: 0.85rem 1.85rem 0.65rem 0.65rem;
@@ -3210,7 +3211,7 @@ body.pico article .saved-spot-card button.agenda-save-spot:focus {
   display: flex;
   align-items: center;
   min-width: 0;
-  flex: 1 1 0;
+  flex: 1 1 52%;
   padding: 0;
   text-decoration: none;
   color: inherit;
@@ -3218,9 +3219,9 @@ body.pico article .saved-spot-card button.agenda-save-spot:focus {
 
 .saved-spot-note__input {
   display: block;
-  flex: 1 1 0;
+  flex: 1 1 42%;
   width: auto;
-  min-width: 8rem;
+  min-width: 0;
   height: 4.5rem;
   min-height: 4.5rem;
   max-height: 4.5rem;
@@ -3257,21 +3258,16 @@ body.pico article .saved-spot-note__input {
   box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.35);
 }
 
-@media (max-width: 720px) {
-  .saved-spot-card {
-    flex-wrap: wrap;
+@media (max-width: 640px) {
+  .saved-spot-card__place .place-name {
+    font-size: 0.8rem;
   }
 
-  .saved-spot-card__main {
-    flex: 1 1 calc(100% - 2rem);
-  }
-
-  .saved-spot-note__input,
-  body.pico article .saved-spot-note__input {
-    flex: 1 1 100%;
-    width: 100%;
-    min-width: 0;
-    order: 3;
+  .saved-spot-card__place .place-rating {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -3287,15 +3283,18 @@ a.saved-spot-card__main:hover {
   text-align: left;
   gap: 0.75rem;
   margin: 0;
-  width: auto;
+  width: 100%;
   max-width: none;
+  min-width: 0;
 }
 
 .saved-spot-card__place .place-photo {
-  width: 4.5rem;
+  width: 4.5rem !important;
   min-width: 4.5rem;
+  max-width: 4.5rem;
   min-height: 4.5rem;
   height: 4.5rem;
+  aspect-ratio: 1 / 1;
   border-radius: 14px;
   overflow: hidden;
   background: #e2e8f0;
@@ -3319,12 +3318,21 @@ body.pico .saved-spot-card__place .place-photo img {
 .saved-spot-card__place .place-info {
   min-width: 0;
   flex: 1;
+  overflow: hidden;
 }
 
 .saved-spot-card__place .place-name {
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+a.saved-spot-card__main.place-card-link .place-name,
+a.saved-spot-card__main.place-card-link:hover .place-name {
+  text-decoration: none;
 }
 
 .saved-spot-card__place .place-rating {
