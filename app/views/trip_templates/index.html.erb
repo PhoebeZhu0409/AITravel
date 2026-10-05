@@ -239,7 +239,28 @@
     var jumpButtons = document.querySelectorAll(".saved-spots-jump");
     if (!tabs.length && !jumpButtons.length) return;
 
-    function activate(target) {
+    var currentTab = null;
+
+    function tabFromHash() {
+      var tabFromHash = (location.hash || "").replace(/^#/, "");
+      if (tabFromHash === "future" || tabFromHash === "past" || tabFromHash === "saved") return tabFromHash;
+      return "plan";
+    }
+
+    function urlForTab(target) {
+      var url = new URL(location.href);
+      if (target !== "past") url.searchParams.delete("past_page");
+      if (target !== "future") url.searchParams.delete("future_page");
+      url.hash = target === "plan" ? "" : target;
+      return url.pathname + url.search + url.hash;
+    }
+
+    function activate(target, options) {
+      options = options || {};
+      if (target !== "plan" && target !== "future" && target !== "past" && target !== "saved") {
+        target = "plan";
+      }
+
       tabs.forEach(function (tab) {
         var isOn = tab.getAttribute("data-tab-target") === target;
         tab.setAttribute("aria-selected", isOn ? "true" : "false");
@@ -263,7 +284,24 @@
           panel.setAttribute("hidden", "");
         }
       });
+
+      if (options.skipHistory) {
+        currentTab = target;
+        return;
+      }
+
+      if (target === currentTab) return;
+
+      currentTab = target;
+      history.pushState({ homeTab: target }, "", urlForTab(target));
     }
+
+    window.addEventListener("popstate", function (event) {
+      var target =
+        (event.state && event.state.homeTab) ||
+        tabFromHash();
+      activate(target, { skipHistory: true });
+    });
 
     tabs.forEach(function (tab) {
       tab.addEventListener("click", function () {
@@ -278,18 +316,17 @@
     });
 
     var params = new URLSearchParams(location.search);
+    var initialTab;
     if (params.has("past_page")) {
-      activate("past");
+      initialTab = "past";
     } else if (params.has("future_page")) {
-      activate("future");
+      initialTab = "future";
     } else {
-      var tabFromHash = (location.hash || "").replace(/^#/, "");
-      if (tabFromHash === "future" || tabFromHash === "past" || tabFromHash === "plan" || tabFromHash === "saved") {
-        activate(tabFromHash);
-      } else {
-        activate("plan");
-      }
+      initialTab = tabFromHash();
     }
+
+    activate(initialTab, { skipHistory: true });
+    history.replaceState({ homeTab: initialTab }, "", urlForTab(initialTab));
 
   });
 </script>

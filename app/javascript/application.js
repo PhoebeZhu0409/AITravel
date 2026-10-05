@@ -271,5 +271,3 @@ function deleteTripInPlace(link, href) {
     window.location.assign(href)
   })
 }
-
-
