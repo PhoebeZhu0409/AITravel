@@ -3228,7 +3228,7 @@ body.pico article .saved-spot-card button.agenda-save-spot:focus {
   max-height: 2.35rem;
   margin: 0;
   padding: 0.28rem 0.55rem;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   line-height: 1.35;
   color: #0f172a;
   background: #f9fafb;
@@ -3250,6 +3250,7 @@ body.pico article .saved-spot-note__input {
   height: 2.35rem;
   min-height: 2.35rem;
   max-height: 2.35rem;
+  font-size: 0.7rem;
 }
 
 .saved-spot-note__input:focus {
