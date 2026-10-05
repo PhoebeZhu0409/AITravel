@@ -10,14 +10,55 @@
     <%# iOS app loads /#future, /#past, /#saved — set tab before body paints (no Plan/header flash). %>
     <script>
       (function () {
+        var path = (location.pathname || "").replace(/\/+$/, "") || "/";
+        var onHome = path === "/" || path === "/trips";
         var h = (location.hash || "").replace(/^#/, "");
         if (h === "future" || h === "past" || h === "saved") {
           document.documentElement.setAttribute("data-home-tab", h);
         } else {
           document.documentElement.setAttribute("data-home-tab", "plan");
         }
+        if (!onHome || h === "plan" || h === "") {
+          document.documentElement.classList.add("home-tab-ready");
+        }
       })();
     </script>
+    <style id="nalu-home-tab-critical">
+      html[data-home-tab="future"] #home-panel-plan,
+      html[data-home-tab="past"] #home-panel-plan,
+      html[data-home-tab="saved"] #home-panel-plan {
+        display: none !important;
+      }
+      html[data-home-tab="future"] #home-panel-future,
+      html[data-home-tab="past"] #home-panel-past,
+      html[data-home-tab="saved"] #home-panel-saved {
+        display: block !important;
+      }
+      html[data-home-tab="future"] #home-panel-future[hidden],
+      html[data-home-tab="past"] #home-panel-past[hidden],
+      html[data-home-tab="saved"] #home-panel-saved[hidden] {
+        display: block !important;
+      }
+      html[data-home-tab="future"] .home-tabs,
+      html[data-home-tab="past"] .home-tabs,
+      html[data-home-tab="saved"] .home-tabs,
+      html[data-home-tab="future"] .home-plan-header,
+      html[data-home-tab="past"] .home-plan-header,
+      html[data-home-tab="saved"] .home-plan-header,
+      html[data-home-tab="future"] body.pico > header,
+      html[data-home-tab="past"] body.pico > header,
+      html[data-home-tab="saved"] body.pico > header,
+      html[data-home-tab="future"] .saved-spots-jump,
+      html[data-home-tab="past"] .saved-spots-jump,
+      html[data-home-tab="saved"] .saved-spots-jump {
+        display: none !important;
+      }
+      html[data-home-tab="future"]:not(.home-tab-ready) body,
+      html[data-home-tab="past"]:not(.home-tab-ready) body,
+      html[data-home-tab="saved"]:not(.home-tab-ready) body {
+        visibility: hidden !important;
+      }
+    </style>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <base href="<%= root_url %>" target="_top">
