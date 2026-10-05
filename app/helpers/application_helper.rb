@@ -5,6 +5,25 @@ module ApplicationHelper
     request.user_agent.to_s.match?(/Android|iPhone|iPad|iPod/i)
   end
 
+  def google_maps_api_key
+    ENV.fetch("GOOGLE_MAPS_API_KEY", "").to_s.strip
+  end
+
+  # Maps JavaScript is billed per load — only trip agenda + rebuild need it on first paint.
+  # Home “Plan a trip” loads Maps lazily when the user opens the Plan tab (see index script).
+  def load_google_maps_api?
+    return false if google_maps_api_key.blank?
+
+    case controller_name
+    when "trips"
+      %w[show rebuild_form].include?(action_name)
+    when "pages"
+      %w[showcase_madrid showcase_new_york].include?(action_name)
+    else
+      false
+    end
+  end
+
   # Agenda "Time" column: local wall clock at the destination (AI times are local, not UTC).
   # Uses Google IANA zone (place_time_zone_id) when set; otherwise shows time without a UTC label.
   def agenda_start_time_with_zone(trip_plan)

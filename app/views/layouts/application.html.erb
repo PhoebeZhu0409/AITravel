@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html<%= " data-google-maps-key=\"#{h(google_maps_api_key)}\"".html_safe if google_maps_api_key.present? %>>
   <head>
   
     <title><%= content_for(:title) || "Nalu.AI" %></title>
@@ -196,20 +196,68 @@
   </script>-->
 
 <script>
-  // This is the function Google calls after Maps JS finishes loading
+  window._naluMapsLoadQueued = false;
+  window._naluMapsLoadCallbacks = [];
+
+  function flushGoogleMapsLoadCallbacks() {
+    var cbs = window._naluMapsLoadCallbacks || [];
+    window._naluMapsLoadCallbacks = [];
+    window._naluMapsLoadQueued = false;
+    cbs.forEach(function (cb) {
+      try {
+        cb();
+      } catch (e) {
+        console.warn("Google Maps callback error:", e);
+      }
+    });
+  }
+
+  // Called by Google after Maps JS finishes loading (or after lazy inject).
   function googleMapsLoaded() {
     function runMaps() {
       if (document.getElementById("trip_location_box")) initAutocomplete();
       if (document.querySelector(".day-map")) initItineraryMaps();
-      if (document.querySelector(".place-cell")) initPlaceCards();
+      if (document.querySelector(".place-cell:not(.place-cell--cached)")) initPlaceCards();
     }
 
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", runMaps);
+      document.addEventListener("DOMContentLoaded", function () {
+        runMaps();
+        flushGoogleMapsLoadCallbacks();
+      });
     } else {
       runMaps();
+      flushGoogleMapsLoadCallbacks();
     }
   }
+
+  window.ensureGoogleMapsLoaded = function (onReady) {
+    var key = document.documentElement.getAttribute("data-google-maps-key");
+    if (!key) return;
+
+    if (window.google && window.google.maps) {
+      googleMapsLoaded();
+      if (onReady) onReady();
+      return;
+    }
+
+    if (onReady) {
+      window._naluMapsLoadCallbacks = window._naluMapsLoadCallbacks || [];
+      window._naluMapsLoadCallbacks.push(onReady);
+    }
+
+    if (window._naluMapsLoadQueued) return;
+    window._naluMapsLoadQueued = true;
+
+    var s = document.createElement("script");
+    s.async = true;
+    s.defer = true;
+    s.src =
+      "https://maps.googleapis.com/maps/api/js?key=" +
+      encodeURIComponent(key) +
+      "&libraries=places&callback=googleMapsLoaded";
+    document.head.appendChild(s);
+  };
 
   function initTripLocationAutocomplete() {
     if (!window.google || !google.maps || !google.maps.places) return;
@@ -657,11 +705,13 @@ function initItineraryMaps() {
 </script>
 
 
-<!-----------  Maps API (single load for autocomplete, itinerary maps, place cards) --------->
+<% if load_google_maps_api? && google_maps_api_key.present? %>
+<!-----------  Maps API: trip show / rebuild / showcase only (lists & sign-in skip this) --------->
 <script
-  src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GOOGLE_MAPS_API_KEY'] %>&libraries=places&callback=googleMapsLoaded"
+  src="https://maps.googleapis.com/maps/api/js?key=<%= google_maps_api_key %>&libraries=places&callback=googleMapsLoaded"
   async defer>
 </script>
+<% end %>
 
     <%= render "shared/generation_limit_modal" if generation_quota_exhausted? %>
   </body>

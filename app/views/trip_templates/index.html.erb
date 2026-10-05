@@ -202,6 +202,11 @@
     </header>
 
     <%= render "trip_templates/saved_spots_list", saved_spots: @saved_spots %>
+
+    <%= render "trip_templates/trips_pagination",
+        pagy: @pagy_saved,
+        page_param: :saved_page,
+        label: "Saved spots pages" %>
   </article>
 </div>
 
@@ -251,6 +256,7 @@
       var url = new URL(location.href);
       if (target !== "past") url.searchParams.delete("past_page");
       if (target !== "future") url.searchParams.delete("future_page");
+      if (target !== "saved") url.searchParams.delete("saved_page");
       url.hash = target === "plan" ? "" : target;
       return url.pathname + url.search + url.hash;
     }
@@ -287,6 +293,10 @@
 
       document.documentElement.classList.add("home-tab-ready");
 
+      if (target === "plan" && window.ensureGoogleMapsLoaded) {
+        window.ensureGoogleMapsLoaded();
+      }
+
       if (options.skipHistory) {
         currentTab = target;
         return;
@@ -319,7 +329,9 @@
 
     var params = new URLSearchParams(location.search);
     var initialTab;
-    if (params.has("past_page")) {
+    if (params.has("saved_page")) {
+      initialTab = "saved";
+    } else if (params.has("past_page")) {
       initialTab = "past";
     } else if (params.has("future_page")) {
       initialTab = "future";
@@ -330,5 +342,15 @@
     activate(initialTab, { skipHistory: true });
     history.replaceState({ homeTab: initialTab }, "", urlForTab(initialTab));
 
+    if (initialTab === "plan" && window.ensureGoogleMapsLoaded) {
+      window.ensureGoogleMapsLoaded();
+    }
+
+    document.addEventListener("focusin", function (e) {
+      var id = e.target && e.target.id;
+      if (id === "trip_location_box" || id === "trip_location_box_2") {
+        if (window.ensureGoogleMapsLoaded) window.ensureGoogleMapsLoaded();
+      }
+    });
   });
 </script>

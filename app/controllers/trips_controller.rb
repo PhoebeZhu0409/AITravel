@@ -16,9 +16,11 @@ class TripsController < ApplicationController
 
     @pagy_future, @future_trips = pagy(future_scope, page_param: :future_page, limit: 10)
     @pagy_past, @past_trips = pagy(past_scope, page_param: :past_page, limit: 10)
-    @saved_spots = current_user.saved_trip_plans
+
+    saved_scope = current_user.saved_trip_plans
       .includes(trip_plan: [:trip, { place_thumbnail_attachment: :blob }])
       .order(created_at: :desc)
+    @pagy_saved, @saved_spots = pagy(saved_scope, page_param: :saved_page, limit: 10)
     enqueue_missing_saved_spot_thumbnails(@saved_spots)
     enqueue_missing_trip_location_heroes(@future_trips.to_a + @past_trips.to_a)
     @trip_form = (session.delete(:trip_form_draft) || {}).stringify_keys
