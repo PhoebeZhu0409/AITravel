@@ -2306,7 +2306,10 @@ html[data-home-tab="past"] .home-tabs,
 html[data-home-tab="saved"] .home-tabs,
 html[data-home-tab="future"] .home-plan-header,
 html[data-home-tab="past"] .home-plan-header,
-html[data-home-tab="saved"] .home-plan-header {
+html[data-home-tab="saved"] .home-plan-header,
+html[data-home-tab="future"] body.pico > header,
+html[data-home-tab="past"] body.pico > header,
+html[data-home-tab="saved"] body.pico > header {
   display: none !important;
 }
 

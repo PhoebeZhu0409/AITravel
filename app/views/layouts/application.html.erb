@@ -7,6 +7,17 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="turbo-prefetch" content="false">
+    <%# iOS app loads /#future, /#past, /#saved — set tab before body paints (no Plan/header flash). %>
+    <script>
+      (function () {
+        var h = (location.hash || "").replace(/^#/, "");
+        if (h === "future" || h === "past" || h === "saved") {
+          document.documentElement.setAttribute("data-home-tab", h);
+        } else {
+          document.documentElement.setAttribute("data-home-tab", "plan");
+        }
+      })();
+    </script>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <base href="<%= root_url %>" target="_top">

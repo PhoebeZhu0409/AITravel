@@ -1,15 +1,3 @@
-<%# Before paint: open the tab from #future / #past / #saved (iOS WKWebView loads these URLs). %>
-<script>
-  (function () {
-    var h = (location.hash || "").replace(/^#/, "");
-    if (h === "future" || h === "past" || h === "saved") {
-      document.documentElement.setAttribute("data-home-tab", h);
-    } else {
-      document.documentElement.setAttribute("data-home-tab", "plan");
-    }
-  })();
-</script>
-
 <%= render "trip_templates/home_plan_header" %>
 
 <div class="home-tabs" role="tablist" aria-label="Plan and browse trips">
