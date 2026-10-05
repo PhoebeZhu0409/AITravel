@@ -2301,6 +2301,15 @@ html[data-home-tab="saved"] #home-panel-saved[hidden] {
   display: block !important;
 }
 
+html[data-home-tab="future"] .home-tabs,
+html[data-home-tab="past"] .home-tabs,
+html[data-home-tab="saved"] .home-tabs,
+html[data-home-tab="future"] .home-plan-header,
+html[data-home-tab="past"] .home-plan-header,
+html[data-home-tab="saved"] .home-plan-header {
+  display: none !important;
+}
+
 .home-tab-panel {
   margin-bottom: 0.5rem;
 }

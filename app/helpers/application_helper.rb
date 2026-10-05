@@ -96,7 +96,7 @@ module ApplicationHelper
   def trip_show_hero_src(trip)
     if (showcase = showcase_hero_image(trip))
       absolute_asset_url(image_path(showcase))
-    elsif trip.location_hero.attached? && active_storage_file_available?(trip.location_hero)
+    elsif trip.location_hero_available?
       absolute_asset_url(rails_blob_url(trip.location_hero))
     else
       trip_hero_default_url

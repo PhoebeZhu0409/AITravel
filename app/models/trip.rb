@@ -44,4 +44,13 @@ class Trip < ApplicationRecord
 
     trip_start_date + trip_duration_days.days - 1.day
   end
+
+  def location_hero_available?
+    return false unless location_hero.attached?
+
+    location_hero.blob.service.exist?(location_hero.blob.key)
+  rescue StandardError => e
+    Rails.logger.warn("[ActiveStorage] location hero check failed: #{e.class} #{e.message}")
+    false
+  end
 end

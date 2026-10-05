@@ -20,6 +20,7 @@ class TripsController < ApplicationController
       .includes(trip_plan: [:trip, { place_thumbnail_attachment: :blob }])
       .order(created_at: :desc)
     enqueue_missing_saved_spot_thumbnails(@saved_spots)
+    enqueue_missing_trip_location_heroes(@future_trips.to_a + @past_trips.to_a)
     @trip_form = (session.delete(:trip_form_draft) || {}).stringify_keys
 
     render({ :template => "trip_templates/index" })
@@ -164,6 +165,15 @@ class TripsController < ApplicationController
       next if plan.place_thumbnail_available?
 
       EnsurePlaceThumbnailJob.perform_later(plan.id)
+    end
+  end
+
+  def enqueue_missing_trip_location_heroes(trips)
+    trips.each do |trip|
+      next if trip.showcase_slug.present?
+      next if trip.location_hero_available?
+
+      EnsureTripLocationHeroJob.perform_later(trip.id)
     end
   end
 
