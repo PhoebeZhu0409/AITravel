@@ -99,6 +99,38 @@ document.addEventListener("change", function (event) {
   })
 })
 
+const savedSpotNoteSaveTimers = new WeakMap()
+
+function scheduleSavedSpotNoteSave(textarea) {
+  const id = textarea.getAttribute("data-trip-plan-id")
+  if (!id) return
+
+  const prev = savedSpotNoteSaveTimers.get(textarea)
+  if (prev) clearTimeout(prev)
+
+  savedSpotNoteSaveTimers.set(
+    textarea,
+    setTimeout(function () {
+      fetch("/saved_spots/" + id, {
+        method: "PATCH",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+          "X-CSRF-Token": csrfToken()
+        },
+        body: JSON.stringify({ traveller_note: textarea.value })
+      }).catch(function () {})
+    }, 450)
+  )
+}
+
+document.addEventListener("input", function (event) {
+  const textarea = event.target.closest("[data-saved-spot-note]")
+  if (textarea) scheduleSavedSpotNoteSave(textarea)
+})
+
 document.addEventListener("click", function (event) {
   const openPlan = event.target.closest("[data-nalu-open-plan]")
   if (openPlan) {

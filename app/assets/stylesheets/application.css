@@ -1729,8 +1729,64 @@ nav[aria-label="breadcrumb"] + hr {
   font-size: 0.95rem;
 }
 
-#home-panel-future:has(.trips-empty-welcome) .home-tab-hero,
-#home-panel-future:has(.trips-empty-welcome) article > header {
+#home-panel-future:has(.trips-empty-welcome) .home-tab-hero {
+  display: none;
+}
+
+.home-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.home-panel-heading h2 {
+  margin: 0;
+}
+
+body.pico article .home-panel-heading h2 {
+  margin: 0;
+}
+
+body.pico article button.saved-spots-jump {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0.4rem 0.75rem;
+  min-height: 0;
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #be123c;
+  background: #fff;
+  border: 1px solid #fecdd3;
+  border-radius: 9999px;
+  box-shadow: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+body.pico article button.saved-spots-jump:hover {
+  background: #fff1f2;
+  color: #9f1239;
+  border-color: #fda4af;
+}
+
+body.pico article button.saved-spots-jump--active,
+body.pico article button.saved-spots-jump[aria-current="page"] {
+  background: #be123c;
+  border-color: #9f1239;
+  color: #fff;
+}
+
+.saved-spots-jump__heart {
+  font-size: 0.95em;
+  line-height: 1;
+}
+
+#home-panel-future:has(.trips-empty-welcome) article > header h2 {
   display: none;
 }
 
@@ -2129,6 +2185,8 @@ body.pico .trip-notes-section label {
 #trip_notes_box::placeholder {
   color: #5a7a8f;
   opacity: 0.9;
+  font-size: 0.8em;
+  line-height: 1.45;
 }
 
 #trip_notes_box:focus {
@@ -3140,10 +3198,14 @@ body.pico article .saved-spots-list li::marker {
 
 .saved-spot-card {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
   background: #fff;
   border-bottom: 1px solid #ececec;
   border-radius: 0;
   box-shadow: none;
+  padding: 0.85rem 0.35rem 0.85rem 0.15rem;
 }
 
 .saved-spots-list li:last-child .saved-spot-card {
@@ -3151,11 +3213,9 @@ body.pico article .saved-spots-list li::marker {
 }
 
 .saved-spot-card .agenda-save-spot {
-  position: absolute;
-  top: 50%;
-  right: 0.35rem;
-  z-index: 2;
-  transform: translateY(-50%);
+  position: static;
+  flex-shrink: 0;
+  transform: none;
 }
 
 body.pico article .saved-spot-card button.agenda-save-spot {
@@ -3185,9 +3245,68 @@ body.pico article .saved-spot-card button.agenda-save-spot:focus {
 
 .saved-spot-card__main {
   display: block;
-  padding: 0.85rem 2.25rem 0.85rem 0.15rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0;
   text-decoration: none;
   color: inherit;
+}
+
+.saved-spot-note__input {
+  display: block;
+  flex: 0 0 13.5rem;
+  width: 13.5rem;
+  height: 4.35rem;
+  min-height: 4.35rem;
+  max-height: 4.35rem;
+  margin: 0;
+  padding: 0.45rem 0.55rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: #0f172a;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.saved-spot-note__input::placeholder {
+  color: #9ca3af;
+  font-size: 0.65rem;
+  line-height: 1.4;
+}
+
+body.pico article .saved-spot-note__input {
+  margin: 0;
+  width: 13.5rem;
+  height: 4.35rem;
+  min-height: 4.35rem;
+  max-height: 4.35rem;
+}
+
+.saved-spot-note__input:focus {
+  border-color: #93c5fd;
+  outline: none;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.35);
+}
+
+@media (max-width: 720px) {
+  .saved-spot-card {
+    flex-wrap: wrap;
+  }
+
+  .saved-spot-card__main {
+    flex: 1 1 calc(100% - 2rem);
+  }
+
+  .saved-spot-note__input,
+  body.pico article .saved-spot-note__input {
+    flex: 1 1 100%;
+    width: 100%;
+    order: 3;
+  }
 }
 
 a.saved-spot-card__main:hover {

@@ -1,0 +1,9 @@
+<button
+  type="button"
+  class="saved-spots-jump<%= " saved-spots-jump--active" if local_assigns[:active] %>"
+  data-tab-target="saved"
+  aria-controls="home-panel-saved"
+  <%= "aria-current=\"page\"".html_safe if local_assigns[:active] %>>
+  <span class="saved-spots-jump__heart" aria-hidden="true">♥︎</span>
+  Saved Spots
+</button>

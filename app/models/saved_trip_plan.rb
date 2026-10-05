@@ -4,11 +4,12 @@
 #
 # Table name: saved_trip_plans
 #
-#  id           :bigint           not null, primary key
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
-#  trip_plan_id :bigint           not null
-#  user_id      :bigint           not null
+#  id             :bigint           not null, primary key
+#  traveller_note :text             default(""), not null
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  trip_plan_id   :bigint           not null
+#  user_id        :bigint           not null
 #
 # Indexes
 #
@@ -26,4 +27,5 @@ class SavedTripPlan < ApplicationRecord
   belongs_to :trip_plan
 
   validates :trip_plan_id, uniqueness: { scope: :user_id }
+  validates :traveller_note, length: { maximum: 10_000 }
 end

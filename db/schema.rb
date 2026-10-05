@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_05_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_05_141000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -47,6 +47,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_05_120000) do
     t.bigint "trip_plan_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "traveller_note", default: "", null: false
     t.index ["trip_plan_id"], name: "index_saved_trip_plans_on_trip_plan_id"
     t.index ["user_id", "trip_plan_id"], name: "index_saved_trip_plans_on_user_id_and_trip_plan_id", unique: true
     t.index ["user_id"], name: "index_saved_trip_plans_on_user_id"

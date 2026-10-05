@@ -33,7 +33,6 @@ class User < ApplicationRecord
   has_many  :trip_generation_events, dependent: :destroy
   has_many  :saved_trip_plans, dependent: :destroy
   has_many  :saved_spot_trip_plans, through: :saved_trip_plans, source: :trip_plan
-
   has_one_attached :avatar
 
   ALLOWED_AVATAR_CONTENT_TYPES = %w[image/jpeg image/png image/webp image/gif].freeze

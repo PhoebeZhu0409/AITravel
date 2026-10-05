@@ -50,6 +50,15 @@
                     </div>
                   </div>
                 </a>
+                <textarea
+                  id="saved-spot-note-<%= plan.id %>"
+                  class="saved-spot-note__input"
+                  rows="1"
+                  maxlength="10000"
+                  placeholder="Traveller's note..."
+                  aria-label="Traveller's note for <%= place_label %>"
+                  data-saved-spot-note
+                  data-trip-plan-id="<%= plan.id %>"><%= saved.traveller_note %></textarea>
                 <button
                   type="button"
                   class="agenda-save-spot agenda-save-spot--saved"

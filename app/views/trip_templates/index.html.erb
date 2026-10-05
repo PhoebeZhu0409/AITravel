@@ -10,9 +10,6 @@
   <button type="button" class="home-tab" role="tab" id="tab-past" aria-selected="false" aria-controls="home-panel-past" data-tab-target="past">
     <span class="home-tab-label">My Past Trips</span>
   </button>
-  <button type="button" class="home-tab" role="tab" id="tab-saved" aria-selected="false" aria-controls="home-panel-saved" data-tab-target="saved">
-    <span class="home-tab-label">Saved Spots</span>
-  </button>
 </div>
 
 
@@ -24,10 +21,9 @@
 <div id="home-panel-plan" class="home-tab-panel" role="tabpanel" aria-labelledby="tab-plan">
   <%= render "trip_templates/home_index_hero", src: index_lorem_hero_src, fallback: index_hero_fallback %>
   <article>
-    <header>
-      <h2>
-        Plan A New Trip
-      </h2>
+    <header class="home-panel-heading">
+      <h2>Plan A New Trip</h2>
+      <%= render "trip_templates/saved_spots_jump" %>
     </header>
 
 
@@ -174,8 +170,9 @@
 <div id="home-panel-future" class="home-tab-panel" role="tabpanel" aria-labelledby="tab-future" hidden>
   <%= render "trip_templates/home_index_hero", src: index_lorem_hero_src, fallback: index_hero_fallback %>
   <article>
-    <header>
+    <header class="home-panel-heading">
       <h2>My Future Trips</h2>
+      <%= render "trip_templates/saved_spots_jump" %>
     </header>
 
     <%= render "trip_templates/trips_list",
@@ -196,11 +193,12 @@
 
 
 <!--=============================== My Past Trips =============================== -->
-<div id="home-panel-saved" class="home-tab-panel" role="tabpanel" aria-labelledby="tab-saved" hidden>
+<div id="home-panel-saved" class="home-tab-panel" role="tabpanel" aria-labelledby="saved-spots-heading" hidden>
   <%= render "trip_templates/home_index_hero", src: index_lorem_hero_src, fallback: index_hero_fallback %>
   <article>
-    <header>
-      <h2>Saved Spots</h2>
+    <header class="home-panel-heading">
+      <h2 id="saved-spots-heading">Saved Spots</h2>
+      <%= render "trip_templates/saved_spots_jump", active: true %>
     </header>
 
     <%= render "trip_templates/saved_spots_list", saved_spots: @saved_spots %>
@@ -210,8 +208,9 @@
 <div id="home-panel-past" class="home-tab-panel" role="tabpanel" aria-labelledby="tab-past" hidden>
   <%= render "trip_templates/home_index_hero", src: index_lorem_hero_src, fallback: index_hero_fallback %>
   <article>
-    <header>
+    <header class="home-panel-heading">
       <h2>My Past Trips</h2>
+      <%= render "trip_templates/saved_spots_jump" %>
     </header>
 
     <%= render "trip_templates/trips_list",
@@ -237,13 +236,23 @@
       past: document.getElementById("home-panel-past"),
       saved: document.getElementById("home-panel-saved")
     };
-    if (!tabs.length) return;
+    var jumpButtons = document.querySelectorAll(".saved-spots-jump");
+    if (!tabs.length && !jumpButtons.length) return;
 
     function activate(target) {
       tabs.forEach(function (tab) {
         var isOn = tab.getAttribute("data-tab-target") === target;
         tab.setAttribute("aria-selected", isOn ? "true" : "false");
         tab.classList.toggle("home-tab--active", isOn);
+      });
+      jumpButtons.forEach(function (btn) {
+        var isSaved = target === "saved";
+        btn.classList.toggle("saved-spots-jump--active", isSaved);
+        if (isSaved) {
+          btn.setAttribute("aria-current", "page");
+        } else {
+          btn.removeAttribute("aria-current");
+        }
       });
       Object.keys(panels).forEach(function (key) {
         var panel = panels[key];
@@ -259,6 +268,12 @@
     tabs.forEach(function (tab) {
       tab.addEventListener("click", function () {
         activate(tab.getAttribute("data-tab-target"));
+      });
+    });
+
+    jumpButtons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        activate("saved");
       });
     });
 

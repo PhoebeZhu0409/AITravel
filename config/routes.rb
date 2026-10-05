@@ -37,6 +37,7 @@ Rails.application.routes.draw do
   get("/delete_trip/:path_id", { :controller => "trips", :action => "destroy" })
 
   post("/saved_spots/:trip_plan_id", { :controller => "saved_spots", :action => "create" })
+  patch("/saved_spots/:trip_plan_id", { :controller => "saved_spots", :action => "update" })
   delete("/saved_spots/:trip_plan_id", { :controller => "saved_spots", :action => "destroy" })
 
   # ------------------------------
