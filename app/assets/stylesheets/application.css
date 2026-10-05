@@ -93,7 +93,7 @@
 }
 
 .sign-in-lead {
-  margin: 0.5rem auto 1.35rem;
+  margin: 0.5rem auto 0.85rem;
   max-width: 22rem;
   width: 100%;
   padding: 0 0.25rem;
@@ -103,6 +103,62 @@
   line-height: 1.5;
   color: #6b7280;
   text-align: center;
+}
+
+.sign-in-landing__hero {
+  position: relative;
+  width: 100%;
+  max-width: 42rem;
+  margin: 0 auto 1rem;
+}
+
+.sign-in-landing__hero-photo {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.sign-in-landing__featured-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0.45rem 0.75rem;
+  box-sizing: border-box;
+  background: rgba(249, 250, 251, 0.05);
+  border: none;
+  border-radius: 0 0 10px 10px;
+  box-shadow: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.sign-in-landing__featured-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: #111827;
+  white-space: nowrap;
+  line-height: 1.15;
+  min-height: 0;
+}
+
+.sign-in-landing__featured-cta-arrows {
+  color: inherit;
+  font-weight: 400;
+  font-size: inherit;
+  line-height: inherit;
 }
 
 /* Full-viewport gray: icons + Sign up + sign-in card + tutorial; grows to bottom of viewport */
@@ -129,39 +185,6 @@
   margin-top: 0;
 }
 
-.sign-in-landing__featured-wrap {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  width: 100%;
-  max-width: 40rem;
-  margin-top: min(3.5rem, 15%);
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 1rem;
-}
-
-.sign-in-landing__featured-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  flex-shrink: 0;
-  margin: 0 0 0 -1.15rem;
-  padding: 0;
-  font-size: 0.9375rem;
-  font-weight: 400;
-  color: #374151;
-  white-space: nowrap;
-  line-height: 1.05rem;
-  min-height: 1.05rem;
-}
-
-.sign-in-landing__featured-cta-arrows {
-  color: #1d4ed8;
-  font-weight: 400;
-  line-height: 1.05rem;
-}
-
 .sign-in-landing__featured-marquee {
   flex: 1;
   min-width: 0;
@@ -184,7 +207,7 @@
   flex-wrap: nowrap;
   align-items: center;
   width: max-content;
-  animation: sign-in-featured-marquee-ltr 44s linear infinite;
+  animation: sign-in-featured-marquee-ltr 35.2s linear infinite;
 }
 
 .sign-in-landing__featured-set {
@@ -209,13 +232,13 @@
 
 @media (prefers-reduced-motion: reduce) {
   .sign-in-landing__featured-wrap {
-    flex-wrap: wrap;
-    justify-content: center;
-    text-align: center;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    text-align: left;
   }
 
   .sign-in-landing__featured-cta {
-    width: 100%;
+    width: auto;
     padding-left: 0;
   }
 
@@ -243,37 +266,40 @@
   }
 }
 
+@media (max-width: 640px) {
+  .sign-in-landing__hero {
+    max-width: 100%;
+  }
+
+  .sign-in-landing__featured-wrap {
+    width: 100%;
+    bottom: 0;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0 0 10px 10px;
+  }
+}
+
 .sign-in-landing__featured-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.9375rem;
+  gap: 0.3rem;
+  font-size: 0.78rem;
   font-weight: 400;
-  color: #1e40af;
+  color: #111827;
   text-decoration: none;
+  line-height: 1.15;
 }
 
 .sign-in-landing__featured-link:hover {
   text-decoration: underline;
-  color: #1d4ed8;
-}
-
-.sign-in-landing__featured-teaser {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.9375rem;
-  font-weight: 400;
-  color: #6b7280;
-  text-decoration: none;
-  cursor: default;
-  user-select: none;
+  color: #111827;
 }
 
 .sign-in-landing__pin {
-  color: #9ca3af;
-  font-size: 1.05rem;
+  color: #111827;
+  font-size: 0.78rem;
   flex-shrink: 0;
+  line-height: 1;
 }
 
 .sign-in-landing__signup {
@@ -1555,16 +1581,21 @@ body.pico img.app-header-profile__avatar {
 }
 
 body.pico > header nav {
-  align-items: flex-start;
+  align-items: center;
 }
 
 body.pico > header nav > ul.app-header-user-menu {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  flex-direction: row;
+  align-items: center;
   gap: 0.2rem;
   flex-wrap: nowrap;
   margin-left: auto;
+  margin-bottom: 0;
+}
+
+body.pico > header nav > ul:first-child {
+  margin-bottom: 0;
 }
 
 body.pico > header nav > ul:last-child:not(.app-header-user-menu) {
@@ -1576,7 +1607,6 @@ body.pico > header nav > ul:last-child:not(.app-header-user-menu) {
 
 body.pico > header .app-header-sign-out-item {
   margin: 0;
-  padding: 0;
   list-style: none;
   text-align: right;
 }
@@ -2107,7 +2137,7 @@ body.pico .trip-notes-section label {
   box-shadow: 0 0 0 2px rgba(107, 184, 230, 0.25);
 }
 
-/* ----- Top toggle: Plan A Trip / Plan A Day ----- */
+/* ----- Plan A Trip heading ----- */
 .plan-mode-nav {
   margin: 0.75rem 0 1.25rem;
 }
@@ -2135,9 +2165,8 @@ body.pico .plan-mode-nav__tab {
   box-shadow: none !important;
 }
 
-body.pico .plan-mode-nav__tab:hover {
-  color: #475569;
-  text-decoration: none !important;
+body.pico span.plan-mode-nav__tab {
+  cursor: default;
 }
 
 body.pico .plan-mode-nav__tab--active,
@@ -2147,11 +2176,6 @@ body.pico .plan-mode-nav__tab[aria-current="page"] {
   text-decoration: none !important;
 }
 
-body.pico .plan-mode-nav__tab--active:hover,
-body.pico .plan-mode-nav__tab[aria-current="page"]:hover {
-  color: #0f172a;
-}
-
 .plan-mode-nav__caret {
   display: block;
   width: 0;
@@ -2159,20 +2183,6 @@ body.pico .plan-mode-nav__tab[aria-current="page"]:hover {
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
   border-top: 7px solid #0f172a;
-}
-
-.plan-day-coming-soon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 280px;
-  margin-top: 1rem;
-  border-radius: 12px;
-  background: #f1f5f9;
-  color: #6eb8e0;
-  font-size: clamp(1.75rem, 5vw, 2.5rem);
-  font-weight: 300;
-  letter-spacing: 0.04em;
 }
 
 /* ----- Home index: trip section tabs ----- */
@@ -2976,6 +2986,263 @@ body.pico .agenda-tab-arrow--next[type="button"]:hover:not(:disabled) {
 }
 
 
+.agenda-row {
+  position: relative;
+}
+
+.agenda-table tbody td.agenda-get-around-cell {
+  position: relative;
+  vertical-align: middle;
+  padding-right: 2rem;
+}
+
+.agenda-table tbody td.agenda-get-around-cell .agenda-save-spot {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.agenda-save-spot .bi {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.agenda-save-spot--saved {
+  color: #9ca3af;
+}
+
+.agenda-table tbody td.agenda-get-around-cell .agenda-save-spot:hover {
+  color: #6b7280;
+  background: transparent;
+}
+
+body.pico .agenda-table tbody td.agenda-get-around-cell button.agenda-save-spot {
+  margin: 0;
+  min-height: 0;
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+}
+
+body.pico .agenda-table tbody td.agenda-get-around-cell button.agenda-save-spot:hover,
+body.pico .agenda-table tbody td.agenda-get-around-cell button.agenda-save-spot:focus {
+  background: transparent;
+  box-shadow: none;
+}
+
+.saved-spots-list-wrap {
+  margin-top: 0.5rem;
+}
+
+.saved-spots-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0 0 0.85rem;
+}
+
+.saved-spots-filter__label {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+  white-space: nowrap;
+}
+
+body.pico article .saved-spots-filter__label {
+  margin: 0;
+}
+
+.saved-spots-city-filter {
+  flex: 1 1 12rem;
+  min-width: 0;
+  max-width: 18rem;
+  min-height: 2.5rem;
+  padding: 0.5rem 2.1rem 0.5rem 0.7rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #0f172a;
+  background-color: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+body.pico article select.saved-spots-city-filter {
+  margin: 0;
+  max-width: 18rem;
+  min-height: 2.5rem;
+}
+
+.saved-spots-city-group[hidden] {
+  display: none !important;
+}
+
+.saved-spots-city-heading {
+  margin: 1.15rem 0 0.1rem;
+  padding: 0 0.15rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: 0.01em;
+}
+
+body.pico article .saved-spots-city-heading {
+  margin: 1.15rem 0 0.1rem;
+}
+
+.saved-spots-city-group:first-of-type .saved-spots-city-heading,
+body.pico article .saved-spots-city-group:first-of-type .saved-spots-city-heading {
+  margin-top: 0.15rem;
+}
+
+.saved-spots-empty {
+  margin: 0.75rem 0 0;
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.saved-spots-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+body.pico article .saved-spots-list li {
+  list-style: none;
+  list-style-type: none;
+}
+
+body.pico article .saved-spots-list li::marker {
+  content: none;
+}
+
+.saved-spot-card {
+  position: relative;
+  background: #fff;
+  border-bottom: 1px solid #ececec;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.saved-spots-list li:last-child .saved-spot-card {
+  border-bottom: none;
+}
+
+.saved-spot-card .agenda-save-spot {
+  position: absolute;
+  top: 50%;
+  right: 0.35rem;
+  z-index: 2;
+  transform: translateY(-50%);
+}
+
+body.pico article .saved-spot-card button.agenda-save-spot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  background-color: transparent;
+  color: #9ca3af;
+  box-shadow: none;
+}
+
+body.pico article .saved-spot-card button.agenda-save-spot:hover,
+body.pico article .saved-spot-card button.agenda-save-spot:focus {
+  background: transparent;
+  background-color: transparent;
+  color: #6b7280;
+  box-shadow: none;
+}
+
+.saved-spot-card__main {
+  display: block;
+  padding: 0.85rem 2.25rem 0.85rem 0.15rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+a.saved-spot-card__main:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.saved-spot-card__place.place-card {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  gap: 0.9rem;
+  margin: 0;
+  max-width: none;
+}
+
+.saved-spot-card__place .place-photo {
+  width: 4.35rem;
+  min-width: 4.35rem;
+  height: 4.35rem;
+  border-radius: 10px;
+  background: #e5e7eb;
+}
+
+.saved-spot-card__place .place-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+body.pico .saved-spot-card__place .place-photo img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.saved-spot-card__place .place-info {
+  min-width: 0;
+}
+
+.saved-spot-card__place .place-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.saved-spot-card__place .place-rating {
+  margin-top: 0.2rem;
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
 /* --------------- table column witdth --------------- */
 .agenda-table {
   table-layout: auto; 
@@ -3198,9 +3465,20 @@ a.place-card-link:hover .place-name {
   }
 
   .agenda-day-panel .agenda-table tbody td.agenda-get-around-cell {
+    position: relative;
+    padding-right: 1.75rem;
     word-break: break-word;
     overflow-wrap: anywhere;
     line-height: 1.45;
+  }
+
+  .agenda-day-panel .agenda-table tbody tr.agenda-row {
+    position: relative;
+  }
+
+  .agenda-day-panel .agenda-table tbody td.agenda-get-around-cell .agenda-save-spot {
+    top: 0.55rem;
+    right: 0.7rem;
   }
 
   .agenda-day-panel .agenda-get-around-body {

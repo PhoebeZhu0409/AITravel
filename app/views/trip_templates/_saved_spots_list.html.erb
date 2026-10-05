@@ -1,0 +1,69 @@
+<div class="saved-spots-list-wrap">
+  <% if saved_spots.empty? %>
+    <p class="saved-spots-empty">
+      No saved spots yet. Open a trip agenda and tap the bookmark on any stop to save it here.
+    </p>
+  <% else %>
+    <% spots_by_city = saved_spots.group_by { |saved| TripLocationDisplay.city_country_for_plan(saved.trip_plan) } %>
+    <% city_labels = spots_by_city.keys.sort_by { |label| label.downcase } %>
+    <div class="saved-spots-filter">
+      <label class="saved-spots-filter__label" for="saved-spots-city-filter">City</label>
+      <select id="saved-spots-city-filter" class="saved-spots-city-filter" data-nopico aria-label="Filter saved spots by city">
+        <option value="">All cities</option>
+        <% city_labels.each do |city_label| %>
+          <option value="<%= city_label %>"><%= city_label %></option>
+        <% end %>
+      </select>
+    </div>
+    <% city_labels.each do |city_label| %>
+      <section class="saved-spots-city-group" data-saved-city="<%= city_label %>">
+        <h3 class="saved-spots-city-heading"><%= city_label %></h3>
+        <ul class="saved-spots-list">
+          <% spots_by_city[city_label].each do |saved| %>
+            <% plan = saved.trip_plan %>
+            <% next unless plan %>
+            <% trip = plan.trip %>
+            <% next unless trip %>
+            <% place_label = plan.place_display_name.presence || plan.plan_location.to_s.split(",").first %>
+            <% maps_href = plan.google_maps_search_url.presence || "/trips/#{trip.id}" %>
+            <% thumb_url = plan_photo_url(trip, plan) %>
+            <li>
+              <div class="saved-spot-card">
+                <a
+                  href="<%= maps_href %>"
+                  target="_blank"
+                  rel="noopener"
+                  class="saved-spot-card__main place-card-link">
+                  <div class="place-card saved-spot-card__place">
+                    <div class="place-photo">
+                      <% if thumb_url.present? %>
+                        <%= image_tag thumb_url, alt: place_label %>
+                      <% end %>
+                    </div>
+                    <div class="place-info">
+                      <div class="place-name"><%= place_label %></div>
+                      <div class="place-rating">
+                        <% if plan.place_rating.present? %>
+                          <%= number_with_precision(plan.place_rating, precision: 1) %> ★ (<%= plan.place_user_ratings_total.to_i %>)
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+                <button
+                  type="button"
+                  class="agenda-save-spot agenda-save-spot--saved"
+                  data-trip-plan-id="<%= plan.id %>"
+                  data-saved="true"
+                  aria-label="Remove from saved spots"
+                  aria-pressed="true">
+                  <i class="bi bi-bookmark-fill" aria-hidden="true"></i>
+                </button>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      </section>
+    <% end %>
+  <% end %>
+</div>

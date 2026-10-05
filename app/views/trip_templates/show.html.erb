@@ -141,9 +141,10 @@
                   <% end %>
                 <% end %>
                 <% this_day.order(:start_time).each do |a_day| %>
-                  <tr>
-
-                    <td data-label="Time"><%= agenda_start_time_with_zone(a_day) %></td>
+                  <tr class="agenda-row">
+                    <td data-label="Time" class="agenda-time-cell">
+                      <span class="agenda-time-text"><%= agenda_start_time_with_zone(a_day) %></span>
+                    </td>
               
                     <td class="plan-cell" data-label="Plan">
                       <div class="plan-brief">
@@ -191,6 +192,11 @@
                     </td>
   <!---------------------------------------------------->
                     <td class="agenda-get-around-cell" data-label="Get around">
+                      <% unless @trip_show_public_demo %>
+                        <%= render "trip_templates/agenda_save_spot_button",
+                            trip_plan: a_day,
+                            saved_trip_plan_ids: @saved_trip_plan_ids %>
+                      <% end %>
                       <div class="agenda-get-around-body"><%= a_day.plan_details %></div>
                       <% if a_day.google_maps_search_url.present? || a_day.uber_dropoff_url.present? %>
                         <div class="agenda-get-around-links">

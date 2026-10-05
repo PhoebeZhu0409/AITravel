@@ -1,4 +1,3 @@
-<%# locals: active (:trip or :day) %>
 <div class="home-plan-header">
   <%= render("trip_templates/page_profile_bar", left: capture do %>
     <nav aria-label="breadcrumb">
@@ -10,5 +9,5 @@
 
   <hr>
 
-  <%= render "trip_templates/plan_mode_nav", active: active %>
+  <%= render "trip_templates/plan_mode_nav" %>
 </div>

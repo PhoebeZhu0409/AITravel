@@ -1,22 +1,8 @@
-<%# locals: active (:trip or :day) %>
 <nav class="plan-mode-nav" aria-label="Planning mode">
   <div class="plan-mode-nav__tabs">
-    <%= top_nav_link_to root_path,
-        class: "plan-mode-nav__tab#{' plan-mode-nav__tab--active' if active == :trip}",
-        aria: { current: active == :trip ? "page" : false } do %>
+    <span class="plan-mode-nav__tab plan-mode-nav__tab--active">
       Plan A Trip
-      <% if active == :trip %>
-        <span class="plan-mode-nav__caret" aria-hidden="true"></span>
-      <% end %>
-    <% end %>
-
-    <%= top_nav_link_to plan_a_day_path,
-        class: "plan-mode-nav__tab#{' plan-mode-nav__tab--active' if active == :day}",
-        aria: { current: active == :day ? "page" : false } do %>
-      Plan A Day
-      <% if active == :day %>
-        <span class="plan-mode-nav__caret" aria-hidden="true"></span>
-      <% end %>
-    <% end %>
+      <span class="plan-mode-nav__caret" aria-hidden="true"></span>
+    </span>
   </div>
 </nav>

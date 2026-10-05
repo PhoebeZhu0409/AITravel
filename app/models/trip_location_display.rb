@@ -36,6 +36,36 @@ class TripLocationDisplay
     "#{parsed[:city]}, #{parsed[:country]}"
   end
 
+  def self.city_country_for_plan(trip_plan)
+    trip = trip_plan&.trip
+    raw = destination_for_plan(trip_plan, trip)
+    label = city_country_label(raw)
+    label.presence || "Unknown"
+  end
+
+  def self.destination_for_plan(trip_plan, trip)
+    return "" unless trip
+
+    date = trip_plan&.date
+    if date.present?
+      second = TripLegNotes.second_from_notes(trip.trip_notes)
+      return second.location.to_s.strip if second && date_in_leg?(date, second)
+
+      primary = TripLegNotes.primary_from_notes(trip.trip_notes)
+      return primary.location.to_s.strip if primary && date_in_leg?(date, primary)
+    end
+
+    trip.trip_location.to_s.strip
+  end
+
+  def self.date_in_leg?(date, leg)
+    start_d = Date.parse(leg.start_date.to_s)
+    end_d = Date.parse(leg.end_date.to_s)
+    date >= start_d && date <= end_d
+  rescue Date::Error, TypeError
+    false
+  end
+
   # Google-style strings often include admin areas between city and country — keep first and last segments.
   def self.parse_city_country(location)
     parts = location.to_s.split(",").map(&:strip).reject(&:blank?)
@@ -46,5 +76,5 @@ class TripLocationDisplay
     { city: parts.first, country: parts.last }
   end
 
-  private_class_method :locations_for, :combine_locations, :city_country_label, :parse_city_country
+  private_class_method :locations_for, :combine_locations, :parse_city_country, :destination_for_plan, :date_in_leg?
 end

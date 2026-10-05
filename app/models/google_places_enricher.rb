@@ -20,6 +20,14 @@ class GooglePlacesEnricher
   LOCATION_BIAS_RADIUS_M = 50_000
 
   class << self
+    # Fetch + store a place photo only when the trip plan has no usable thumbnail.
+    def ensure_place_thumbnail!(trip_plan)
+      return if trip_plan.place_thumbnail_available?
+
+      trip_plan.place_thumbnail.purge if trip_plan.place_thumbnail.attached?
+      enrich_trip_plan(trip_plan)
+    end
+
     def enrich_trip_plan(trip_plan)
       key = ENV.fetch("GOOGLE_MAPS_API_KEY", "").to_s.strip
       return if key.blank?

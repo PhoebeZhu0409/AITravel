@@ -16,16 +16,13 @@ class TripsController < ApplicationController
 
     @pagy_future, @future_trips = pagy(future_scope, page_param: :future_page, limit: 10)
     @pagy_past, @past_trips = pagy(past_scope, page_param: :past_page, limit: 10)
+    @saved_spots = current_user.saved_trip_plans
+      .includes(trip_plan: [:trip, { place_thumbnail_attachment: :blob }])
+      .order(created_at: :desc)
+    enqueue_missing_saved_spot_thumbnails(@saved_spots)
     @trip_form = (session.delete(:trip_form_draft) || {}).stringify_keys
 
     render({ :template => "trip_templates/index" })
-  end
-
-
-    #=============================== Plan A Day (TBD) =============================== 
-
-  def plan_a_day
-    render({ :template => "trip_templates/plan_a_day" })
   end
 
     #===============================  Show Trip  =============================== 
@@ -39,6 +36,7 @@ class TripsController < ApplicationController
 
     unless @trip_show_public_demo
       GooglePlacesEnricher.ensure_trip_destination_time_zones!(@the_trip)
+      @saved_trip_plan_ids = current_user.saved_trip_plans.pluck(:trip_plan_id).to_set
     end
 
     render({ :template => "trip_templates/show" })
@@ -158,6 +156,16 @@ class TripsController < ApplicationController
 
   
   private
+
+  def enqueue_missing_saved_spot_thumbnails(saved_spots)
+    saved_spots.each do |saved|
+      plan = saved.trip_plan
+      next unless plan
+      next if plan.place_thumbnail_available?
+
+      EnsurePlaceThumbnailJob.perform_later(plan.id)
+    end
+  end
 
   def trip_generation_limit_message
     "Uh oh 🥲 — you’ve used all your free generations (#{User::REGULAR_GENERATION_LIMIT} every 6 months). " \

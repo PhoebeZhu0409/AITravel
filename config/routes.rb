@@ -18,7 +18,6 @@ Rails.application.routes.draw do
 
   # READ
   get("/trips", { :controller => "trips", :action => "index" })
-  get("/plan-a-day", { :controller => "trips", :action => "plan_a_day", :as => :plan_a_day })
   #get("/", { :controller => "trips", :action => "index" })
   root to: "trips#index"
 
@@ -36,6 +35,9 @@ Rails.application.routes.draw do
 
   # DELETE
   get("/delete_trip/:path_id", { :controller => "trips", :action => "destroy" })
+
+  post("/saved_spots/:trip_plan_id", { :controller => "saved_spots", :action => "create" })
+  delete("/saved_spots/:trip_plan_id", { :controller => "saved_spots", :action => "destroy" })
 
   # ------------------------------
 

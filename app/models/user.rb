@@ -31,6 +31,8 @@ class User < ApplicationRecord
   has_many  :trip_plans, class_name: "TripPlan", foreign_key: "user_id"
   has_many  :trips, class_name: "Trip", foreign_key: "user_id"
   has_many  :trip_generation_events, dependent: :destroy
+  has_many  :saved_trip_plans, dependent: :destroy
+  has_many  :saved_spot_trip_plans, through: :saved_trip_plans, source: :trip_plan
 
   has_one_attached :avatar
 

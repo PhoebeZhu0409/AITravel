@@ -27,6 +27,7 @@ class TripPlan < ApplicationRecord
   belongs_to :trip, required: true, class_name: "Trip", foreign_key: "trip_id"
   belongs_to :user, required: true, class_name: "User", foreign_key: "user_id"
 
+  has_many :saved_trip_plans, dependent: :destroy
   has_one_attached :place_thumbnail
 
   # Same URL as the agenda card link (show template); use in PDF so links match the website.
@@ -60,9 +61,19 @@ class TripPlan < ApplicationRecord
     UberDropoffUrl.universal(**uber_dropoff_kwargs)
   end
 
+  # True only when the photo blob is actually on disk (Render local storage can drop files).
+  def place_thumbnail_available?
+    return false unless place_thumbnail.attached?
+
+    place_thumbnail.blob.service.exist?(place_thumbnail.blob.key)
+  rescue StandardError => e
+    Rails.logger.warn("[ActiveStorage] place thumbnail check failed: #{e.class} #{e.message}")
+    false
+  end
+
   # Populated once at agenda generation; show page skips client-side Places if true.
   def google_place_cached?
-    place_thumbnail.attached? ||
+    place_thumbnail_available? ||
       place_rating.present? ||
       place_user_ratings_total.present? ||
       place_display_name.present?

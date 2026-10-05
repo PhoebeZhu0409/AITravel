@@ -54,6 +54,40 @@ module ApplicationHelper
     image_path("trip_hero_default.jpg")
   end
 
+  HOME_TAB_HERO_FILES = %w[
+    home_tab_hero.jpg
+    home_tab_hero_02.jpg
+    home_tab_hero_03.png
+    home_tab_hero_04.png
+    home_tab_hero_05.jpg
+    home_tab_hero_06.jpg
+    home_tab_hero_07.png
+    home_tab_hero_08.png
+    home_tab_hero_09.jpg
+    home_tab_hero_10.jpg
+    home_tab_hero_11.png
+    home_tab_hero_12.jpg
+    home_tab_hero_13.jpg
+    home_tab_hero_14.jpg
+    home_tab_hero_15.png
+    home_tab_hero_16.jpg
+    home_tab_hero_17.jpg
+    home_tab_hero_18.png
+    home_tab_hero_19.jpg
+    home_tab_hero_20.png
+    home_tab_hero_21.png
+    home_tab_hero_22.png
+    home_tab_hero_23.jpg
+    home_tab_hero_24.jpg
+    home_tab_hero_25.jpg
+    home_tab_hero_26.jpg
+    home_tab_hero_27.jpg
+  ].freeze
+
+  def home_tab_hero_src
+    image_path(HOME_TAB_HERO_FILES.sample)
+  end
+
   def trip_hero_default_url
     absolute_asset_url(image_path("trip_hero_default.jpg"))
   end
@@ -92,6 +126,14 @@ module ApplicationHelper
       trip_plan.place_thumbnail.attached? && active_storage_file_available?(trip_plan.place_thumbnail)
 
     nil
+  end
+
+  def saved_spot_thumb_src(trip, trip_plan)
+    plan_photo_url(trip, trip_plan) || trip_show_hero_src(trip)
+  end
+
+  def saved_spot_thumb_onerror
+    trip_hero_image_onerror
   end
 
   def absolute_asset_url(url)

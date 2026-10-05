@@ -8,6 +8,97 @@ import "avatar_upload"
 // Change to true to allow Turbo
 Turbo.session.drive = false
 
+function csrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]')
+  return meta ? meta.getAttribute("content") : ""
+}
+
+function applySavedSpotState(button, saved) {
+  button.setAttribute("data-saved", saved ? "true" : "false")
+  button.setAttribute("aria-pressed", saved ? "true" : "false")
+  button.setAttribute("aria-label", saved ? "Remove from saved spots" : "Save spot")
+  button.classList.toggle("agenda-save-spot--saved", saved)
+  const icon = button.querySelector(".bi")
+  if (icon) {
+    icon.classList.toggle("bi-bookmark-fill", saved)
+    icon.classList.toggle("bi-bookmark", !saved)
+  }
+}
+
+document.addEventListener("click", function (event) {
+  const saveBtn = event.target.closest(".agenda-save-spot")
+  if (saveBtn) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    const id = saveBtn.getAttribute("data-trip-plan-id")
+    const saved = saveBtn.getAttribute("data-saved") === "true"
+    const method = saved ? "DELETE" : "POST"
+
+    fetch("/saved_spots/" + id, {
+      method: method,
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRF-Token": csrfToken()
+      }
+    }).then(function (res) {
+      if (!res.ok) throw new Error("save failed")
+      return res.json()
+    }).then(function (data) {
+      const nowSaved = !!data.saved
+      document.querySelectorAll('.agenda-save-spot[data-trip-plan-id="' + id + '"]').forEach(function (btn) {
+        applySavedSpotState(btn, nowSaved)
+      })
+
+      if (!nowSaved) {
+        const card = saveBtn.closest(".saved-spot-card, article.saved-spot-card")
+        if (card) {
+          const li = card.closest("li")
+          const group = card.closest("[data-saved-city]")
+          const wrap = card.closest(".saved-spots-list-wrap")
+          const city = group && group.getAttribute("data-saved-city")
+          if (li) li.remove()
+          const list = group && group.querySelector(".saved-spots-list")
+          if (group && list && !list.querySelector("li")) {
+            group.remove()
+            const filter = wrap && wrap.querySelector("#saved-spots-city-filter")
+            if (filter && city) {
+              Array.from(filter.options).forEach(function (opt) {
+                if (opt.value === city) opt.remove()
+              })
+              if (filter.value === city) {
+                filter.value = ""
+                filter.dispatchEvent(new Event("change"))
+              }
+            }
+          }
+          if (wrap && !wrap.querySelector("[data-saved-city]")) {
+            wrap.innerHTML =
+              "<p class=\"saved-spots-empty\">No saved spots yet. Open a trip agenda and tap the bookmark on any stop to save it here.</p>"
+          }
+        }
+      }
+    }).catch(function () {})
+
+    return
+  }
+}, true)
+
+document.addEventListener("change", function (event) {
+  const filter = event.target.closest("#saved-spots-city-filter")
+  if (!filter) return
+
+  const wrap = filter.closest(".saved-spots-list-wrap")
+  if (!wrap) return
+
+  const city = filter.value
+  wrap.querySelectorAll("[data-saved-city]").forEach(function (group) {
+    group.hidden = !!(city && group.getAttribute("data-saved-city") !== city)
+  })
+})
+
 document.addEventListener("click", function (event) {
   const openPlan = event.target.closest("[data-nalu-open-plan]")
   if (openPlan) {

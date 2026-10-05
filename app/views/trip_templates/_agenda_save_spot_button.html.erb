@@ -1,0 +1,11 @@
+<%# locals: trip_plan, saved_trip_plan_ids %>
+<% saved = saved_trip_plan_ids.include?(trip_plan.id) %>
+<button
+  type="button"
+  class="agenda-save-spot<%= " agenda-save-spot--saved" if saved %>"
+  data-trip-plan-id="<%= trip_plan.id %>"
+  data-saved="<%= saved ? "true" : "false" %>"
+  aria-label="<%= saved ? "Remove from saved spots" : "Save spot" %>"
+  aria-pressed="<%= saved ? "true" : "false" %>">
+  <i class="bi <%= saved ? "bi-bookmark-fill" : "bi-bookmark" %>" aria-hidden="true"></i>
+</button>
