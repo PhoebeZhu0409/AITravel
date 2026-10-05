@@ -3119,7 +3119,7 @@ body.pico article select.saved-spots-city-filter {
 .saved-spots-city-heading {
   margin: 1.15rem 0 0.1rem;
   padding: 0 0.15rem;
-  font-size: 1.3125rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #0f172a;
   letter-spacing: 0.01em;
@@ -3127,8 +3127,8 @@ body.pico article select.saved-spots-city-filter {
 
 body.pico article .saved-spots-city-heading {
   margin: 1.15rem 0 0.1rem;
-  --pico-font-size: 1.3125rem;
-  font-size: 1.3125rem;
+  --pico-font-size: 1rem;
+  font-size: 1rem;
 }
 
 .saved-spots-city-group:first-of-type .saved-spots-city-heading,
@@ -3164,10 +3164,10 @@ body.pico article .saved-spots-list li::marker {
 .saved-spot-card {
   position: relative;
   display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.85rem 1.85rem 0.65rem 0.65rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.5rem 0.65rem;
+  padding: 0.85rem 1.85rem 0.7rem 0.65rem;
   background: #fff;
   border: none;
   border-radius: 18px;
@@ -3211,24 +3211,25 @@ body.pico article .saved-spot-card button.agenda-save-spot:focus {
   display: flex;
   align-items: center;
   min-width: 0;
-  flex: 1 1 52%;
+  flex: 1 1 100%;
   padding: 0;
+  padding-right: 1.1rem;
   text-decoration: none;
   color: inherit;
 }
 
 .saved-spot-note__input {
   display: block;
-  flex: 1 1 42%;
-  width: auto;
+  flex: 1 1 100%;
+  width: 100%;
   min-width: 0;
-  height: 4.5rem;
-  min-height: 4.5rem;
-  max-height: 4.5rem;
+  height: 2.35rem;
+  min-height: 2.35rem;
+  max-height: 2.35rem;
   margin: 0;
-  padding: 0.45rem 0.55rem;
-  font-size: 0.8125rem;
-  line-height: 1.4;
+  padding: 0.28rem 0.55rem;
+  font-size: 0.75rem;
+  line-height: 1.35;
   color: #0f172a;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
@@ -3239,16 +3240,16 @@ body.pico article .saved-spot-card button.agenda-save-spot:focus {
 
 .saved-spot-note__input::placeholder {
   color: #9ca3af;
-  font-size: 0.65rem;
-  line-height: 1.4;
+  font-size: 0.75rem;
+  line-height: 1.35;
 }
 
 body.pico article .saved-spot-note__input {
   margin: 0;
-  width: auto;
-  height: 4.5rem;
-  min-height: 4.5rem;
-  max-height: 4.5rem;
+  width: 100%;
+  height: 2.35rem;
+  min-height: 2.35rem;
+  max-height: 2.35rem;
 }
 
 .saved-spot-note__input:focus {
@@ -3259,15 +3260,18 @@ body.pico article .saved-spot-note__input {
 }
 
 @media (max-width: 640px) {
+  .saved-spots-city-heading,
+  body.pico article .saved-spots-city-heading {
+    --pico-font-size: 0.9rem;
+    font-size: 0.9rem;
+  }
+
   .saved-spot-card__place .place-name {
     font-size: 0.8rem;
   }
 
   .saved-spot-card__place .place-rating {
     font-size: 0.75rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 }
 
@@ -3318,16 +3322,16 @@ body.pico .saved-spot-card__place .place-photo img {
 .saved-spot-card__place .place-info {
   min-width: 0;
   flex: 1;
-  overflow: hidden;
 }
 
 .saved-spot-card__place .place-name {
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: 700;
   line-height: 1.25;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  overflow-wrap: anywhere;
 }
 
 a.saved-spot-card__main.place-card-link .place-name,
