@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: "users/registrations" }
+  get("/session/status", { controller: "session_status", action: "show" })
 
   # Public pages (no sign-in)
   get("/legal-notices", { :controller => "pages", :action => "legal_notices" })

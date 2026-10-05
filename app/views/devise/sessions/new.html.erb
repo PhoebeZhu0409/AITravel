@@ -85,7 +85,10 @@
                       label: "Password",
                       input_html: { autocomplete: "new-password", class: "sign-in-input" } %>
           <% if devise_mapping.rememberable? %>
-            <%= f.input :remember_me, as: :boolean, wrapper_html: { class: "sign-in-remember" } %>
+            <%= f.input :remember_me,
+                        as: :boolean,
+                        wrapper_html: { class: "sign-in-remember" },
+                        input_html: { checked: true } %>
           <% end %>
           <div class="sign-in-actions">
             <%= f.button :submit, "Log in", class: "sign-in-submit" %>
