@@ -102,14 +102,11 @@
           </div>
         <% end %>
 
-        <div class="sign-in-links">
-          <% if devise_mapping.recoverable? %>
+        <% if devise_mapping.recoverable? %>
+          <div class="sign-in-links">
             <%= link_to "Forgot your password?", new_password_path(resource_name) %>
-          <% end %>
-          <% if devise_mapping.confirmable? %>
-            <%= link_to "Resend confirmation email", new_confirmation_path(resource_name) %>
-          <% end %>
-        </div>
+          </div>
+        <% end %>
       </div>
     </div>
 
