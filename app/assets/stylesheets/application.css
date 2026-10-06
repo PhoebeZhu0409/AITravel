@@ -92,6 +92,27 @@
   text-align: center;
 }
 
+.sign-in-flash {
+  margin: 0 0 1rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.sign-in-flash--notice {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+.sign-in-flash--alert {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
 .sign-in-lead {
   margin: 0.5rem auto 0.85rem;
   max-width: 22rem;

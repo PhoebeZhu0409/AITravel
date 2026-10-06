@@ -1,5 +1,9 @@
 <h2>Sign up</h2>
 
+<p class="sign-in-flash sign-in-flash--notice" style="max-width: 360px; margin: 0 auto 1rem;">
+  After you sign up, we’ll email you a confirmation link. You can sign in once your email is confirmed.
+</p>
+
 <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
   <%= f.error_notification %>
 

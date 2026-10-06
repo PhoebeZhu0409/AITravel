@@ -73,6 +73,13 @@
     <div class="sign-in-card">
       <p class="sign-in-title">Sign in</p>
 
+      <% if notice.present? %>
+        <p class="sign-in-flash sign-in-flash--notice" role="status"><%= notice %></p>
+      <% end %>
+      <% if alert.present? %>
+        <p class="sign-in-flash sign-in-flash--alert" role="alert"><%= alert %></p>
+      <% end %>
+
       <div class="sign-in-form-block">
         <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name), html: { autocomplete: "off", class: "sign-in-form" }) do |f| %>
           <%= f.input :email,
@@ -98,6 +105,9 @@
         <div class="sign-in-links">
           <% if devise_mapping.recoverable? %>
             <%= link_to "Forgot your password?", new_password_path(resource_name) %>
+          <% end %>
+          <% if devise_mapping.confirmable? %>
+            <%= link_to "Resend confirmation email", new_confirmation_path(resource_name) %>
           <% end %>
         </div>
       </div>
