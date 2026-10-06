@@ -184,17 +184,7 @@ window.$ = jquery;
 import Rails from "@rails/ujs"
 Rails.start();
 
-document.addEventListener("click", function (event) {
-  const link = event.target.closest("a[data-delete-confirm]")
-  if (!link) return
-
-  const href = link.getAttribute("href")
-  const message = link.getAttribute("data-delete-confirm")
-  if (!href || !message) return
-
-  event.preventDefault()
-  event.stopPropagation()
-
+function ensureAppConfirmDialog() {
   let dialog = document.getElementById("app-confirm-dialog")
   if (!dialog) {
     dialog = document.createElement("dialog")
@@ -210,10 +200,15 @@ document.addEventListener("click", function (event) {
       "</article>"
     document.body.appendChild(dialog)
   }
+  return dialog
+}
 
+function showAppConfirmDialog(message, okLabel, onOk) {
+  const dialog = ensureAppConfirmDialog()
   dialog.querySelector(".app-confirm-dialog__msg").textContent = message
   const ok = dialog.querySelector(".app-confirm-dialog__ok")
   const cancel = dialog.querySelector(".app-confirm-dialog__cancel")
+  ok.textContent = okLabel || "Delete"
 
   const close = function () {
     if (typeof dialog.close === "function") dialog.close()
@@ -223,17 +218,63 @@ document.addEventListener("click", function (event) {
   cancel.onclick = close
   ok.onclick = function () {
     close()
+    onOk()
+  }
+
+  if (typeof dialog.showModal === "function") dialog.showModal()
+  else onOk()
+}
+
+document.addEventListener("click", function (event) {
+  const link = event.target.closest("a[data-delete-confirm]")
+  if (!link) return
+
+  const href = link.getAttribute("href")
+  const message = link.getAttribute("data-delete-confirm")
+  if (!href || !message) return
+
+  event.preventDefault()
+  event.stopPropagation()
+
+  showAppConfirmDialog(message, "Delete", function () {
     if (link.getAttribute("data-delete-inplace") === "true") {
       deleteTripInPlace(link, href)
     } else {
       window.location.assign(href)
     }
-  }
-
-  if (typeof dialog.showModal === "function") dialog.showModal()
-  else if (link.getAttribute("data-delete-inplace") === "true") deleteTripInPlace(link, href)
-  else window.location.assign(href)
+  })
 }, true)
+
+// WKWebView often blocks window.confirm (Rails UJS data-confirm); use in-page dialog instead.
+document.addEventListener(
+  "submit",
+  function (event) {
+    const form = event.target
+    if (!(form instanceof HTMLFormElement)) return
+    if (form.dataset.naluConfirmOk === "1") return
+
+    const submitter =
+      event.submitter ||
+      form.querySelector("button[data-nalu-confirm], input[type=submit][data-nalu-confirm]")
+    if (!submitter || !submitter.getAttribute("data-nalu-confirm")) return
+
+    event.preventDefault()
+    event.stopPropagation()
+
+    const message = submitter.getAttribute("data-nalu-confirm")
+    const okLabel = submitter.getAttribute("data-nalu-confirm-ok") || "Delete"
+
+    showAppConfirmDialog(message, okLabel, function () {
+      form.dataset.naluConfirmOk = "1"
+      if (typeof form.requestSubmit === "function") {
+        form.requestSubmit(submitter)
+      } else {
+        form.submit()
+      }
+    })
+  },
+  true
+)
 
 function deleteTripInPlace(link, href) {
   const row = link.closest("li")

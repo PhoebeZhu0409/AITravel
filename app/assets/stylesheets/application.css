@@ -1456,6 +1456,26 @@ body.pico .trip-add-location-wrap button.trip-add-location-btn[type="button"]:fo
 }
 
 /* Devise edit profile */
+.devise-registration-edit {
+  /* iOS tab bar + home indicator: keep “Cancel account” tappable above chrome */
+  padding-bottom: max(6rem, calc(env(safe-area-inset-bottom, 0px) + 5rem));
+}
+
+.devise-account-cancel {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.devise-account-cancel__lead {
+  margin: 0 0 0.75rem;
+  color: #475569;
+}
+
+.devise-account-cancel__form {
+  margin: 0;
+}
+
 .devise-registration-edit .account-status-readonly {
   display: flex;
   align-items: center;

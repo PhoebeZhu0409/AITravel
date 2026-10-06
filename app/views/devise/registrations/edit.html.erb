@@ -72,9 +72,19 @@
   </div>
 <% end %>
 
-<h3>Cancel my account</h3>
-
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
+<section class="devise-account-cancel" aria-labelledby="cancel-account-heading">
+  <h3 id="cancel-account-heading">Cancel my account</h3>
+  <p class="devise-account-cancel__lead">Unhappy?</p>
+  <%= button_to "Cancel my account",
+                registration_path(resource_name),
+                method: :delete,
+                form: { data: { turbo: false }, class: "devise-account-cancel__form" },
+                class: "devise-account-cancel__button btn-delete",
+                data: {
+                  nalu_confirm: "Are you sure? This permanently deletes your account and cannot be undone.",
+                  nalu_confirm_ok: "Delete my account"
+                } %>
+</section>
 
 <%= app_link_to "Back", root_path %>
 </div>
