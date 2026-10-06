@@ -1,5 +1,8 @@
-<p>Welcome <%= @email %>!</p>
+<% greeting_name = @resource.username.to_s.strip.presence || @resource.email %>
+<p>Hello <%= greeting_name %>!</p>
 
-<p>You can confirm your account email through the link below:</p>
+<p>Thanks for signing up for Nalu. Please confirm your email address by clicking the link below:</p>
 
-<p><%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token) %></p>
+<p><%= link_to "Confirm my account", confirmation_url(@resource, confirmation_token: @token) %></p>
+
+<p>If you didn’t create an account, you can ignore this email.</p>
