@@ -20,6 +20,14 @@
         }
         if (!onHome || h === "plan" || h === "") {
           document.documentElement.classList.add("home-tab-ready");
+        } else {
+          // iOS WebView: never leave body visibility:hidden if home-tab JS is slow.
+          document.addEventListener("DOMContentLoaded", function () {
+            document.documentElement.classList.add("home-tab-ready");
+          });
+          setTimeout(function () {
+            document.documentElement.classList.add("home-tab-ready");
+          }, 400);
         }
       })();
     </script>
@@ -54,10 +62,22 @@
       html.nalu-native[data-home-tab="saved"] .saved-spots-jump {
         display: none !important;
       }
+      /* iOS app: brief veil until tab JS runs — no Plan chrome flash; 400ms fallback in <head> always reveals. */
       html.nalu-native[data-home-tab="future"]:not(.home-tab-ready) body,
       html.nalu-native[data-home-tab="past"]:not(.home-tab-ready) body,
       html.nalu-native[data-home-tab="saved"]:not(.home-tab-ready) body {
         visibility: hidden !important;
+      }
+      html.nalu-native[data-home-tab="future"] #home-panel-plan,
+      html.nalu-native[data-home-tab="past"] #home-panel-plan,
+      html.nalu-native[data-home-tab="saved"] #home-panel-plan,
+      html.nalu-native[data-home-tab="future"] .home-tabs,
+      html.nalu-native[data-home-tab="past"] .home-tabs,
+      html.nalu-native[data-home-tab="saved"] .home-tabs,
+      html.nalu-native[data-home-tab="future"] .home-plan-header,
+      html.nalu-native[data-home-tab="past"] .home-plan-header,
+      html.nalu-native[data-home-tab="saved"] .home-plan-header {
+        display: none !important;
       }
     </style>
     <%= csrf_meta_tags %>
