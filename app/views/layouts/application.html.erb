@@ -39,23 +39,24 @@
       html[data-home-tab="saved"] #home-panel-saved[hidden] {
         display: block !important;
       }
-      html[data-home-tab="future"] .home-tabs,
-      html[data-home-tab="past"] .home-tabs,
-      html[data-home-tab="saved"] .home-tabs,
-      html[data-home-tab="future"] .home-plan-header,
-      html[data-home-tab="past"] .home-plan-header,
-      html[data-home-tab="saved"] .home-plan-header,
-      html[data-home-tab="future"] body.pico > header,
-      html[data-home-tab="past"] body.pico > header,
-      html[data-home-tab="saved"] body.pico > header,
-      html[data-home-tab="future"] .saved-spots-jump,
-      html[data-home-tab="past"] .saved-spots-jump,
-      html[data-home-tab="saved"] .saved-spots-jump {
+      /* Hide site chrome only in the iOS app (html.nalu-native). Website always keeps header/tabs. */
+      html.nalu-native[data-home-tab="future"] .home-tabs,
+      html.nalu-native[data-home-tab="past"] .home-tabs,
+      html.nalu-native[data-home-tab="saved"] .home-tabs,
+      html.nalu-native[data-home-tab="future"] .home-plan-header,
+      html.nalu-native[data-home-tab="past"] .home-plan-header,
+      html.nalu-native[data-home-tab="saved"] .home-plan-header,
+      html.nalu-native[data-home-tab="future"] body.pico > header,
+      html.nalu-native[data-home-tab="past"] body.pico > header,
+      html.nalu-native[data-home-tab="saved"] body.pico > header,
+      html.nalu-native[data-home-tab="future"] .saved-spots-jump,
+      html.nalu-native[data-home-tab="past"] .saved-spots-jump,
+      html.nalu-native[data-home-tab="saved"] .saved-spots-jump {
         display: none !important;
       }
-      html[data-home-tab="future"]:not(.home-tab-ready) body,
-      html[data-home-tab="past"]:not(.home-tab-ready) body,
-      html[data-home-tab="saved"]:not(.home-tab-ready) body {
+      html.nalu-native[data-home-tab="future"]:not(.home-tab-ready) body,
+      html.nalu-native[data-home-tab="past"]:not(.home-tab-ready) body,
+      html.nalu-native[data-home-tab="saved"]:not(.home-tab-ready) body {
         visibility: hidden !important;
       }
     </style>
