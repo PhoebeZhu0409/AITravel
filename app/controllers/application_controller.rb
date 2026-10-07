@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
 
   def after_sign_in_path_for(_resource)
     # iOS app + phone browsers: land on Future list, not Plan (matches native Future tab).
-    mobile_browser? ? root_path(anchor: "future") : root_path
+    helpers.mobile_browser? ? root_path(anchor: "future") : root_path
   end
 
 end
