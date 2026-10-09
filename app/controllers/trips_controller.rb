@@ -6,13 +6,8 @@ class TripsController < ApplicationController
   def index
     matching_trips = current_user.trips.with_attached_location_hero
 
-    future_scope = matching_trips
-      .where(trip_start_date: (Date.today...))
-      .order(created_at: :desc)
-
-    past_scope = matching_trips
-      .where(trip_start_date: (...Date.today))
-      .order(created_at: :desc)
+    future_scope = matching_trips.future_trips.order(created_at: :desc)
+    past_scope = matching_trips.past_trips.order(created_at: :desc)
 
     @pagy_future, @future_trips = pagy(future_scope, page_param: :future_page, limit: 10)
     @pagy_past, @past_trips = pagy(past_scope, page_param: :past_page, limit: 10)

@@ -33,7 +33,8 @@ module Rails8Template
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
-    # config.time_zone = "Central Time (US & Canada)"
+    # Future/Past trip lists and “today” use this zone (see Trip.future_trips / past_trips).
+    config.time_zone = "Beijing"
     # config.eager_load_paths << Rails.root.join("extras")
     config.generators do |g|
       g.test_framework nil

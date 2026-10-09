@@ -39,6 +39,15 @@ class Trip < ApplicationRecord
 
   scope :showcase, -> { where.not(showcase_slug: nil) }
 
+  # Future while any trip day remains (last day >= today in app time zone).
+  scope :future_trips, lambda { |as_of = Date.current|
+    where("trip_start_date + (trip_duration_days - 1) >= ?", as_of)
+  }
+
+  scope :past_trips, lambda { |as_of = Date.current|
+    where("trip_start_date + (trip_duration_days - 1) < ?", as_of)
+  }
+
   def trip_end_date
     return unless trip_start_date.present? && trip_duration_days.present?
 
