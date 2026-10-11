@@ -143,6 +143,7 @@ class TripAgendaGenerator
     hour = md[1].to_i
     min = md[2].to_i
     sec = (md[3] || "0").to_i
+    # UTC date is intentional: wall clock must be read back via .utc (see TripPlan#wall_clock_hms).
     Time.utc(2000, 1, 1, hour, min, sec)
   end
 

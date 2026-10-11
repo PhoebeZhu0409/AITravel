@@ -31,7 +31,11 @@ module ApplicationHelper
 
     st = trip_plan.start_time
     d = trip_plan.date
-    hour, min, sec = st.hour, st.min, st.sec
+    # `time` columns are stored as wall clock (see TripAgendaGenerator#parse_wall_clock_time).
+    # Never use st.hour — ActiveRecord applies Time.zone and shifts the clock (e.g. +8 in Beijing).
+    hour, min, sec = trip_plan.wall_clock_hms(:start_time)
+    return "" unless hour
+
     tz = Time.find_zone(trip_plan.place_time_zone_id) if trip_plan.place_time_zone_id.present?
 
     if tz.present?

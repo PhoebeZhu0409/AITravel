@@ -71,6 +71,15 @@ class TripPlan < ApplicationRecord
     false
   end
 
+  # Wall-clock components for a Postgres `time` column (destination local time, not device TZ).
+  def wall_clock_hms(time_attr)
+    value = public_send(time_attr)
+    return nil if value.blank?
+
+    t = value.utc
+    [t.hour, t.min, t.sec]
+  end
+
   # Populated once at agenda generation; show page skips client-side Places if true.
   def google_place_cached?
     place_thumbnail_available? ||
